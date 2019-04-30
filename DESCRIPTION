@@ -1,13 +1,29 @@
 Package: proActiv
-Title: What the Package Does (One Line, Title Case)
+Title: Estimate Promoter Activity from RNA-Seq data
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Deniz",
+           family = "Demircioglu",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: What license it uses
+           email = "ddemircioglu@gis.a-star.edu.sg",
+           comment = c(ORCID = "0000-0001-7857-0407"))
+Description: Estimate promoter activity using RNA-Seq data. 
+  This package uses Tophat2 or STAR junction files and estimates promoter activity. 
+  The promoters of each gene can be identified by providing a txdb object for the input annotation version. 
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 6.1.1
+Imports: 
+    dplyr,
+    GenomicRanges,
+    GenomicFeatures,
+    GenomicAlignments,
+    GenomeInfoDb,
+    IRanges,
+    S4Vectors,
+    methods,
+    rlang
+Suggests: 
+    parallel,
+    DESeq2
