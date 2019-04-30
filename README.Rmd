@@ -35,6 +35,10 @@ This is a basic example which shows you how to solve a common problem:
 The data used for the example below can be downloaded from here: [inputFiles](https://drive.google.com/drive/folders/1R8sI97h1ZTdyxbQxG4latR9xN9FF2tq8?usp=sharing)
 
 ```{r, eval = FALSE}
+library(GenomicRanges)
+library(GenomicFeatures)
+library(GenomicAlignments)
+library(dplyr)
 library(proActiv)
 
 # Load the txdb object for your annotation of choice (Gencode v19 used here)
