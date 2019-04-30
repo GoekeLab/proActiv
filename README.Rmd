@@ -12,14 +12,14 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# proActiv
+## proActiv
 
 <!-- badges: start -->
 <!-- badges: end -->
 
 proActiv is an R package that estimates promoter activity from RNA-Seq data. proActiv uses aligned reads and genome annotations as input, and provides absolute and relative promoter activity as output. The package can be used to identify active promoters and alternative promoters, the details of the method are described at https://doi.org/10.1101/176487. 
 
-## Installation
+### Installation
 
 proActiv can be installed from [GitHub](https://github.com/) with:
 
@@ -27,17 +27,18 @@ proActiv can be installed from [GitHub](https://github.com/) with:
 library("devtools")
 devtools::install_github("GoekeLab/proActiv")
 ```
-## Examples
-
-This is a basic example to estimate promoter activity from a set of RNA-Seq data which was aligned with TopHat2. proActiv will use the junction file from the TopHat2 alignment (see below for an example with STAR-aligned reads), and a set of annotation objects that describe the associations of promoters, transcripts, and genes, to calculate promoter activity.
+### Annotation and Example Data
 
 The pre-calculated promoter annotation objects can be downloaded here for hg19 (Grch37):  [preprocessedAnnotation](https://drive.google.com/drive/folders/1dtuP2QIKBTIQd8HecUmDZz2fCI_VaLMl?usp=sharing)
 
-Example junction files as produced by TopHat2 can be downloaded here:
+Example junction files as produced by TopHat2 and STAR can be downloaded here:
 [inputFiles](https://drive.google.com/drive/folders/1R8sI97h1ZTdyxbQxG4latR9xN9FF2tq8?usp=sharing)
 
 
 ### Estimate Promoter Activity (TopHat2 alignment)
+
+This is a basic example to estimate promoter activity from a set of RNA-Seq data which was aligned with TopHat2. proActiv will use the junction file from the TopHat2 alignment (see below for an example with STAR-aligned reads), and a set of annotation objects that describe the associations of promoters, transcripts, and genes, to calculate promoter activity.
+
 
 ```{r, eval = FALSE}
 library(proActiv)
@@ -173,3 +174,18 @@ promoterCoordinates <- preparePromoterCoordinates(exonReducedRanges,
                                                     promoterIdMapping)
 
 ```
+
+
+## Limitations
+
+proActiv will not provide promoter activity estimates for promoters which are not uniquely identifiable from splice junctions (single exon transcripts, promoters which overlap with internal exons). 
+
+##Citing proActiv
+
+If you use proActiv, please cite:
+Demircioğlu, Deniz, et al. "A Pan-Cancer Transcriptome Analysis Reveals Pervasive Regulation through Tumor-Associated Alternative Promoters." bioRxiv (2018): 176487.
+
+## Contributors
+
+ProActiv is developed and maintained by Deniz Demircioglu and Jonathan Göke.
+
