@@ -1,13 +1,13 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# proActivTest
+# proActiv
 
 <!-- badges: start -->
 
 <!-- badges: end -->
 
-The goal of proActivTest is to estimate promoter activity using RNA-Seq
+The goal of proActiv is to estimate promoter activity using RNA-Seq
 data. The users only need to provide an input txdb object (annotation
 version of their choice) and the input junction bed files. The proActiv
 package will identify the promoter regions and estimate absolute and
@@ -21,7 +21,7 @@ be installed from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("dnzdmrcgl/proActivTest")
+devtools::install_github("GoekeLab/proActiv")
 ```
 
 ## Example
@@ -31,7 +31,7 @@ The data used for the example below can be downloaded from here:
 [inputFiles](https://drive.google.com/drive/folders/1R8sI97h1ZTdyxbQxG4latR9xN9FF2tq8?usp=sharing)
 
 ``` r
-library(proActivTest)
+library(proActiv)
 
 # Load the txdb object for your annotation of choice (Gencode v19 used here)
 txdb <- loadDb('./inputFiles/annotation/gencode.v19.annotation.sqlite')
