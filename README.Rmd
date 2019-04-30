@@ -12,48 +12,48 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# proActiv
+## proActiv
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of proActiv is to estimate promoter activity using RNA-Seq data. The users only need to provide an input txdb object (annotation version of their choice) and 
-the input junction bed files. The proActiv package will identify the promoter regions and estimate absolute and relative promoter activity as well as gene expression. The
-details of the method can be found at https://doi.org/10.1101/176487. 
+proActiv is an R package that estimates promoter activity from RNA-Seq data. proActiv uses aligned reads and genome annotations as input, and provides absolute and relative promoter activity as output. The package can be used to identify active promoters and alternative promoters, the details of the method are described at https://doi.org/10.1101/176487. 
 
-## Installation
+### Installation
 
-proActiv is currently available only as the development version and can be installed from [GitHub](https://github.com/) with:
+proActiv can be installed from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
+library("devtools")
 devtools::install_github("GoekeLab/proActiv")
 ```
-## Examples
+### Annotation and Example Data
 
-This is a basic example which shows you how to solve a common problem:
-The input data used for the example below can be downloaded from here: [inputFiles](https://drive.google.com/drive/folders/1R8sI97h1ZTdyxbQxG4latR9xN9FF2tq8?usp=sharing)
-The preprocessed annotation data for Gencode v19 to be used for simple examples can be downloaded from here: [preprocessedAnnotation](https://drive.google.com/drive/folders/1dtuP2QIKBTIQd8HecUmDZz2fCI_VaLMl?usp=sharing)
+The pre-calculated promoter annotation objects can be downloaded here for hg19 (Grch37):  [preprocessedAnnotation](https://drive.google.com/drive/folders/1dtuP2QIKBTIQd8HecUmDZz2fCI_VaLMl?usp=sharing)
 
-### Simple example (TopHat2)
+Example junction files as produced by TopHat2 and STAR can be downloaded here:
+[inputFiles](https://drive.google.com/drive/folders/1R8sI97h1ZTdyxbQxG4latR9xN9FF2tq8?usp=sharing)
+
+
+### Estimate Promoter Activity (TopHat2 alignment)
+
+This is a basic example to estimate promoter activity from a set of RNA-Seq data which was aligned with TopHat2. proActiv will use the junction file from the TopHat2 alignment (see below for an example with STAR-aligned reads), and a set of annotation objects that describe the associations of promoters, transcripts, and genes, to calculate promoter activity.
+
 
 ```{r, eval = FALSE}
-library(GenomicRanges)
-library(GenomicFeatures)
-library(GenomicAlignments)
-library(dplyr)
 library(proActiv)
 
 # The number of cores to be used for parallel execution (mc.cores argument for parallel::mclappy), optional
 numberOfCores <- 1
 
-# Loads the exonReducedRanges, promoterIdMapping, intronRanges.annotated and promoterCoordinates objects
-load('preprocessedAnnotation/preprocessedAnnotation.RData')
+# Loads the promoter annotations for the human genome (hg19):
+# exonReducedRanges, promoterIdMapping, intronRanges.annotated and promoterCoordinates
+load('preprocessedAnnotation.RData')
 
 ### TopHat2 Junction Files Example 
 
 # The paths and labels for samples
-tophatJunctionFiles <- list.files('./inputFiles/tophat/', full.names = TRUE)
+tophatJunctionFiles <- list.files('tophat/', full.names = TRUE)
 tophatJunctionFileLabels <- paste0('s', 1:length(tophatJunctionFiles), '-tophat')
 
 # Count the total number of junction reads for each promoter
@@ -64,42 +64,39 @@ promoterCounts.tophat <- calculatePromoterReadCounts(exonReducedRanges,
                                                       junctionType = 'tophat', 
                                                       numberOfCores)
 
-# Normalize the promoter read counts by DESeq2 (optional)
+# Normalize promoter read counts by DESeq2 (optional)
 normalizedPromoterCounts.tophat <- normalizePromoterReadCounts(promoterCounts.tophat)
 
-# Calculate the absolute promoter activity
+# Calculate absolute promoter activity
 absolutePromoterActivity.tophat <- getAbsolutePromoterActivity(normalizedPromoterCounts.tophat, 
                                                                promoterIdMapping, 
                                                                log2 = TRUE, 
                                                                pseudocount = 1)
-# Calculate the gene expression
+# Calculate gene expression
 geneExpression.tophat <- getGeneExpression(absolutePromoterActivity.tophat)
-# Calculate the relative promoter activity
+# Calculate relative promoter activity
 relativePromoterActivity.tophat <- getRelativePromoterActivity(absolutePromoterActivity.tophat, 
                                                                geneExpression.tophat)
 
 ```
 
 
-### Simple example (STAR)
+### Estimate Promoter Activity (STAR alignment)
 
 ```{r, eval = FALSE}
-library(GenomicRanges)
-library(GenomicFeatures)
-library(GenomicAlignments)
-library(dplyr)
 library(proActiv)
 
 # The number of cores to be used for parallel execution (mc.cores argument for parallel::mclappy), optional
 numberOfCores <- 1
 
-# Loads the exonReducedRanges, promoterIdMapping, intronRanges.annotated and promoterCoordinates objects
-load('preprocessedAnnotation/preprocessedAnnotation.RData')
+# Loads the promoter annotations for the human genome (hg19):
+# exonReducedRanges, promoterIdMapping, intronRanges.annotated and promoterCoordinates
+load('preprocessedAnnotation.RData')
 
 ### STAR Junction Files Example 
 
 # The paths and labels for samples
-starJunctionFiles <- list.files('./inputFiles/star/', full.names = TRUE)
+starJunctionFiles <- list.files('star/', full.names = TRUE)
 starJunctionFileLabels <- paste0('s', 1:length(starJunctionFiles), '-star')
 
 # Count the total number of junction reads for each promoter
@@ -110,24 +107,28 @@ promoterCounts.star <- calculatePromoterReadCounts(exonReducedRanges,
                                                       junctionType = 'star', 
                                                       numberOfCores)
 
-# Normalize the promoter read counts by DESeq2 (optional)
+# Normalize promoter read counts by DESeq2 (optional)
 normalizedPromoterCounts.star <- normalizePromoterReadCounts(promoterCounts.star)
 
-# Calculate the absolute promoter activity
+# Calculate absolute promoter activity
 absolutePromoterActivity.star <- getAbsolutePromoterActivity(normalizedPromoterCounts.star, 
                                                              promoterIdMapping, 
                                                              log2 = TRUE, 
                                                              pseudocount = 1)
-# Calculate the gene expression
+# Calculate gene expression
 geneExpression.star <- getGeneExpression(absolutePromoterActivity.star)
-# Calculate the relative promoter activity
+# Calculate relative promoter activity
 relativePromoterActivity.star <- getRelativePromoterActivity(absolutePromoterActivity.star, 
                                                              geneExpression.tophat)
 
 ```
 
 
-### Advanced example
+### Creating your own promoter annotations
+proActiv provides functions to create promoter annotation objects for any genome. Here we describe how the annotation can be created using a TxDb object (please see the TxDb documentation for how to create annotations from a GTF file).
+
+A TxDb object for the human genome version hg19 (Grch37) can be downloaded here:
+[inputFiles](https://drive.google.com/drive/folders/1R8sI97h1ZTdyxbQxG4latR9xN9FF2tq8?usp=sharing)
 
 ```{r, eval = FALSE}
 library(GenomicRanges)
@@ -172,61 +173,19 @@ exonReducedRanges <- prepareAnnotatedReducedExonRanges(txdb,
 promoterCoordinates <- preparePromoterCoordinates(exonReducedRanges,
                                                     promoterIdMapping)
 
-### TopHat2 Junction Files Example 
-
-# The paths and labels for samples
-tophatJunctionFiles <- list.files('./inputFiles/tophat/', full.names = TRUE)
-tophatJunctionFileLabels <- paste0('s', 1:length(tophatJunctionFiles), '-tophat')
-
-# Count the total number of junction reads for each promoter
-promoterCounts.tophat <- calculatePromoterReadCounts(exonReducedRanges, 
-                                                      intronRanges.annotated, 
-                                                      junctionFilePaths = tophatJunctionFiles, 
-                                                      junctionFileLabels =  tophatJunctionFileLabels, 
-                                                      junctionType = 'tophat', 
-                                                      numberOfCores)
-
-# Normalize the promoter read counts by DESeq2 (optional)
-normalizedPromoterCounts.tophat <- normalizePromoterReadCounts(promoterCounts.tophat)
-
-# Calculate the absolute promoter activity
-absolutePromoterActivity.tophat <- getAbsolutePromoterActivity(normalizedPromoterCounts.tophat, 
-                                                               promoterIdMapping, 
-                                                               log2 = TRUE, 
-                                                               pseudocount = 1)
-# Calculate the gene expression
-geneExpression.tophat <- getGeneExpression(absolutePromoterActivity.tophat)
-# Calculate the relative promoter activity
-relativePromoterActivity.tophat <- getRelativePromoterActivity(absolutePromoterActivity.tophat, 
-                                                               geneExpression.tophat)
-
-
-### STAR Junction Files Example 
-
-# The paths and labels for samples
-starJunctionFiles <- list.files('./inputFiles/star/', full.names = TRUE)
-starJunctionFileLabels <- paste0('s', 1:length(starJunctionFiles), '-star')
-
-# Count the total number of junction reads for each promoter
-promoterCounts.star <- calculatePromoterReadCounts(exonReducedRanges, 
-                                                      intronRanges.annotated, 
-                                                      junctionFilePaths = starJunctionFiles, 
-                                                      junctionFileLabels =  starJunctionFileLabels, 
-                                                      junctionType = 'star', 
-                                                      numberOfCores)
-
-# Normalize the promoter read counts by DESeq2 (optional)
-normalizedPromoterCounts.star <- normalizePromoterReadCounts(promoterCounts.star)
-
-# Calculate the absolute promoter activity
-absolutePromoterActivity.star <- getAbsolutePromoterActivity(normalizedPromoterCounts.star, 
-                                                             promoterIdMapping, 
-                                                             log2 = TRUE, 
-                                                             pseudocount = 1)
-# Calculate the gene expression
-geneExpression.star <- getGeneExpression(absolutePromoterActivity.star)
-# Calculate the relative promoter activity
-relativePromoterActivity.star <- getRelativePromoterActivity(absolutePromoterActivity.star, 
-                                                             geneExpression.tophat)
-
 ```
+
+
+## Limitations
+
+proActiv will not provide promoter activity estimates for promoters which are not uniquely identifiable from splice junctions (single exon transcripts, promoters which overlap with internal exons). 
+
+##Citing proActiv
+
+If you use proActiv, please cite:
+Demircioğlu, Deniz, et al. "A Pan-Cancer Transcriptome Analysis Reveals Pervasive Regulation through Tumor-Associated Alternative Promoters." bioRxiv (2018): 176487.
+
+## Contributors
+
+ProActiv is developed and maintained by Deniz Demircioglu and Jonathan Göke.
+
