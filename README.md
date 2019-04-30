@@ -42,6 +42,9 @@ library(GenomicAlignments)
 library(dplyr)
 library(proActiv)
 
+# The number of cores to be used for parallel execution (mc.cores argument for parallel::mclappy), optional
+numberOfCores <- 1
+
 # Loads the exonReducedRanges, promoterIdMapping, intronRanges.annotated and promoterCoordinates objects
 load('preprocessedAnnotation/preprocessedAnnotation.RData')
 
@@ -82,6 +85,9 @@ library(GenomicFeatures)
 library(GenomicAlignments)
 library(dplyr)
 library(proActiv)
+
+# The number of cores to be used for parallel execution (mc.cores argument for parallel::mclappy), optional
+numberOfCores <- 1
 
 # Loads the exonReducedRanges, promoterIdMapping, intronRanges.annotated and promoterCoordinates objects
 load('preprocessedAnnotation/preprocessedAnnotation.RData')
