@@ -231,3 +231,56 @@ preparePromoterCoordinates <- function(exonReducedRanges, promoterIdMapping) {
   return(promoterCoordinates)
 }
 
+#' Prepare promoter annotation data for the user specified txdb object
+#'
+#' @param txdb A txdb object. The txdb object of the annotation version for
+#'   which promoters will be identified.
+#' @param species A character object. The genus and species of the organism to
+#'   be used in keepStandardChromosomes(). Supported species can be seen with
+#'   names(genomeStyles()).
+#' @param numberOfCores A numeric value. The number of cores to be used for
+#'   reducing first exons of each gene. Defaults to 1 (no parallelization). This
+#'   parameter will be used argument to mclapply function hence require
+#'   'parallel' package to be installed.
+#'
+#' @return A PromoterAnnotation object. The reduced exon ranges, annotated
+#'   intron ranges, promoter coordinates and the promoter id mapping are
+#'   attributes of the promoter annotation data.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' promoterAnnotation <- preparePromoterAnnotationData(txdb,
+#'                                                     species = 'Homo_sapiens',
+#'                                                     numberOfCores = 1)
+#' }
+preparePromoterAnnotationData <- function(txdb, species = 'Homo_sapiens', numberOfCores = 1) {
+  promoterAnnotationData <- PromoterAnnotation()
+
+  # Reduce first exons to identify transcripts belonging to each promoter
+  reducedExonRanges(promoterAnnotationData) <- getUnannotatedReducedExonRanges(txdb,
+                                                                               species,
+                                                                               numberOfCores)
+
+  # Prepare the id mapping transcripts, TSSs, promoters and genes
+  promoterIdMapping(promoterAnnotationData) <- preparePromoterIdMapping(txdb,
+                                                                        species,
+                                                                        reducedExonRanges(promoterAnnotationData))
+
+  # Prepare the annotated intron ranges to be used as input for junction read counting
+  annotatedIntronRanges(promoterAnnotationData) <- prepareAnnotatedIntronRanges(txdb,
+                                                                                species,
+                                                                                promoterIdMapping(promoterAnnotationData))
+
+  # Annotate the reduced exons with promoter metadata
+  reducedExonRanges(promoterAnnotationData) <- prepareAnnotatedReducedExonRanges(txdb,
+                                                                                 species,
+                                                                                 promoterIdMapping(promoterAnnotationData),
+                                                                                 reducedExonRanges(promoterAnnotationData))
+
+  # Retrieve promoter coordinates
+  promoterCoordinates(promoterAnnotationData) <- preparePromoterCoordinates(reducedExonRanges(promoterAnnotationData),
+                                                                            promoterIdMapping(promoterAnnotationData))
+
+  return(promoterAnnotationData)
+}

@@ -56,9 +56,9 @@ calculateJunctionReadCounts <- function(exonRanges, intronRanges, junctionFilePa
 #' Calculate the promoter read counts using junction read counts approach for
 #' all the input junction files
 #'
-#' @param exonRanges A GRanges object containing reduced exon ranges by gene
-#' @param intronRanges A Granges object containing the annotated unique intron
-#'   ranges. These ranges willbe used for counting the reads
+#' @param promoterAnnotationData A PromoterAnnotation object containing the
+#'   reduced exon ranges, annotated intron ranges, promoter coordinates and the
+#'   promoter id mapping
 #' @param junctionFilePaths A character vector. The list of junction files for
 #'   which the junction read counts will be calculated
 #' @param junctionFileLabels A character vector. The labels of junction files
@@ -79,15 +79,14 @@ calculateJunctionReadCounts <- function(exonRanges, intronRanges, junctionFilePa
 #' \dontrun{
 #' junctionFilePaths <- c('./sample1-tophat.bed', './sample2-tophat.bed')
 #' junctionFileLabels <- c('sample1', 'sample2')
-#' promoterReadCounts <- calculatePromoterReadCounts(exonReducedRanges,
-#'                                                    intronRanges.annotated,
+#' promoterReadCounts <- calculatePromoterReadCounts(promoterAnnotationData,
 #'                                                    junctionFilePaths,
 #'                                                    junctionFileLabels,
 #'                                                    junctionType = 'tophat',
 #'                                                    numberOfCores = 1)
 #' }
 #'
-calculatePromoterReadCounts <- function(exonRanges, intronRanges, junctionFilePaths = NULL, junctionFileLabels = NULL,
+calculatePromoterReadCounts <- function(promoterAnnotationData, junctionFilePaths = NULL, junctionFileLabels = NULL,
                                         junctionType = 'tophat', numberOfCores = 1) {
   if (!junctionType %in% c('tophat', 'star')) {
     stop(paste0('Error: Invalid junction type: ', junctionType, '! Possible values: "tophat" or "star"'))
@@ -102,13 +101,16 @@ calculatePromoterReadCounts <- function(exonRanges, intronRanges, junctionFilePa
   }
 
   if (numberOfCores == 1) {
-    promoterReadCounts <- lapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = exonRanges, intronRanges = intronRanges, junctionType = junctionType)
+    promoterReadCounts <- lapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
+                                 intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType)
   } else {
     if (requireNamespace('parallel', quietly = TRUE) == TRUE) {
-      promoterReadCounts <- parallel::mclapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = exonRanges, intronRanges = intronRanges, junctionType = junctionType, mc.cores = numberOfCores)
+      promoterReadCounts <- parallel::mclapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
+                                               intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, mc.cores = numberOfCores)
     } else {
       print('Warning: "parallel" package is not available! Using sequential version instead...')
-      promoterReadCounts <- lapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = exonRanges, intronRanges = intronRanges, junctionType = junctionType)
+      promoterReadCounts <- lapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
+                                   intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType)
     }
   }
 
@@ -117,10 +119,11 @@ calculatePromoterReadCounts <- function(exonRanges, intronRanges, junctionFilePa
   } else {
     promoterReadCounts <- as.data.frame(promoterReadCounts)
   }
-  rownames(promoterReadCounts) <- exonRanges$promoterId
+  rownames(promoterReadCounts) <- reducedExonRanges(promoterAnnotationData)$promoterId
   colnames(promoterReadCounts) <- junctionFileLabels
   return(promoterReadCounts)
 }
+
 
 #' Normalize promoter read counts using DESeq2
 #'

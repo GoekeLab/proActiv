@@ -29,13 +29,12 @@ devtools::install_github("GoekeLab/proActiv")
 ```
 ### Annotation and Example Data
 
-Pre-calculated promoter annotation objects for Gencode v19 (GRCh37) are available as part of the proActiv package. 
-The available annotation objects are:
+Pre-calculated promoter annotation data for Gencode v19 (GRCh37) is available as part of the proActiv package. The PromoterAnnotation object has 4 slots:
 
- - proActiv::reducedExonRanges.gencode.v19 : The reduced first exon ranges for each promoter with promoter metadata.
- - proActiv::promoterIdMapping.gencode.v19 : The id mapping between transcript ids, names, TSS ids, promoter ids and gene ids.
- - proActiv::annotatedIntronRanges.gencode.v19 : The intron ranges annotated with the promoter information.
- - proActiv::promoterCoordinates.gencode.v19 : Promoter coordinates (TSS) with gene id and internal promoter state.
+ - reducedExonRanges : The reduced first exon ranges for each promoter with promoter metadata for Gencode v19
+ - promoterIdMapping : The id mapping between transcript ids, names, TSS ids, promoter ids and gene ids for Gencode v19
+ - annotatedIntronRanges : The intron ranges annotated with the promoter information for Gencode v19
+ - promoterCoordinates : Promoter coordinates (TSS) with gene id and internal promoter state for Gencode v19
 
 Example junction files as produced by TopHat2 and STAR are available as external data. The reference genome used for alignment is Gencode v19 (GRCh37).
 The TopHat2 and STAR example files (5 files each) can be found at 'extdata/tophat2' and 'extdata/star' folders respectively.
@@ -64,15 +63,8 @@ This is a basic example to estimate promoter activity from a set of RNA-Seq data
 ```{r, eval = FALSE}
 library(proActiv)
 
-# The number of cores to be used for parallel execution (mc.cores argument for parallel::mclappy), optional
-numberOfCores <- 1
-
 # Preprocessed data is available as part of the package for the human genome (hg19):
-# Available data: 
-#   proActiv::reducedExonRanges.gencode.v19
-#   proActiv::promoterIdMapping.gencode.v19
-#   proActiv::annotatedIntronRanges.gencode.v19
-#   proActiv::promoterCoordinates.gencode.v19
+# Available data: proActiv::promoterAnnotationData.gencode.v19
 
 ### TopHat2 Junction Files Example 
 
@@ -82,23 +74,20 @@ tophatJunctionFiles <- list.files(system.file('extdata/tophat2', package = 'proA
 tophatJunctionFileLabels <- paste0('s', 1:length(tophatJunctionFiles), '-tophat')
 
 # Count the total number of junction reads for each promoter
-promoterCounts.tophat <- calculatePromoterReadCounts(proActiv::reducedExonRanges.gencode.v19, 
-                                                      proActiv::annotatedIntronRanges.gencode.v19, 
+promoterCounts.tophat <- calculatePromoterReadCounts(proActiv::promoterAnnotationData.gencode.v19, 
                                                       junctionFilePaths = tophatJunctionFiles, 
                                                       junctionFileLabels =  tophatJunctionFileLabels, 
-                                                      junctionType = 'tophat', 
-                                                      numberOfCores)
+                                                      junctionType = 'tophat')
 
 # Normalize promoter read counts by DESeq2 (optional)
 normalizedPromoterCounts.tophat <- normalizePromoterReadCounts(promoterCounts.tophat)
 
 # Calculate absolute promoter activity
 absolutePromoterActivity.tophat <- getAbsolutePromoterActivity(normalizedPromoterCounts.tophat, 
-                                                               proActiv::promoterIdMapping.gencode.v19, 
-                                                               log2 = TRUE, 
-                                                               pseudocount = 1)
+                                                               proActiv::promoterAnnotationData.gencode.v19)
 # Calculate gene expression
 geneExpression.tophat <- getGeneExpression(absolutePromoterActivity.tophat)
+
 # Calculate relative promoter activity
 relativePromoterActivity.tophat <- getRelativePromoterActivity(absolutePromoterActivity.tophat, 
                                                                geneExpression.tophat)
@@ -111,15 +100,8 @@ relativePromoterActivity.tophat <- getRelativePromoterActivity(absolutePromoterA
 ```{r, eval = FALSE}
 library(proActiv)
 
-# The number of cores to be used for parallel execution (mc.cores argument for parallel::mclappy), optional
-numberOfCores <- 1
-
 # Preprocessed data is available as part of the package for the human genome (hg19):
-# Available data: 
-#   proActiv::reducedExonRanges.gencode.v19
-#   proActiv::promoterIdMapping.gencode.v19
-#   proActiv::annotatedIntronRanges.gencode.v19
-#   proActiv::promoterCoordinates.gencode.v19
+# Available data: proActiv::promoterAnnotationData.gencode.v19
 
 ### STAR Junction Files Example 
 
@@ -128,23 +110,21 @@ starJunctionFiles <- list.files(system.file('extdata/star', package = 'proActiv'
 starJunctionFileLabels <- paste0('s', 1:length(starJunctionFiles), '-star')
 
 # Count the total number of junction reads for each promoter
-promoterCounts.star <- calculatePromoterReadCounts(proActiv::reducedExonRanges.gencode.v19, 
-                                                      proActiv::annotatedIntronRanges.gencode.v19, 
+promoterCounts.star <- calculatePromoterReadCounts(proActiv::promoterAnnotationData.gencode.v19, 
                                                       junctionFilePaths = starJunctionFiles, 
                                                       junctionFileLabels =  starJunctionFileLabels, 
-                                                      junctionType = 'star', 
-                                                      numberOfCores)
+                                                      junctionType = 'star')
 
 # Normalize promoter read counts by DESeq2 (optional)
 normalizedPromoterCounts.star <- normalizePromoterReadCounts(promoterCounts.star)
 
 # Calculate absolute promoter activity
 absolutePromoterActivity.star <- getAbsolutePromoterActivity(normalizedPromoterCounts.star, 
-                                                             proActiv::promoterIdMapping.gencode.v19, 
-                                                             log2 = TRUE, 
-                                                             pseudocount = 1)
+                                                             proActiv::promoterIdMapping.gencode.v19)
+
 # Calculate gene expression
 geneExpression.star <- getGeneExpression(absolutePromoterActivity.star)
+
 # Calculate relative promoter activity
 relativePromoterActivity.star <- getRelativePromoterActivity(absolutePromoterActivity.star, 
                                                              geneExpression.star)
@@ -176,30 +156,13 @@ numberOfCores <- 1
 ### Annotation data preparation
 ### Needs to be executed once per annotation. Results can be saved and loaded later for reuse 
 
-# Reduce first exons to identify transcripts belonging to each promoter
-reducedExonRanges <- getUnannotatedReducedExonRanges(txdb, 
-                                                     species,
-                                                     numberOfCores)
+promoterAnnotationData <- preparePromoterAnnotationData(txdb, species = 'Homo_sapiens', numberOfCores = 1)
 
-# Prepare the id mapping transcripts, TSSs, promoters and genes
-promoterIdMapping <- preparePromoterIdMapping(txdb, 
-                                              species,
-                                              reducedExonRanges)
-
-# Prepare the annotated intron ranges to be used as input for junction read counting
-annotatedIntronRanges <- prepareAnnotatedIntronRanges(txdb, 
-                                                        species, 
-                                                        promoterIdMapping)
-
-# Annotate the reduced exons with promoter metadata
-reducedExonRanges <- prepareAnnotatedReducedExonRanges(txdb, 
-                                                       species, 
-                                                       promoterIdMapping, 
-                                                       reducedExonRanges)
+# Retrieve the id mapping between transcripts, TSSs, promoters and genes
+head(promoterIdMapping(promoterAnnotationData))
 
 # Retrieve promoter coordinates 
-promoterCoordinates <- preparePromoterCoordinates(reducedExonRanges,
-                                                    promoterIdMapping)
+head(promoterCoordinates(promoterAnnotationData))
 
 ```
 
