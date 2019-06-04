@@ -5,15 +5,14 @@
 \title{Calculate the promoter read counts using junction read counts approach for
 all the input junction files}
 \usage{
-calculatePromoterReadCounts(exonRanges, intronRanges,
+calculatePromoterReadCounts(promoterAnnotationData,
   junctionFilePaths = NULL, junctionFileLabels = NULL,
   junctionType = "tophat", numberOfCores = 1)
 }
 \arguments{
-\item{exonRanges}{A GRanges object containing reduced exon ranges by gene}
-
-\item{intronRanges}{A Granges object containing the annotated unique intron
-ranges. These ranges willbe used for counting the reads}
+\item{promoterAnnotationData}{A PromoterAnnotation object containing the
+reduced exon ranges, annotated intron ranges, promoter coordinates and the
+promoter id mapping}
 
 \item{junctionFilePaths}{A character vector. The list of junction files for
 which the junction read counts will be calculated}
@@ -42,8 +41,7 @@ all the input junction files
 \dontrun{
 junctionFilePaths <- c('./sample1-tophat.bed', './sample2-tophat.bed')
 junctionFileLabels <- c('sample1', 'sample2')
-promoterReadCounts <- calculatePromoterReadCounts(exonReducedRanges,
-                                                   intronRanges.annotated,
+promoterReadCounts <- calculatePromoterReadCounts(promoterAnnotationData,
                                                    junctionFilePaths,
                                                    junctionFileLabels,
                                                    junctionType = 'tophat',

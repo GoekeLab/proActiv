@@ -5,15 +5,16 @@
 \title{Prepare the absolute promoter activity table including the promoter and gene
 ids}
 \usage{
-getAbsolutePromoterActivity(junctionReadCounts, promoterIdMapping,
+getAbsolutePromoterActivity(junctionReadCounts, promoterAnnotationData,
   log2 = TRUE, pseudocount = 1)
 }
 \arguments{
 \item{junctionReadCounts}{Matrix of junction read counts (rows: promoters,
 cols: samples)}
 
-\item{promoterIdMapping}{data.frame containing id mappings between promoters
-and genes}
+\item{promoterAnnotationData}{A PromoterAnnotation object containing the
+reduced exon ranges, annotated intron ranges, promoter coordinates and the
+promoter id mapping}
 
 \item{log2}{Logical indicating whether log2 read counts should be used
 (default: TRUE) or not}
@@ -30,7 +31,7 @@ ids
 \examples{
 \dontrun{
 absolutePromoterActivity <- getAbsolutePromoterActivity(junctionReadCounts,
-                                                         promoterIdMapping,
+                                                         promoterAnnotationData,
                                                          log2 = TRUE,
                                                          pseudocount = 1)
 }

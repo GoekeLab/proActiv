@@ -12,6 +12,6 @@
 #'   with the promoter information} \item{promoterIdMapping}{The id mapping
 #'   between transcript ids, names, TSS ids, promoter ids and gene ids for
 #'   Gencode v19} \item{promoterCoordinates}{A GRanges object of 113,076 ranges
-#'   showing the tss coordinate for each promoter of Gencode v19}
+#'   showing the tss coordinate for each promoter of Gencode v19} }
 #'
 "promoterAnnotationData.gencode.v19"
