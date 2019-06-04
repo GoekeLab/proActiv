@@ -125,7 +125,7 @@ normalizedPromoterCounts.star <- normalizePromoterReadCounts(promoterCounts.star
 
 # Calculate absolute promoter activity
 absolutePromoterActivity.star <- getAbsolutePromoterActivity(normalizedPromoterCounts.star, 
-                                                             proActiv::promoterIdMapping.gencode.v19)
+                                                             proActiv::promoterAnnotationData.gencode.v19)
 
 # Calculate gene expression
 geneExpression.star <- getGeneExpression(absolutePromoterActivity.star)
