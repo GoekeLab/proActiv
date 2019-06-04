@@ -33,7 +33,8 @@ reduceExonsByGene <- function(idx, exonRanges.firstExon.byGene) {
 #' @importFrom GenomeInfoDb 'seqlevelsStyle<-'
 getTranscriptRanges <- function(txdb, species = 'Homo_sapiens') {
   # Retrieve transcript ranges with detailed metadata
-  transcriptRanges <- transcripts(txdb, columns = c('TXID', 'TXSTART', 'TXEND', 'GENEID', 'TXNAME'), use.names = TRUE)
+  transcriptRanges <- transcripts(txdb, columns = c('TXID', 'TXSTART', 'TXEND', 'GENEID', 'TXNAME'))
+  names(transcriptRanges) <- transcriptRanges$TXNAME
   transcriptRanges <- keepStandardChromosomes(x = transcriptRanges, species = species, pruning.mode = "tidy")
   GenomeInfoDb::seqlevelsStyle(transcriptRanges) <- 'UCSC'
   return(transcriptRanges)
