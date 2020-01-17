@@ -19,6 +19,8 @@ knitr::opts_chunk$set(
 
 proActiv is an R package that estimates promoter activity from RNA-Seq data. proActiv uses aligned reads and genome annotations as input, and provides absolute and relative promoter activity as output. The package can be used to identify active promoters and alternative promoters, the details of the method are described at https://doi.org/10.1101/176487.
 
+Additional data on differential promoters in tissues and cancers can be downloaded here: https://jglab.org/data-and-software/
+
 ### Installation
 
 proActiv can be installed from [GitHub](https://github.com/) with:
