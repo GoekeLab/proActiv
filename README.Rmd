@@ -17,7 +17,9 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-proActiv is an R package that estimates promoter activity from RNA-Seq data. proActiv uses aligned reads and genome annotations as input, and provides absolute and relative promoter activity as output. The package can be used to identify active promoters and alternative promoters, the details of the method are described at https://doi.org/10.1101/176487. 
+proActiv is an R package that estimates promoter activity from RNA-Seq data. proActiv uses aligned reads and genome annotations as input, and provides absolute and relative promoter activity as output. The package can be used to identify active promoters and alternative promoters, the details of the method are described at https://doi.org/10.1101/176487.
+
+Additional data on differential promoters in tissues and cancers can be downloaded here: https://jglab.org/data-and-software/
 
 ### Installation
 
@@ -66,7 +68,7 @@ library(proActiv)
 # Preprocessed data is available as part of the package for the human genome (hg19):
 # Available data: proActiv::promoterAnnotationData.gencode.v19
 
-### TopHat2 Junction Files Example 
+### TopHat2 Junction Files Example
 
 # The paths and labels for samples
 
@@ -74,22 +76,22 @@ tophatJunctionFiles <- list.files(system.file('extdata/tophat2', package = 'proA
 tophatJunctionFileLabels <- paste0('s', 1:length(tophatJunctionFiles), '-tophat')
 
 # Count the total number of junction reads for each promoter
-promoterCounts.tophat <- calculatePromoterReadCounts(proActiv::promoterAnnotationData.gencode.v19, 
-                                                      junctionFilePaths = tophatJunctionFiles, 
-                                                      junctionFileLabels =  tophatJunctionFileLabels, 
+promoterCounts.tophat <- calculatePromoterReadCounts(proActiv::promoterAnnotationData.gencode.v19,
+                                                      junctionFilePaths = tophatJunctionFiles,
+                                                      junctionFileLabels =  tophatJunctionFileLabels,
                                                       junctionType = 'tophat')
 
 # Normalize promoter read counts by DESeq2 (optional)
 normalizedPromoterCounts.tophat <- normalizePromoterReadCounts(promoterCounts.tophat)
 
 # Calculate absolute promoter activity
-absolutePromoterActivity.tophat <- getAbsolutePromoterActivity(normalizedPromoterCounts.tophat, 
+absolutePromoterActivity.tophat <- getAbsolutePromoterActivity(normalizedPromoterCounts.tophat,
                                                                proActiv::promoterAnnotationData.gencode.v19)
 # Calculate gene expression
 geneExpression.tophat <- getGeneExpression(absolutePromoterActivity.tophat)
 
 # Calculate relative promoter activity
-relativePromoterActivity.tophat <- getRelativePromoterActivity(absolutePromoterActivity.tophat, 
+relativePromoterActivity.tophat <- getRelativePromoterActivity(absolutePromoterActivity.tophat,
                                                                geneExpression.tophat)
 
 ```
@@ -103,30 +105,30 @@ library(proActiv)
 # Preprocessed data is available as part of the package for the human genome (hg19):
 # Available data: proActiv::promoterAnnotationData.gencode.v19
 
-### STAR Junction Files Example 
+### STAR Junction Files Example
 
 # The paths and labels for samples
 starJunctionFiles <- list.files(system.file('extdata/star', package = 'proActiv'), full.names = TRUE)
 starJunctionFileLabels <- paste0('s', 1:length(starJunctionFiles), '-star')
 
 # Count the total number of junction reads for each promoter
-promoterCounts.star <- calculatePromoterReadCounts(proActiv::promoterAnnotationData.gencode.v19, 
-                                                      junctionFilePaths = starJunctionFiles, 
-                                                      junctionFileLabels =  starJunctionFileLabels, 
+promoterCounts.star <- calculatePromoterReadCounts(proActiv::promoterAnnotationData.gencode.v19,
+                                                      junctionFilePaths = starJunctionFiles,
+                                                      junctionFileLabels =  starJunctionFileLabels,
                                                       junctionType = 'star')
 
 # Normalize promoter read counts by DESeq2 (optional)
 normalizedPromoterCounts.star <- normalizePromoterReadCounts(promoterCounts.star)
 
 # Calculate absolute promoter activity
-absolutePromoterActivity.star <- getAbsolutePromoterActivity(normalizedPromoterCounts.star, 
+absolutePromoterActivity.star <- getAbsolutePromoterActivity(normalizedPromoterCounts.star,
                                                              proActiv::promoterAnnotationData.gencode.v19)
 
 # Calculate gene expression
 geneExpression.star <- getGeneExpression(absolutePromoterActivity.star)
 
 # Calculate relative promoter activity
-relativePromoterActivity.star <- getRelativePromoterActivity(absolutePromoterActivity.star, 
+relativePromoterActivity.star <- getRelativePromoterActivity(absolutePromoterActivity.star,
                                                              geneExpression.star)
 
 ```
@@ -136,7 +138,7 @@ relativePromoterActivity.star <- getRelativePromoterActivity(absolutePromoterAct
 proActiv provides functions to create promoter annotation objects for any genome. Here we describe how the annotation can be created using a TxDb object (please see the TxDb documentation for how to create annotations from a GTF file).
 
 A TxDb object for the human genome version hg19 (Grch37) can be downloaded here:
-[inputFiles](https://drive.google.com/drive/folders/1R8sI97h1ZTdyxbQxG4latR9xN9FF2tq8?usp=sharing)
+[inputFiles](http://s3.ap-southeast-1.amazonaws.com/all-public-data.store.genome.sg/DemirciogluEtAl2019/annotations/gencode.v19.annotation.sqlite)
 
 ```{r, eval = FALSE}
 library(GenomicRanges)
@@ -154,14 +156,14 @@ species <- 'Homo_sapiens'
 numberOfCores <- 1
 
 ### Annotation data preparation
-### Needs to be executed once per annotation. Results can be saved and loaded later for reuse 
+### Needs to be executed once per annotation. Results can be saved and loaded later for reuse
 
 promoterAnnotationData <- preparePromoterAnnotationData(txdb, species = 'Homo_sapiens', numberOfCores = 1)
 
 # Retrieve the id mapping between transcripts, TSSs, promoters and genes
 head(promoterIdMapping(promoterAnnotationData))
 
-# Retrieve promoter coordinates 
+# Retrieve promoter coordinates
 head(promoterCoordinates(promoterAnnotationData))
 
 ```
@@ -169,7 +171,7 @@ head(promoterCoordinates(promoterAnnotationData))
 
 ## Limitations
 
-proActiv will not provide promoter activity estimates for promoters which are not uniquely identifiable from splice junctions (single exon transcripts, promoters which overlap with internal exons). 
+proActiv will not provide promoter activity estimates for promoters which are not uniquely identifiable from splice junctions (single exon transcripts, promoters which overlap with internal exons).
 
 ## Citing proActiv
 
@@ -179,4 +181,3 @@ Demircioğlu, Deniz, et al. "A Pan-Cancer Transcriptome Analysis Reveals Pervasi
 ## Contributors
 
 ProActiv is developed and maintained by Deniz Demircioglu and Jonathan Göke.
-
