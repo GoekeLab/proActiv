@@ -17,17 +17,57 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-proActiv is an R package that estimates promoter activity from RNA-Seq data. proActiv uses aligned reads and genome annotations as input, and provides absolute and relative promoter activity as output. The package can be used to identify active promoters and alternative promoters, the details of the method are described at https://doi.org/10.1101/176487.
+proActiv is an R package that estimates promoter activity from RNA-Seq data. proActiv uses aligned reads and genome annotations as input, and provides absolute and relative promoter activity as output. The package can be used to identify active promoters and alternative promoters, the details of the method are described in [Demircioglu et al (2019)](https://www.cell.com/cell/fulltext/S0092-8674(19)30906-7).
 
-Additional data on differential promoters in tissues and cancers can be downloaded here: https://jglab.org/data-and-software/
+Additional data on differential promoters in tissues and cancers from TCGA, ICGC, GTEx, and PCAWG can be downloaded here: https://jglab.org/data-and-software/
 
 ### Installation
 
-proActiv can be installed from [GitHub](https://github.com/) with:
+proActiv can be installed from GitHub with:
 
 ``` r
 library("devtools")
 devtools::install_github("GoekeLab/proActiv")
+```
+
+### Estimate Promoter Activity (after TopHat2 or STAR alignment)
+
+This is a basic example to estimate promoter activity from a set of RNA-Seq data which was aligned with TopHat2 (or STAR). proActiv will use the junction file from the TopHat2 (STAR) alignment, and a set of annotation objects that describe the associations of promoters, transcripts, and genes, to calculate promoter activity.
+
+
+```{r, eval = FALSE}
+library(proActiv)
+
+# Preprocessed annotations are available as part of the R package for the human genome (hg19):
+# proActiv::promoterAnnotationData.gencode.v19
+
+# The paths and labels for samples
+junctionFiles <- list.files(system.file('extdata/tophat2', package = 'proActiv'), full.names = TRUE)
+
+# for STAR alignment
+# junctionFiles <- list.files(system.file('extdata/star', package = 'proActiv'), full.names = TRUE)
+
+junctionFileLabels <- paste0('s', 1:length(junctionFiles))
+
+# Count the total number of junction reads for each promoter
+promoterCounts <- calculatePromoterReadCounts(proActiv::promoterAnnotationData.gencode.v19,
+                                                      junctionFilePaths = junctionFiles,
+                                                      junctionFileLabels =  junctionFileLabels,
+                                                      junctionType = 'tophat')  # use junctionType = 'star' for STAR aligned reads
+
+# Normalize promoter read counts by DESeq2 (optional)
+normalizedPromoterCounts <- normalizePromoterReadCounts(promoterCounts)
+
+# Calculate absolute promoter activity
+absolutePromoterActivity <- getAbsolutePromoterActivity(normalizedPromoterCounts,
+                                                               proActiv::promoterAnnotationData.gencode.v19)
+# Calculate gene expression
+geneExpression <- getGeneExpression(absolutePromoterActivity)
+
+# Calculate relative promoter activity
+relativePromoterActivity <- getRelativePromoterActivity(absolutePromoterActivity,
+                                                               geneExpression)
+
 ```
 ### Annotation and Example Data
 
@@ -57,83 +97,6 @@ Example STAR files:
 - extdata/tophat2/sample4.junctions
 - extdata/tophat2/sample5.junctions
 
-### Estimate Promoter Activity (TopHat2 alignment)
-
-This is a basic example to estimate promoter activity from a set of RNA-Seq data which was aligned with TopHat2. proActiv will use the junction file from the TopHat2 alignment (see below for an example with STAR-aligned reads), and a set of annotation objects that describe the associations of promoters, transcripts, and genes, to calculate promoter activity.
-
-
-```{r, eval = FALSE}
-library(proActiv)
-
-# Preprocessed data is available as part of the package for the human genome (hg19):
-# Available data: proActiv::promoterAnnotationData.gencode.v19
-
-### TopHat2 Junction Files Example
-
-# The paths and labels for samples
-
-tophatJunctionFiles <- list.files(system.file('extdata/tophat2', package = 'proActiv'), full.names = TRUE)
-tophatJunctionFileLabels <- paste0('s', 1:length(tophatJunctionFiles), '-tophat')
-
-# Count the total number of junction reads for each promoter
-promoterCounts.tophat <- calculatePromoterReadCounts(proActiv::promoterAnnotationData.gencode.v19,
-                                                      junctionFilePaths = tophatJunctionFiles,
-                                                      junctionFileLabels =  tophatJunctionFileLabels,
-                                                      junctionType = 'tophat')
-
-# Normalize promoter read counts by DESeq2 (optional)
-normalizedPromoterCounts.tophat <- normalizePromoterReadCounts(promoterCounts.tophat)
-
-# Calculate absolute promoter activity
-absolutePromoterActivity.tophat <- getAbsolutePromoterActivity(normalizedPromoterCounts.tophat,
-                                                               proActiv::promoterAnnotationData.gencode.v19)
-# Calculate gene expression
-geneExpression.tophat <- getGeneExpression(absolutePromoterActivity.tophat)
-
-# Calculate relative promoter activity
-relativePromoterActivity.tophat <- getRelativePromoterActivity(absolutePromoterActivity.tophat,
-                                                               geneExpression.tophat)
-
-```
-
-
-### Estimate Promoter Activity (STAR alignment)
-
-```{r, eval = FALSE}
-library(proActiv)
-
-# Preprocessed data is available as part of the package for the human genome (hg19):
-# Available data: proActiv::promoterAnnotationData.gencode.v19
-
-### STAR Junction Files Example
-
-# The paths and labels for samples
-starJunctionFiles <- list.files(system.file('extdata/star', package = 'proActiv'), full.names = TRUE)
-starJunctionFileLabels <- paste0('s', 1:length(starJunctionFiles), '-star')
-
-# Count the total number of junction reads for each promoter
-promoterCounts.star <- calculatePromoterReadCounts(proActiv::promoterAnnotationData.gencode.v19,
-                                                      junctionFilePaths = starJunctionFiles,
-                                                      junctionFileLabels =  starJunctionFileLabels,
-                                                      junctionType = 'star')
-
-# Normalize promoter read counts by DESeq2 (optional)
-normalizedPromoterCounts.star <- normalizePromoterReadCounts(promoterCounts.star)
-
-# Calculate absolute promoter activity
-absolutePromoterActivity.star <- getAbsolutePromoterActivity(normalizedPromoterCounts.star,
-                                                             proActiv::promoterAnnotationData.gencode.v19)
-
-# Calculate gene expression
-geneExpression.star <- getGeneExpression(absolutePromoterActivity.star)
-
-# Calculate relative promoter activity
-relativePromoterActivity.star <- getRelativePromoterActivity(absolutePromoterActivity.star,
-                                                             geneExpression.star)
-
-```
-
-
 ### Creating your own promoter annotations
 proActiv provides functions to create promoter annotation objects for any genome. Here we describe how the annotation can be created using a TxDb object (please see the TxDb documentation for how to create annotations from a GTF file).
 
@@ -156,9 +119,7 @@ species <- 'Homo_sapiens'
 numberOfCores <- 1
 
 ### Annotation data preparation
-### Needs to be executed once per annotation. Results can be saved and loaded later for reuse
-
-promoterAnnotationData <- preparePromoterAnnotationData(txdb, species = 'Homo_sapiens', numberOfCores = 1)
+promoterAnnotationData <- preparePromoterAnnotationData(txdb, species = species, numberOfCores = numberOfCores)
 
 # Retrieve the id mapping between transcripts, TSSs, promoters and genes
 head(promoterIdMapping(promoterAnnotationData))
@@ -176,7 +137,8 @@ proActiv will not provide promoter activity estimates for promoters which are no
 ## Citing proActiv
 
 If you use proActiv, please cite:
-Demircioğlu, Deniz, et al. "A Pan-Cancer Transcriptome Analysis Reveals Pervasive Regulation through Tumor-Associated Alternative Promoters." bioRxiv (2018): 176487.
+
+Demircioğlu, Deniz, et al. "A Pan-cancer Transcriptome Analysis Reveals Pervasive Regulation through Alternative Promoters." *Cell* 178.6 (2019): 1465-1477.
 
 ## Contributors
 
