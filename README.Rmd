@@ -12,14 +12,31 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-## proActiv
+![Stay proActiv!](man/figures/proActiv_design.png)
+
+![Stay proActiv!](man/figures/proActiv_name.png)
+
+
+## proActiv: Estimation of Promoter Activity from RNA-Seq data
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-proActiv is an R package that estimates promoter activity from RNA-Seq data. proActiv uses aligned reads and genome annotations as input, and provides absolute and relative promoter activity as output. The package can be used to identify active promoters and alternative promoters, the details of the method are described in [Demircioglu et al (2019)](https://www.cell.com/cell/fulltext/S0092-8674(19)30906-7).
+proActiv is an R package that estimates promoter activity from RNA-Seq data. proActiv uses aligned reads and genome annotations as input, and provides absolute and relative promoter activity as output. The package can be used to identify active promoters and alternative promoters, the details of the method are described in [Demircioglu et al][Reference].
 
 Additional data on differential promoters in tissues and cancers from TCGA, ICGC, GTEx, and PCAWG can be downloaded here: https://jglab.org/data-and-software/
+
+### Content
+
+- [Installation]
+- [Estimate Promoter Activity]
+- [Annotation and Example Data]
+- [Creating your own promoter annotations]
+- [Limitations]
+- [Release History]
+- [Citing proActiv][Reference]
+- [Contributors]
+
 
 ### Installation
 
@@ -30,7 +47,7 @@ library("devtools")
 devtools::install_github("GoekeLab/proActiv")
 ```
 
-### Estimate Promoter Activity (after TopHat2 or STAR alignment)
+### Estimate Promoter Activity
 
 This is a basic example to estimate promoter activity from a set of RNA-Seq data which was aligned with TopHat2 (or STAR). proActiv will use the junction file from the TopHat2 (STAR) alignment, and a set of annotation objects that describe the associations of promoters, transcripts, and genes, to calculate promoter activity.
 
@@ -129,17 +146,25 @@ head(promoterCoordinates(promoterAnnotationData))
 
 ```
 
+## Release History
+
+**Initial Release 0.1.0**
+
+Release date: 5th September 2020
 
 ## Limitations
 
 proActiv will not provide promoter activity estimates for promoters which are not uniquely identifiable from splice junctions (single exon transcripts, promoters which overlap with internal exons).
 
-## Citing proActiv
+## Reference
 
 If you use proActiv, please cite:
 
-Demircioğlu, Deniz, et al. "A Pan-cancer Transcriptome Analysis Reveals Pervasive Regulation through Alternative Promoters." *Cell* 178.6 (2019): 1465-1477.
+[Demircioğlu, Deniz, et al. "A Pan-cancer Transcriptome Analysis Reveals Pervasive Regulation through Alternative Promoters." *Cell* 178.6 (2019): 1465-1477.](https://www.cell.com/cell/fulltext/S0092-8674(19)30906-7)
 
 ## Contributors
 
-ProActiv is developed and maintained by Deniz Demircioglu and Jonathan Göke.
+proActiv was developed and maintained by [Deniz Demircioglu](https://github.com/dnzdmrcgl) and [Jonathan Göke](https://github.com/jonathangoeke).
+
+![Stay proActiv!](man/figures/proActiv_logoName.png)
+

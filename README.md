@@ -1,13 +1,37 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-proActiv
---------
+
+![Stay proActiv\!](man/figures/proActiv_design.png)
+
+![Stay proActiv\!](man/figures/proActiv_name.png)
+
+## proActiv: Estimation of Promoter Activity from RNA-Seq data
 
 <!-- badges: start -->
-<!-- badges: end -->
-proActiv is an R package that estimates promoter activity from RNA-Seq data. proActiv uses aligned reads and genome annotations as input, and provides absolute and relative promoter activity as output. The package can be used to identify active promoters and alternative promoters, the details of the method are described in [Demircioglu et al (2019)](https://www.cell.com/cell/fulltext/S0092-8674(19)30906-7).
 
-Additional data on differential promoters in tissues and cancers from TCGA, ICGC, GTEx, and PCAWG can be downloaded here: <https://jglab.org/data-and-software/>
+<!-- badges: end -->
+
+proActiv is an R package that estimates promoter activity from RNA-Seq
+data. proActiv uses aligned reads and genome annotations as input, and
+provides absolute and relative promoter activity as output. The package
+can be used to identify active promoters and alternative promoters, the
+details of the method are described in [Demircioglu et al](#reference).
+
+Additional data on differential promoters in tissues and cancers from
+TCGA, ICGC, GTEx, and PCAWG can be downloaded here:
+<https://jglab.org/data-and-software/>
+
+### Content
+
+  - [Installation](#installation)
+  - [Estimate Promoter Activity](#estimate-promoter-activity)
+  - [Annotation and Example Data](#annotation-and-example-data)
+  - [Creating your own promoter
+    annotations](#creating-your-own-promoter-annotations)
+  - [Limitations](#limitations)
+  - [Release History](#release-history)
+  - [Citing proActiv](#reference)
+  - [Contributors](#contributors)
 
 ### Installation
 
@@ -18,9 +42,13 @@ library("devtools")
 devtools::install_github("GoekeLab/proActiv")
 ```
 
-### Estimate Promoter Activity (after TopHat2 or STAR alignment)
+### Estimate Promoter Activity
 
-This is a basic example to estimate promoter activity from a set of RNA-Seq data which was aligned with TopHat2 (or STAR). proActiv will use the junction file from the TopHat2 (STAR) alignment, and a set of annotation objects that describe the associations of promoters, transcripts, and genes, to calculate promoter activity.
+This is a basic example to estimate promoter activity from a set of
+RNA-Seq data which was aligned with TopHat2 (or STAR). proActiv will use
+the junction file from the TopHat2 (STAR) alignment, and a set of
+annotation objects that describe the associations of promoters,
+transcripts, and genes, to calculate promoter activity.
 
 ``` r
 library(proActiv)
@@ -58,36 +86,50 @@ relativePromoterActivity <- getRelativePromoterActivity(absolutePromoterActivity
 
 ### Annotation and Example Data
 
-Pre-calculated promoter annotation data for Gencode v19 (GRCh37) is available as part of the proActiv package. The PromoterAnnotation object has 4 slots:
+Pre-calculated promoter annotation data for Gencode v19 (GRCh37) is
+available as part of the proActiv package. The PromoterAnnotation object
+has 4 slots:
 
--   reducedExonRanges : The reduced first exon ranges for each promoter with promoter metadata for Gencode v19
--   promoterIdMapping : The id mapping between transcript ids, names, TSS ids, promoter ids and gene ids for Gencode v19
--   annotatedIntronRanges : The intron ranges annotated with the promoter information for Gencode v19
--   promoterCoordinates : Promoter coordinates (TSS) with gene id and internal promoter state for Gencode v19
+  - reducedExonRanges : The reduced first exon ranges for each promoter
+    with promoter metadata for Gencode v19
+  - promoterIdMapping : The id mapping between transcript ids, names,
+    TSS ids, promoter ids and gene ids for Gencode v19
+  - annotatedIntronRanges : The intron ranges annotated with the
+    promoter information for Gencode v19
+  - promoterCoordinates : Promoter coordinates (TSS) with gene id and
+    internal promoter state for Gencode v19
 
-Example junction files as produced by TopHat2 and STAR are available as external data. The reference genome used for alignment is Gencode v19 (GRCh37). The TopHat2 and STAR example files (5 files each) can be found at 'extdata/tophat2' and 'extdata/star' folders respectively.
+Example junction files as produced by TopHat2 and STAR are available as
+external data. The reference genome used for alignment is Gencode v19
+(GRCh37). The TopHat2 and STAR example files (5 files each) can be found
+at ‘extdata/tophat2’ and ‘extdata/star’ folders respectively.
 
 Example TopHat2 files:
 
--   extdata/tophat2/sample1.bed
--   extdata/tophat2/sample2.bed
--   extdata/tophat2/sample3.bed
--   extdata/tophat2/sample4.bed
--   extdata/tophat2/sample5.bed
+  - extdata/tophat2/sample1.bed
+  - extdata/tophat2/sample2.bed
+  - extdata/tophat2/sample3.bed
+  - extdata/tophat2/sample4.bed
+  - extdata/tophat2/sample5.bed
 
 Example STAR files:
 
--   extdata/tophat2/sample1.junctions
--   extdata/tophat2/sample2.junctions
--   extdata/tophat2/sample3.junctions
--   extdata/tophat2/sample4.junctions
--   extdata/tophat2/sample5.junctions
+  - extdata/tophat2/sample1.junctions
+  - extdata/tophat2/sample2.junctions
+  - extdata/tophat2/sample3.junctions
+  - extdata/tophat2/sample4.junctions
+  - extdata/tophat2/sample5.junctions
 
 ### Creating your own promoter annotations
 
-proActiv provides functions to create promoter annotation objects for any genome. Here we describe how the annotation can be created using a TxDb object (please see the TxDb documentation for how to create annotations from a GTF file).
+proActiv provides functions to create promoter annotation objects for
+any genome. Here we describe how the annotation can be created using a
+TxDb object (please see the TxDb documentation for how to create
+annotations from a GTF file).
 
-A TxDb object for the human genome version hg19 (Grch37) can be downloaded here: [inputFiles](http://s3.ap-southeast-1.amazonaws.com/all-public-data.store.genome.sg/DemirciogluEtAl2019/annotations/gencode.v19.annotation.sqlite)
+A TxDb object for the human genome version hg19 (Grch37) can be
+downloaded here:
+[inputFiles](http://s3.ap-southeast-1.amazonaws.com/all-public-data.store.genome.sg/DemirciogluEtAl2019/annotations/gencode.v19.annotation.sqlite)
 
 ``` r
 library(GenomicRanges)
@@ -114,19 +156,31 @@ head(promoterIdMapping(promoterAnnotationData))
 head(promoterCoordinates(promoterAnnotationData))
 ```
 
-Limitations
------------
+## Release History
 
-proActiv will not provide promoter activity estimates for promoters which are not uniquely identifiable from splice junctions (single exon transcripts, promoters which overlap with internal exons).
+**Initial Release 0.1.0**
 
-Citing proActiv
----------------
+Release date: 5th September 2020
+
+## Limitations
+
+proActiv will not provide promoter activity estimates for promoters
+which are not uniquely identifiable from splice junctions (single exon
+transcripts, promoters which overlap with internal exons).
+
+## Reference
 
 If you use proActiv, please cite:
 
-Demircioğlu, Deniz, et al. "A Pan-cancer Transcriptome Analysis Reveals Pervasive Regulation through Alternative Promoters." *Cell* 178.6 (2019): 1465-1477.
+[Demircioğlu, Deniz, et al. “A Pan-cancer Transcriptome Analysis Reveals
+Pervasive Regulation through Alternative Promoters.” *Cell* 178.6
+(2019):
+1465-1477.](https://www.cell.com/cell/fulltext/S0092-8674\(19\)30906-7)
 
-Contributors
-------------
+## Contributors
 
-ProActiv is developed and maintained by Deniz Demircioglu and Jonathan Göke.
+proActiv was developed and maintained by [Deniz
+Demircioglu](https://github.com/dnzdmrcgl) and [Jonathan
+Göke](https://github.com/jonathangoeke).
+
+![Stay proActiv\!](man/figures/proActiv_logoName.png)
