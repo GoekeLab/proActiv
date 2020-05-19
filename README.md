@@ -160,7 +160,10 @@ head(promoterCoordinates(promoterAnnotationData))
 
 **Initial Release 0.1.0**
 
-Release date: 5th September 2020
+Release date: 19th May 2020
+
+This release corresponds to the proActiv version used by [Demircioglu et
+al.](#reference)
 
 ## Limitations
 
