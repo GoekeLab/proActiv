@@ -7,6 +7,7 @@
 #' @param junctionFilePath character path for the input junction bed file
 #' @param junctionType character type of the junction bed file. Either 'tophat'
 #'   or 'star'
+#' @param genome character genome version
 #'
 #' @export
 #' @return The total number of junction reads overlapping with each promoter for
@@ -18,13 +19,19 @@
 #' junctionCounts <- calculateJunctionReadCounts(exonReducedRanges,
 #'                                                intronRanges.annotated,
 #'                                                junctionFilePath,
-#'                                                junctionType = 'tophat')}
+#'                                                junctionType = 'tophat')
+#' junctionFilePath <- './sample1.bam'                                                
+#' junctionCounts <- calculateJunctionReadCounts(exonReducedRanges,
+#'                                                intronRanges.annotated,
+#'                                                junctionFilePath,
+#'                                                junctionType = 'bam',
+#'                                                genome = 'hg19')}
 #'
 #' @importFrom GenomeInfoDb seqlevelsStyle
 #' @importFrom S4Vectors queryHits
 #' @importFrom S4Vectors subjectHits
 #'
-calculateJunctionReadCounts <- function(exonRanges, intronRanges, junctionFilePath = '', junctionType = 'tophat') {
+calculateJunctionReadCounts <- function(exonRanges, intronRanges, junctionFilePath = '', junctionType = 'tophat', genome = '') {
   if(junctionType == 'tophat') {
     print(paste0('Processing: ', junctionFilePath))
     junctionTable <- readTopHatJunctions(junctionFilePath)
@@ -36,6 +43,20 @@ calculateJunctionReadCounts <- function(exonRanges, intronRanges, junctionFilePa
     seqlevelsStyle(junctionTable) <- 'UCSC'
     junctionTable$score <- junctionTable$um_reads  # to match the tophat style, uniquely mapped reads are used as score
     print('File loaded into memory')
+  } else if (junctionType == 'bam') {
+    print(paste0('Processing: ', junctionFilePath))
+    if (is.null(genome)) {
+      stop('Error: Please specify genome.')
+    }
+    rawBam <- readGAlignments(junctionFilePath)
+    bam <- keepStandardChromosomes(rawBam, pruning.mode = 'coarse')
+    rm(rawBam); gc()
+    junctions <- summarizeJunctions(bam, genome = genome)
+    rm(bam); gc()
+    junctionTable <- keepStandardChromosomes(junctions, pruning.mode = 'coarse')
+    strand(junctionTable) <- junctionTable$intron_strand
+    junctionTable <- junctionTable[,c('score')]
+    print('Junctions extracted from BAM file')
   }
 
   print('Calculating junction counts')
@@ -66,6 +87,8 @@ calculateJunctionReadCounts <- function(exonRanges, intronRanges, junctionFilePa
 #'   used as column names for the output data.frame object
 #' @param junctionType A character. Type of the junction bed file, either
 #'   'tophat'(default) or 'star'
+#' @param genome A character. Genome version used. Must be specified if input is
+#'  a BAM file. Defaults to NULL
 #' @param numberOfCores A numeric value. The number of cores to be used for
 #'   counting junction reads. Defaults to 1 (no parallelization). This parameter
 #'   will be used argument to mclapply function hence require 'parallel' package
@@ -84,12 +107,20 @@ calculateJunctionReadCounts <- function(exonRanges, intronRanges, junctionFilePa
 #'                                                    junctionFileLabels,
 #'                                                    junctionType = 'tophat',
 #'                                                    numberOfCores = 1)
-#' }
+#'                                                    
+#' junctionFilePaths <- c('./sample1.bam', './sample2.bam')
+#' junctionFileLabels <- c('sample1', 'sample2')
+#' promoterReadCounts <- calculatePromoterReadCounts(promoterAnnotationData,
+#'                                                    junctionFilePaths,
+#'                                                    junctionFileLabels,
+#'                                                    junctionType = 'bam',
+#'                                                    genome = 'hg19',
+#'                                                    numberOfCores = 1)}
 #'
 calculatePromoterReadCounts <- function(promoterAnnotationData, junctionFilePaths = NULL, junctionFileLabels = NULL,
-                                        junctionType = 'tophat', numberOfCores = 1) {
-  if (!junctionType %in% c('tophat', 'star')) {
-    stop(paste0('Error: Invalid junction type: ', junctionType, '! Possible values: "tophat" or "star"'))
+                                        junctionType = 'tophat', genome = NULL, numberOfCores = 1) {
+  if (!junctionType %in% c('tophat', 'star', 'bam')) {
+    stop(paste0('Error: Invalid junction type: ', junctionType, '! Possible values: "bam", "tophat" or "star"'))
   }
   if (is.null(junctionFilePaths)) {
     stop(paste0('Error: Please specify valid junction file paths!'))
@@ -102,15 +133,16 @@ calculatePromoterReadCounts <- function(promoterAnnotationData, junctionFilePath
 
   if (numberOfCores == 1) {
     promoterReadCounts <- lapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
-                                 intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType)
+                                 intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, genome = genome)
   } else {
     if (requireNamespace('parallel', quietly = TRUE) == TRUE) {
       promoterReadCounts <- parallel::mclapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
-                                               intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, mc.cores = numberOfCores)
+                                               intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, genome = genome, 
+                                               mc.cores = numberOfCores)
     } else {
       print('Warning: "parallel" package is not available! Using sequential version instead...')
       promoterReadCounts <- lapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
-                                   intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType)
+                                   intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, genome = genome)
     }
   }
 
