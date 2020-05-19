@@ -32,6 +32,11 @@
 #' @importFrom S4Vectors subjectHits
 #'
 calculateJunctionReadCounts <- function(exonRanges, intronRanges, junctionFilePath = '', junctionType = 'tophat', genome = '') {
+  ## Load package in sockets for bplapply
+  if (.Platform$OS.type == 'windows') {
+    suppressMessages(library(GenomicAlignments))
+  }
+  
   if(junctionType == 'tophat') {
     print(paste0('Processing: ', junctionFilePath))
     junctionTable <- readTopHatJunctions(junctionFilePath)
@@ -138,13 +143,23 @@ calculatePromoterReadCounts <- function(promoterAnnotationData, junctionFilePath
   if (numberOfCores == 1) {
     promoterReadCounts <- lapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
                                  intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, genome = genome)
-  } else {
+  } else if (numberOfCores > 1 & .Platform$OS.type != 'windows') {
     if (requireNamespace('parallel', quietly = TRUE) == TRUE) {
       promoterReadCounts <- parallel::mclapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
                                                intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, genome = genome, 
                                                mc.cores = numberOfCores)
     } else {
       print('Warning: "parallel" package is not available! Using sequential version instead...')
+      promoterReadCounts <- lapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
+                                   intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, genome = genome)
+    }
+  } else if (numberOfCores > 1 & .Platform$OS.type == 'windows') {
+    if (requireNamespace('BiocParallel', quietly = TRUE) == TRUE) {
+      promoterReadCounts <- BiocParallel::bplapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
+                                                   intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, genome = genome, 
+                                                   BPPARAM = SnowParam(workers = numberOfCores))
+    } else {
+      print('Warning: "BiocParallel" package is not available! Using sequential version instead...')
       promoterReadCounts <- lapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
                                    intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, genome = genome)
     }
