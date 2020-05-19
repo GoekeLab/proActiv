@@ -130,6 +130,10 @@ calculatePromoterReadCounts <- function(promoterAnnotationData, junctionFilePath
   if (any(!checkFile)) {
     stop(paste0('Error: Please specify valid junction file paths. The following file does not exist: ', junctionFilePaths[!checkFile]))
   }
+  
+  if (is.null(junctionFileLabels)) {
+    junctionFileLabels <- paste0('s', 1:length(junctionFilePaths))
+  }
 
   if (numberOfCores == 1) {
     promoterReadCounts <- lapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
