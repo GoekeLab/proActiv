@@ -182,8 +182,9 @@ Pervasive Regulation through Alternative Promoters.” *Cell* 178.6
 
 ## Contributors
 
-proActiv was developed and maintained by [Deniz
-Demircioglu](https://github.com/dnzdmrcgl) and [Jonathan
+proActiv is developed and maintained by [Deniz
+Demircioglu](https://github.com/dnzdmrcgl), [Joseph
+Lee](https://github.com/jleechung), and [Jonathan
 Göke](https://github.com/jonathangoeke).
 
 ![Stay proActiv\!](man/figures/proActiv_logoName.png)
