@@ -166,7 +166,7 @@ If you use proActiv, please cite:
 
 ## Contributors
 
-proActiv was developed and maintained by [Deniz Demircioglu](https://github.com/dnzdmrcgl) and [Jonathan Göke](https://github.com/jonathangoeke).
+proActiv is developed and maintained by [Deniz Demircioglu](https://github.com/dnzdmrcgl), [Joseph Lee](https://github.com/jleechung), and [Jonathan Göke](https://github.com/jonathangoeke).
 
 ![Stay proActiv!](man/figures/proActiv_logoName.png)
 
