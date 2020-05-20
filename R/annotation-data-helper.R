@@ -22,10 +22,6 @@ getIntronRank <- function(granges) {
 
 # Reduce the first exons of genes to identify overlapping exons
 reduceExonsByGene <- function(idx, exonRanges.firstExon.byGene) {
-  ## Load package in socket for bplapply
-  if (.Platform$OS.type == 'windows') {
-    suppressMessages(library(GenomicRanges))
-  }
   exonRanges.firstExon.gene <- exonRanges.firstExon.byGene[[idx]]
   exonRanges.firstExon.gene.reduced <- reduce(exonRanges.firstExon.gene, with.revmap = TRUE, min.gapwidth = 0L)
   exonRanges.firstExon.gene.reduced$revmap <- as(lapply(exonRanges.firstExon.gene.reduced$revmap, function(idx) {exonRanges.firstExon.gene$customId[idx]}), 'IntegerList')
@@ -82,21 +78,17 @@ getReducedExonRanges <- function(exonRanges.firstExon.byGene, numberOfCores = 1)
   print('Identify overlapping first exons for each gene and annotate with the promoter ids...')
   if (numberOfCores == 1) {
     exonReducedRanges.list <- lapply(1:length(exonRanges.firstExon.byGene), reduceExonsByGene, exonRanges.firstExon.byGene)
-  } else if (numberOfCores > 1 & .Platform$OS.type != 'windows') {
-    if (requireNamespace('parallel', quietly = TRUE) == TRUE) {
-      exonReducedRanges.list <- parallel::mclapply(1:length(exonRanges.firstExon.byGene), reduceExonsByGene, exonRanges.firstExon.byGene, mc.cores = numberOfCores)
-    } else {
-      print('Warning: "parallel" package is not available! Using sequential version instead...')
-      exonReducedRanges.list <- lapply(1:length(exonRanges.firstExon.byGene), reduceExonsByGene, exonRanges.firstExon.byGene)
-    }
-  } else if (numberOfCores > 1 & .Platform$OS.type == 'windows') {
+  } else {
     if (requireNamespace('BiocParallel', quietly = TRUE) == TRUE) {
-      exonReducedRanges.list <- BiocParallel::bplapply(1:length(exonRanges.firstExon.byGene), reduceExonsByGene, exonRanges.firstExon.byGene, BPPARAM = SnowParam(workers = numberOfCores))
+      bpParameters <- BiocParallel::bpparam()
+      bpParameters$workers <- numberOfCores
+      exonReducedRanges.list <- BiocParallel::bplapply(1:length(exonRanges.firstExon.byGene), reduceExonsByGene, exonRanges.firstExon.byGene, 
+                                                       BPPARAM = bpParameters)
     } else {
       print('Warning: "BiocParallel" package is not available! Using sequential version instead...')
       exonReducedRanges.list <- lapply(1:length(exonRanges.firstExon.byGene), reduceExonsByGene, exonRanges.firstExon.byGene)
     }
-  }
+  } 
 
   exonReducedRanges <- do.call(c, exonReducedRanges.list)
   exonReducedRanges$promoterId <- paste0('prmtr.', 1:length(exonReducedRanges))
