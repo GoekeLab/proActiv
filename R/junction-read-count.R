@@ -4,9 +4,9 @@
 #' @param exonRanges A GRanges object containing reduced exon ranges by gene
 #' @param intronRanges A Granges object containing the annotated unique intron
 #'   ranges. These ranges will be used for counting the reads
-#' @param junctionFilePath character path for the input junction bed file
-#' @param junctionType character type of the junction bed file. Either 'tophat'
-#'   or 'star'
+#' @param junctionFilePath character path for the input junction bed or bam file
+#' @param junctionType character type of the junction bed file. Either 'tophat',
+#'   'star' or 'bam'
 #' @param genome character genome version
 #'
 #' @export
@@ -31,7 +31,7 @@
 #' @importFrom S4Vectors queryHits
 #' @importFrom S4Vectors subjectHits
 #'
-calculateJunctionReadCounts <- function(exonRanges, intronRanges, junctionFilePath = '', junctionType = 'tophat', genome = '') {
+calculateJunctionReadCounts <- function(exonRanges, intronRanges, junctionFilePath = '', junctionType = '', genome = '') {
   
   if(junctionType == 'tophat') {
     print(paste0('Processing: ', junctionFilePath))
@@ -83,19 +83,18 @@ calculateJunctionReadCounts <- function(exonRanges, intronRanges, junctionFilePa
 #' @param promoterAnnotationData A PromoterAnnotation object containing the
 #'   reduced exon ranges, annotated intron ranges, promoter coordinates and the
 #'   promoter id mapping
-#' @param junctionFilePaths A character vector. The list of junction files for
-#'   which the junction read counts will be calculated
-#' @param junctionFileLabels A character vector. The labels of junction files
-#'   for which the junction read counts will be calculated. These labels will be
-#'   used as column names for the output data.frame object
-#' @param junctionType A character. Type of the junction bed file, either
-#'   'tophat'(default) or 'star'
+#' @param junctionFilePaths A character vector. The list of junction or BAM files 
+#'   for which the junction read counts will be calculated
+#' @param junctionFileLabels A character vector. The labels of junction or BAM 
+#'   files for which the junction read counts will be calculated. These labels 
+#'   will be used as column names for the output data.frame object
+#' @param junctionType A character. Type of the junction bed or bam file, either
+#'   'tophat', 'star' or 'bam
 #' @param genome A character. Genome version used. Must be specified if input is
 #'  a BAM file. Defaults to NULL
 #' @param numberOfCores A numeric value. The number of cores to be used for
 #'   counting junction reads. Defaults to 1 (no parallelization). This parameter
-#'   will be used argument to mclapply function hence require 'parallel' package
-#'   to be installed
+#'   will be used as an argument to BiocParallel::bplapply
 #'
 #' @return A data.frame object. The number of junction reads per promoter (rows)
 #'   for each sample (cols)
@@ -109,6 +108,7 @@ calculateJunctionReadCounts <- function(exonRanges, intronRanges, junctionFilePa
 #'                                                    junctionFilePaths,
 #'                                                    junctionFileLabels,
 #'                                                    junctionType = 'tophat',
+#'                                                    genome = NULL
 #'                                                    numberOfCores = 1)
 #'                                                    
 #' junctionFilePaths <- c('./sample1.bam', './sample2.bam')
@@ -121,23 +121,8 @@ calculateJunctionReadCounts <- function(exonRanges, intronRanges, junctionFilePa
 #'                                                    numberOfCores = 1)}
 #'
 calculatePromoterReadCounts <- function(promoterAnnotationData, junctionFilePaths = NULL, junctionFileLabels = NULL,
-                                        junctionType = 'tophat', genome = NULL, numberOfCores = 1) {
-  if (!junctionType %in% c('tophat', 'star', 'bam')) {
-    stop(paste0('Error: Invalid junction type: ', junctionType, '! Possible values: "bam", "tophat" or "star"'))
-  }
-  if (is.null(junctionFilePaths)) {
-    stop(paste0('Error: Please specify valid junction file paths!'))
-  }
-
-  checkFile <- file.exists(junctionFilePaths)
-  if (any(!checkFile)) {
-    stop(paste0('Error: Please specify valid junction file paths. The following file does not exist: ', junctionFilePaths[!checkFile]))
-  }
+                                        junctionType = NULL , genome = NULL, numberOfCores = 1) {
   
-  if (is.null(junctionFileLabels)) {
-    junctionFileLabels <- tools::file_path_sans_ext(basename(junctionFilePaths))
-  }
-
   if (numberOfCores == 1) {
     promoterReadCounts <- lapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
                                  intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, genome = genome)
