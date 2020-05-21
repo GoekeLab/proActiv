@@ -81,7 +81,7 @@ proActiv <- function(promoterAnnotationData, filePaths = NULL, fileLabels = NULL
   summarizedResults <- SummarizedExperiment(assays = list(promoterCounts = promoterCounts,
                                                           normalizedPromoterCounts = normalizedPromoterCounts,
                                                           absolutePromoterActivity = subset(absolutePromoterActivity, select = -c(promoterId, geneId)),
-                                                          relativePromoterActivity = subset(absolutePromoterActivity, select = -c(promoterId, geneId))),
+                                                          relativePromoterActivity = subset(relativePromoterActivity, select = -c(promoterId, geneId))),
                                             rowData = absolutePromoterActivity[,c('promoterId', 'geneId')])
   metadata(summarizedResults) <- list(geneExpression = subset(geneExpression, select = -c(geneId)))
   
