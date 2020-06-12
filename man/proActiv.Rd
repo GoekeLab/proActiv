@@ -5,20 +5,20 @@
 \title{Wrapper function returning Summarized Experiment object giving promoter counts and activity}
 \usage{
 proActiv(
-  promoterAnnotationData,
-  filePaths = NULL,
+  files = NULL,
+  promoterAnnotation,
   fileLabels = NULL,
   genome = NULL,
-  numberOfCores = 1
+  ncores = 1
 )
 }
 \arguments{
-\item{promoterAnnotationData}{A PromoterAnnotation object containing the
+\item{files}{A character vector. The list of input files for 
+which the junction read counts will be calculated}
+
+\item{promoterAnnotation}{A PromoterAnnotation object containing the
 reduced exon ranges, annotated intron ranges, promoter coordinates and the
 promoter id mapping}
-
-\item{filePaths}{A character vector. The list of input files for 
-which the junction read counts will be calculated}
 
 \item{fileLabels}{A character vector. The labels of input files 
 for which the junction read counts will be calculated. These labels will be 
@@ -28,7 +28,7 @@ filenames will be used as labels. Defaults to NULL}
 \item{genome}{A character. Genome version. Must be specified if input file
 type is a BAM file. Defaults to NULL}
 
-\item{numberOfCores}{A numeric value. The number of cores to be used for 
+\item{ncores}{A numeric value. The number of cores to be used for 
 counting junction reads. Defaults to 1 (no parallelization). This parameter 
 will be used as an argument to BiocParallel::bplapply}
 }
@@ -42,18 +42,18 @@ Wrapper function returning Summarized Experiment object giving promoter counts a
 }
 \examples{
 \dontrun{
-filePaths <- c('./sample1-tophat.bed', './sample2-tophat.bed')
-proActivFromJunctions <- proActiv(promoterAnnotationData = promoterAnnotationData, 
-                                 filePaths = filePaths, 
+files <- c('./sample1-tophat.bed', './sample2-tophat.bed')
+proActivFromJunctions <- proActiv(files = files,
+                                  promoterAnnotation = promoterAnnotation, 
                                  fileLabels = NULL, 
                                  genome = NULL, 
-                                 numberOfCores = 1)
+                                 ncores = 1)
 
-filePaths <- c('./sample1.bam', './sample2.bam')
-proActivFromBAM <- proActiv(promoterAnnotation Data = promoterAnnotationData,
-                           filePaths = filePaths,
+files <- c('./sample1.bam', './sample2.bam')
+proActivFromBAM <- proActiv(files = files,
+                            promoterAnnotation  = promoterAnnotation,
                            fileLabels = NULL,
                            genome = 'hg19',
-                           numberOfCores = 1)}
+                           ncores = 1)}
                            
 }
