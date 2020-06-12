@@ -123,22 +123,19 @@ calculateJunctionReadCounts <- function(exonRanges, intronRanges, junctionFilePa
 calculatePromoterReadCounts <- function(promoterAnnotationData, junctionFilePaths = NULL, junctionFileLabels = NULL,
                                         junctionType = NULL , genome = NULL, numberOfCores = 1) {
   
-  if (numberOfCores == 1) {
+  if (numberOfCores > 1 & requireNamespace('BiocParallel', quietly = TRUE) == TRUE) {
+    bpParameters <- BiocParallel::bpparam()
+    bpParameters$workers <- numberOfCores
+    promoterReadCounts <- BiocParallel::bplapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
+                                                 intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, genome = genome, 
+                                                 BPPARAM = bpParameters)
+  } else {
+    if (requireNamespace('BiocParallel', quietly = TRUE) == FALSE) {
+      print('Warning: "BiocParallel" package is not available! Using sequential version instead...')
+    }
     promoterReadCounts <- lapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
                                  intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, genome = genome)
-  } else {
-    if (requireNamespace('BiocParallel', quietly = TRUE) == TRUE) {
-      bpParameters <- BiocParallel::bpparam()
-      bpParameters$workers <- numberOfCores
-      promoterReadCounts <- BiocParallel::bplapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
-                                               intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, genome = genome, 
-                                               BPPARAM = bpParameters)
-    } else {
-      print('Warning: "BiocParallel" package is not available! Using sequential version instead...')
-      promoterReadCounts <- lapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
-                                   intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, genome = genome)
-    }
-  } 
+  }
 
   if (length(junctionFilePaths) == 1) {
     promoterReadCounts <- data.frame(counts = promoterReadCounts)
