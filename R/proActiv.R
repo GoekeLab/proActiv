@@ -43,10 +43,6 @@
 proActiv <- function(files, promoterAnnotation, fileLabels = NULL, 
                      genome = NULL, ncores = 1) {
   
-  if (is.null(files)) {
-    stop(paste0('Error: Please specify valid file paths!'))
-  }
-  
   checkFile <- file.exists(files)
   if (any(!checkFile)) {
     stop(paste0('Error: Please specify valid file paths. The following file does not exist: ', files[!checkFile]))
