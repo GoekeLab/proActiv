@@ -40,7 +40,7 @@
 #' @import SummarizedExperiment
 #' @import S4Vectors
 #'
-proActiv <- function(files = NULL, promoterAnnotation, fileLabels = NULL, 
+proActiv <- function(files, promoterAnnotation, fileLabels = NULL, 
                      genome = NULL, ncores = 1) {
   
   if (is.null(files)) {
