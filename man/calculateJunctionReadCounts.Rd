@@ -5,8 +5,13 @@
 \title{Calculate the total number of junction reads overlapping with the introns of
 each promoter for the input junction file}
 \usage{
-calculateJunctionReadCounts(exonRanges, intronRanges,
-  junctionFilePath = "", junctionType = "tophat")
+calculateJunctionReadCounts(
+  exonRanges,
+  intronRanges,
+  junctionFilePath = "",
+  junctionType = "",
+  genome = ""
+)
 }
 \arguments{
 \item{exonRanges}{A GRanges object containing reduced exon ranges by gene}
@@ -14,10 +19,12 @@ calculateJunctionReadCounts(exonRanges, intronRanges,
 \item{intronRanges}{A Granges object containing the annotated unique intron
 ranges. These ranges will be used for counting the reads}
 
-\item{junctionFilePath}{character path for the input junction bed file}
+\item{junctionFilePath}{character path for the input junction bed or bam file}
 
-\item{junctionType}{character type of the junction bed file. Either 'tophat'
-or 'star'}
+\item{junctionType}{character type of the junction bed file. Either 'tophat',
+'star' or 'bam'}
+
+\item{genome}{character genome version}
 }
 \value{
 The total number of junction reads overlapping with each promoter for
@@ -33,6 +40,12 @@ junctionFilePath <- './sample1-tophat.bed'
 junctionCounts <- calculateJunctionReadCounts(exonReducedRanges,
                                                intronRanges.annotated,
                                                junctionFilePath,
-                                               junctionType = 'tophat')}
+                                               junctionType = 'tophat')
+junctionFilePath <- './sample1.bam'                                                
+junctionCounts <- calculateJunctionReadCounts(exonReducedRanges,
+                                               intronRanges.annotated,
+                                               junctionFilePath,
+                                               junctionType = 'bam',
+                                               genome = 'hg19')}
 
 }
