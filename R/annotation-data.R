@@ -33,7 +33,7 @@ getUnannotatedReducedExonRanges <- function(txdb, species = 'Homo_sapiens', numb
   exonRanges.firstExon.byGene <- split(exonRanges.firstExon, exonRanges.firstExon.geneId)
 
   # Identify overlapping first exons for each gene and annotate with the promoter ids
-  exonReducedRanges <- getReducedExonRanges(exonRanges.firstExon.byGene, numberOfCores)
+  exonReducedRanges <- getReducedExonRanges(exonRanges.firstExon, exonRanges.firstExon.geneId)
   return(exonReducedRanges)
 }
 
