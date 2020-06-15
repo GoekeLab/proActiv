@@ -20,13 +20,6 @@ getIntronRank <- function(granges) {
   return(intronRank)
 }
 
-# Reduce the first exons of genes to identify overlapping exons
-reduceExonsByGene <- function(idx, exonRanges.firstExon.byGene) {
-  exonRanges.firstExon.gene <- exonRanges.firstExon.byGene[[idx]]
-  exonRanges.firstExon.gene.reduced <- reduce(exonRanges.firstExon.gene, with.revmap = TRUE, min.gapwidth = 0L)
-  exonRanges.firstExon.gene.reduced$revmap <- as(lapply(exonRanges.firstExon.gene.reduced$revmap, function(idx) {exonRanges.firstExon.gene$customId[idx]}), 'IntegerList')
-  return(exonRanges.firstExon.gene.reduced)
-}
 
 # Get the transcript ranges with metadata and transcript lengths
 #' @importFrom GenomeInfoDb keepStandardChromosomes
@@ -73,25 +66,22 @@ getFirstExonRanges <- function(exonRangesByTx.unlist, transcriptRanges) {
 }
 
 # Reduce all first exons for each gene to identify transcripts belonging to each promoter
-getReducedExonRanges <- function(exonRanges.firstExon.byGene, numberOfCores = 1) {
-  # Identify overlapping first exons for each gene and annotate with the promoter ids
-  print('Identify overlapping first exons for each gene and annotate with the promoter ids...')
-  if (numberOfCores == 1) {
-    exonReducedRanges.list <- lapply(1:length(exonRanges.firstExon.byGene), reduceExonsByGene, exonRanges.firstExon.byGene)
-  } else {
-    if (requireNamespace('BiocParallel', quietly = TRUE) == TRUE) {
-      bpParameters <- BiocParallel::bpparam()
-      bpParameters$workers <- numberOfCores
-      exonReducedRanges.list <- BiocParallel::bplapply(1:length(exonRanges.firstExon.byGene), reduceExonsByGene, exonRanges.firstExon.byGene, 
-                                                       BPPARAM = bpParameters)
-    } else {
-      print('Warning: "BiocParallel" package is not available! Using sequential version instead...')
-      exonReducedRanges.list <- lapply(1:length(exonRanges.firstExon.byGene), reduceExonsByGene, exonRanges.firstExon.byGene)
-    }
-  } 
-
-  exonReducedRanges <- do.call(c, exonReducedRanges.list)
-  exonReducedRanges$promoterId <- paste0('prmtr.', 1:length(exonReducedRanges))
+getReducedExonRanges <- function(exonRanges.firstExon, exonRanges.firstExon.geneId) {
+  exonRanges.firstExon$geneId <- exonRanges.firstExon.geneId
+  exonReducedRanges <- as_tibble(exonRanges.firstExon) %>% 
+    arrange(geneId, start) %>% 
+    group_by(geneId) %>%
+    mutate(exonClass = c(0, cumsum(lead(start) > cummax(end))[-n()])) %>%
+    group_by(geneId, exonClass, seqnames, strand) %>%
+    summarise(start = min(start), 
+              end = max(end), 
+              customId = list(customId),
+              .groups = 'drop') %>%
+    ungroup() %>%
+    dplyr::select(seqnames, start, end, strand, customId)
+  exonReducedRanges$promoterId <- paste0('prmtr.', 1:nrow(exonReducedRanges))
+  exonReducedRanges <- makeGRangesFromDataFrame(exonReducedRanges, keep.extra.columns = TRUE)
+  names(mcols(exonReducedRanges)) <- c('revmap', 'promoterId')
   return(exonReducedRanges)
 }
 
