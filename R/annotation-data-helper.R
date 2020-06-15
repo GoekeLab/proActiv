@@ -5,22 +5,6 @@
 #'
 NULL
 
-# Get the intron ranks similar to exon rank (increasing from 5' to 3' end)
-#' @importFrom S4Vectors runValue
-getIntronRank <- function(granges) {
-  len <- length(granges)
-  intronRank <- NA
-  if (len > 0) {
-    if(runValue(strand(granges)) == '+') {
-      intronRank <- 1:len
-    } else {
-      intronRank <- rev(1:len)
-    }
-  }
-  return(intronRank)
-}
-
-
 # Get the transcript ranges with metadata and transcript lengths
 #' @importFrom GenomeInfoDb keepStandardChromosomes
 #' @importFrom GenomeInfoDb 'seqlevelsStyle<-'
@@ -109,17 +93,17 @@ getUniqueIntronRanges <- function(intronRangesByTx.unlist) {
 
 # Get the rank of each intron within the transcript (similar to exon ranges)
 getIntronRanks <- function(intronRangesByTx) {
-  # Annotate intron's with ranks within each transcript
-  intronRankByTx <- lapply(intronRangesByTx, getIntronRank)
-  names(intronRankByTx) <- names(intronRangesByTx)
-  return(intronRankByTx)
+  intronRankByTx <- as_tibble(intronRangesByTx) %>% 
+    group_by(group_name) %>% 
+    mutate(rank = ifelse(strand == '+', row_number(), rev(row_number())))
+  intronRank <- intronRankByTx$rank
+  return(intronRank)
 }
 
 # Annotate all the intron ranges with the metadata
 annotateAllIntronRanges <- function(intronRankByTx, intronRangesByTx.unlist, transcriptRanges, promoterIdMapping) {
   # Annotate all intron ranges with corresponding ids
-  intronRankByTx.unlist <- unlist(intronRankByTx)
-  intronRangesByTx.unlist$INTRONRANK <- intronRankByTx.unlist[which(!is.na(intronRankByTx.unlist))]
+  intronRangesByTx.unlist$INTRONRANK <- intronRankByTx
   intronRangesByTx.unlist$TXID <- transcriptRanges$TXID[match(names(intronRangesByTx.unlist), transcriptRanges$TXNAME)]
   intronRangesByTx.unlist$TXSTART <- transcriptRanges$TXSTART[match(names(intronRangesByTx.unlist), transcriptRanges$TXNAME)]
   intronRangesByTx.unlist$TXEND <- transcriptRanges$TXEND[match(names(intronRangesByTx.unlist), transcriptRanges$TXNAME)]
