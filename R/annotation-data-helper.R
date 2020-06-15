@@ -42,7 +42,7 @@ getExonRangesByTx <- function(txdb, species = 'Homo_sapiens') {
 }
 
 # Get the first exon of each transcript
-getFirstExonRanges <- function(exonRangesByTx.unlist, transcriptRanges) {
+getFirstExonRanges <- function(exonRangesByTx.unlist) {
   exonRanges.firstExon <- exonRangesByTx.unlist[exonRangesByTx.unlist$exon_rank == 1]
   exonRanges.firstExon$tx_name <- names(exonRanges.firstExon)
   exonRanges.firstExon$customId <- 1:length(exonRanges.firstExon)
@@ -50,6 +50,7 @@ getFirstExonRanges <- function(exonRangesByTx.unlist, transcriptRanges) {
 }
 
 # Reduce all first exons for each gene to identify transcripts belonging to each promoter
+#' @importFrom dplyr as_tibble mutate group_by '%>%' group_by summarise ungroup select
 getReducedExonRanges <- function(exonRanges.firstExon, exonRanges.firstExon.geneId) {
   exonRanges.firstExon$geneId <- exonRanges.firstExon.geneId
   exonReducedRanges <- as_tibble(exonRanges.firstExon) %>% 
@@ -92,6 +93,7 @@ getUniqueIntronRanges <- function(intronRangesByTx.unlist) {
 }
 
 # Get the rank of each intron within the transcript (similar to exon ranges)
+#' @importFrom dplyr as_tibble mutate group_by '%>%'
 getIntronRanks <- function(intronRangesByTx) {
   intronRankByTx <- as_tibble(intronRangesByTx) %>% 
     group_by(group_name) %>% 
@@ -131,12 +133,12 @@ annotateUniqueIntronRanges <- function(intronRanges.unique, intronRangesByTx.unl
 
 # Prepare metadata for each unique intron range considering all of its uses across transcripts
 #' @importFrom rlang .data
-#' @importFrom dplyr tbl_df mutate group_by '%>%' filter distinct inner_join
+#' @importFrom dplyr as_tibble mutate group_by '%>%' filter distinct inner_join
 getIntronTable <- function(intronRanges.unique, intronRangesByTx.unlist) {
-  intronTable <- tbl_df(as.data.frame(intronRanges.unique))  # tbl_df for manipulation
+  intronTable <- as_tibble(as.data.frame(intronRanges.unique)) 
 
   # Prepare metadata for each intron
-  intronRangesByTx.metadata <- tbl_df(as.data.frame(mcols(intronRangesByTx.unlist)))
+  intronRangesByTx.metadata <- as_tibble(as.data.frame(mcols(intronRangesByTx.unlist)))
   intronRangesByTx.metadata <- mutate(group_by(intronRangesByTx.metadata, .data$TXNAME), IntronEndRank = max(.data$INTRONRANK) - .data$INTRONRANK + 1)
   intronRangesByTx.metadata <- mutate(group_by(intronRangesByTx.metadata, .data$INTRONID), MinIntronRank = min(.data$INTRONRANK))
   intronRangesByTx.metadata <- mutate(group_by(intronRangesByTx.metadata, .data$INTRONID), MaxIntronRank = max(.data$INTRONRANK))
