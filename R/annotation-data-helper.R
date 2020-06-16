@@ -93,7 +93,7 @@ getUniqueIntronRanges <- function(intronRangesByTx.unlist) {
 }
 
 # Get the rank of each intron within the transcript (similar to exon ranges)
-#' @importFrom dplyr as_tibble mutate group_by '%>%'
+#' @importFrom dplyr as_tibble mutate group_by '%>%' row_number
 getIntronRanks <- function(intronRangesByTx) {
   intronRankByTx <- as_tibble(intronRangesByTx) %>% 
     group_by(group_name) %>% 
