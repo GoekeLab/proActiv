@@ -50,7 +50,7 @@ getFirstExonRanges <- function(exonRangesByTx.unlist) {
 }
 
 # Reduce all first exons for each gene to identify transcripts belonging to each promoter
-#' @importFrom dplyr as_tibble mutate group_by '%>%' group_by summarise ungroup select
+#' @importFrom dplyr as_tibble mutate group_by '%>%' group_by summarise ungroup select lead
 getReducedExonRanges <- function(exonRanges.firstExon, exonRanges.firstExon.geneId) {
   exonRanges.firstExon$geneId <- exonRanges.firstExon.geneId
   exonReducedRanges <- as_tibble(exonRanges.firstExon) %>% 
