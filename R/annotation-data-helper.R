@@ -5,29 +5,6 @@
 #'
 NULL
 
-# Get the intron ranks similar to exon rank (increasing from 5' to 3' end)
-#' @importFrom S4Vectors runValue
-getIntronRank <- function(granges) {
-  len <- length(granges)
-  intronRank <- NA
-  if (len > 0) {
-    if(runValue(strand(granges)) == '+') {
-      intronRank <- 1:len
-    } else {
-      intronRank <- rev(1:len)
-    }
-  }
-  return(intronRank)
-}
-
-# Reduce the first exons of genes to identify overlapping exons
-reduceExonsByGene <- function(idx, exonRanges.firstExon.byGene) {
-  exonRanges.firstExon.gene <- exonRanges.firstExon.byGene[[idx]]
-  exonRanges.firstExon.gene.reduced <- reduce(exonRanges.firstExon.gene, with.revmap = TRUE, min.gapwidth = 0L)
-  exonRanges.firstExon.gene.reduced$revmap <- as(lapply(exonRanges.firstExon.gene.reduced$revmap, function(idx) {exonRanges.firstExon.gene$customId[idx]}), 'IntegerList')
-  return(exonRanges.firstExon.gene.reduced)
-}
-
 # Get the transcript ranges with metadata and transcript lengths
 #' @importFrom GenomeInfoDb keepStandardChromosomes
 #' @importFrom GenomeInfoDb 'seqlevelsStyle<-'
@@ -65,7 +42,7 @@ getExonRangesByTx <- function(txdb, species = 'Homo_sapiens') {
 }
 
 # Get the first exon of each transcript
-getFirstExonRanges <- function(exonRangesByTx.unlist, transcriptRanges) {
+getFirstExonRanges <- function(exonRangesByTx.unlist) {
   exonRanges.firstExon <- exonRangesByTx.unlist[exonRangesByTx.unlist$exon_rank == 1]
   exonRanges.firstExon$tx_name <- names(exonRanges.firstExon)
   exonRanges.firstExon$customId <- 1:length(exonRanges.firstExon)
@@ -73,25 +50,23 @@ getFirstExonRanges <- function(exonRangesByTx.unlist, transcriptRanges) {
 }
 
 # Reduce all first exons for each gene to identify transcripts belonging to each promoter
-getReducedExonRanges <- function(exonRanges.firstExon.byGene, numberOfCores = 1) {
-  # Identify overlapping first exons for each gene and annotate with the promoter ids
-  print('Identify overlapping first exons for each gene and annotate with the promoter ids...')
-  if (numberOfCores == 1) {
-    exonReducedRanges.list <- lapply(1:length(exonRanges.firstExon.byGene), reduceExonsByGene, exonRanges.firstExon.byGene)
-  } else {
-    if (requireNamespace('BiocParallel', quietly = TRUE) == TRUE) {
-      bpParameters <- BiocParallel::bpparam()
-      bpParameters$workers <- numberOfCores
-      exonReducedRanges.list <- BiocParallel::bplapply(1:length(exonRanges.firstExon.byGene), reduceExonsByGene, exonRanges.firstExon.byGene, 
-                                                       BPPARAM = bpParameters)
-    } else {
-      print('Warning: "BiocParallel" package is not available! Using sequential version instead...')
-      exonReducedRanges.list <- lapply(1:length(exonRanges.firstExon.byGene), reduceExonsByGene, exonRanges.firstExon.byGene)
-    }
-  } 
-
-  exonReducedRanges <- do.call(c, exonReducedRanges.list)
-  exonReducedRanges$promoterId <- paste0('prmtr.', 1:length(exonReducedRanges))
+#' @importFrom dplyr as_tibble mutate group_by '%>%' group_by summarise ungroup select lead
+getReducedExonRanges <- function(exonRanges.firstExon, exonRanges.firstExon.geneId) {
+  exonRanges.firstExon$geneId <- exonRanges.firstExon.geneId
+  exonReducedRanges <- as_tibble(exonRanges.firstExon) %>% 
+    arrange(geneId, start) %>% 
+    group_by(geneId) %>%
+    mutate(exonClass = c(0, cumsum(lead(start) > cummax(end))[-n()])) %>%
+    group_by(geneId, exonClass, seqnames, strand) %>%
+    summarise(start = min(start), 
+              end = max(end), 
+              customId = list(customId),
+              .groups = 'drop') %>%
+    ungroup() %>%
+    dplyr::select(seqnames, start, end, strand, customId)
+  exonReducedRanges$promoterId <- paste0('prmtr.', 1:nrow(exonReducedRanges))
+  exonReducedRanges <- makeGRangesFromDataFrame(exonReducedRanges, keep.extra.columns = TRUE)
+  names(mcols(exonReducedRanges)) <- c('revmap', 'promoterId')
   return(exonReducedRanges)
 }
 
@@ -118,18 +93,19 @@ getUniqueIntronRanges <- function(intronRangesByTx.unlist) {
 }
 
 # Get the rank of each intron within the transcript (similar to exon ranges)
+#' @importFrom dplyr as_tibble mutate group_by '%>%' row_number
 getIntronRanks <- function(intronRangesByTx) {
-  # Annotate intron's with ranks within each transcript
-  intronRankByTx <- lapply(intronRangesByTx, getIntronRank)
-  names(intronRankByTx) <- names(intronRangesByTx)
-  return(intronRankByTx)
+  intronRankByTx <- as_tibble(intronRangesByTx) %>% 
+    group_by(group_name) %>% 
+    mutate(rank = ifelse(strand == '+', row_number(), rev(row_number())))
+  intronRank <- intronRankByTx$rank
+  return(intronRank)
 }
 
 # Annotate all the intron ranges with the metadata
 annotateAllIntronRanges <- function(intronRankByTx, intronRangesByTx.unlist, transcriptRanges, promoterIdMapping) {
   # Annotate all intron ranges with corresponding ids
-  intronRankByTx.unlist <- unlist(intronRankByTx)
-  intronRangesByTx.unlist$INTRONRANK <- intronRankByTx.unlist[which(!is.na(intronRankByTx.unlist))]
+  intronRangesByTx.unlist$INTRONRANK <- intronRankByTx
   intronRangesByTx.unlist$TXID <- transcriptRanges$TXID[match(names(intronRangesByTx.unlist), transcriptRanges$TXNAME)]
   intronRangesByTx.unlist$TXSTART <- transcriptRanges$TXSTART[match(names(intronRangesByTx.unlist), transcriptRanges$TXNAME)]
   intronRangesByTx.unlist$TXEND <- transcriptRanges$TXEND[match(names(intronRangesByTx.unlist), transcriptRanges$TXNAME)]
@@ -157,12 +133,12 @@ annotateUniqueIntronRanges <- function(intronRanges.unique, intronRangesByTx.unl
 
 # Prepare metadata for each unique intron range considering all of its uses across transcripts
 #' @importFrom rlang .data
-#' @importFrom dplyr tbl_df mutate group_by '%>%' filter distinct inner_join
+#' @importFrom dplyr as_tibble mutate group_by '%>%' filter distinct inner_join
 getIntronTable <- function(intronRanges.unique, intronRangesByTx.unlist) {
-  intronTable <- tbl_df(as.data.frame(intronRanges.unique))  # tbl_df for manipulation
+  intronTable <- as_tibble(as.data.frame(intronRanges.unique)) 
 
   # Prepare metadata for each intron
-  intronRangesByTx.metadata <- tbl_df(as.data.frame(mcols(intronRangesByTx.unlist)))
+  intronRangesByTx.metadata <- as_tibble(as.data.frame(mcols(intronRangesByTx.unlist)))
   intronRangesByTx.metadata <- mutate(group_by(intronRangesByTx.metadata, .data$TXNAME), IntronEndRank = max(.data$INTRONRANK) - .data$INTRONRANK + 1)
   intronRangesByTx.metadata <- mutate(group_by(intronRangesByTx.metadata, .data$INTRONID), MinIntronRank = min(.data$INTRONRANK))
   intronRangesByTx.metadata <- mutate(group_by(intronRangesByTx.metadata, .data$INTRONID), MaxIntronRank = max(.data$INTRONRANK))
