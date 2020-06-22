@@ -46,9 +46,6 @@ calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges, junct
     print('File loaded into memory')
   } else if (junctionType == 'bam') {
     print(paste0('Processing: ', junctionFilePath))
-    if (is.null(genome)) {
-      stop('Error: Please specify genome.')
-    }
     rawBam <- readGAlignments(junctionFilePath)
     bam <- keepStandardChromosomes(rawBam, pruning.mode = 'coarse')
     rm(rawBam)

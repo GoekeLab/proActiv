@@ -53,15 +53,20 @@ proActiv <- function(files, promoterAnnotation, fileLabels = NULL,
   }
   
   ext <- unique(tools::file_ext(files))
+  if (length(ext) != 1) {
+    stop("Error: More than one file type detected from given file path")
+  }
+  
   if (ext == 'gz' | ext == 'bz2' | ext == 'xz'){
     files.tmp <- gsub(paste0('\\.', ext), '', files)
     ext <- unique(tools::file_ext(files.tmp))
   }
-  
-  if (length(ext) != 1) {
-    stop("Error: More than one file type detected from given file path")
-  } else if (ext == 'bam') {
+
+  if (ext == 'bam') {
     fileType <- 'bam'
+    if (is.null(genome)) {
+      stop('Error: Please specify genome.')
+    }
   } else if (ext == 'bed') {
     fileType <- 'tophat' 
   } else if (ext == 'junctions') {
