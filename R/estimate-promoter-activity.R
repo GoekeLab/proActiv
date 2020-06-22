@@ -21,7 +21,7 @@
 #'                                                          pseudocount = 1)
 #' }
 #'
-#' @seealso \code{\link{preparePromoterIdMapping}} for preparing the mapping
+#' @seealso \code{\link{preparePromoterAnnotation}} for preparing the mapping
 #'   between promoters and genes, \code{\link{calculatePromoterReadCounts}} and
 #'   \code{\link{normalizePromoterReadCounts}} for obtaining junction read
 #'   counts
