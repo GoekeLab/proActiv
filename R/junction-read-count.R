@@ -1,7 +1,7 @@
 #' Calculate the total number of junction reads overlapping with the introns of
 #' each promoter for the input junction file
 #'
-#' @param exonRanges A GRanges object containing reduced exon ranges by gene
+#' @param promoterCoordinates A GRanges object containing reduced exon ranges by gene
 #' @param intronRanges A Granges object containing the annotated unique intron
 #'   ranges. These ranges will be used for counting the reads
 #' @param junctionFilePath character path for the input junction bed or bam file
@@ -16,12 +16,12 @@
 #' @examples
 #' \dontrun{
 #' junctionFilePath <- './sample1-tophat.bed'
-#' junctionCounts <- calculateJunctionReadCounts(exonReducedRanges,
+#' junctionCounts <- calculateJunctionReadCounts(promoterCoordinates,
 #'                                                intronRanges.annotated,
 #'                                                junctionFilePath,
 #'                                                junctionType = 'tophat')
 #' junctionFilePath <- './sample1.bam'                                                
-#' junctionCounts <- calculateJunctionReadCounts(exonReducedRanges,
+#' junctionCounts <- calculateJunctionReadCounts(promoterCoordinates,
 #'                                                intronRanges.annotated,
 #'                                                junctionFilePath,
 #'                                                junctionType = 'bam',
@@ -31,7 +31,7 @@
 #' @importFrom S4Vectors queryHits
 #' @importFrom S4Vectors subjectHits
 #'
-calculateJunctionReadCounts <- function(exonRanges, intronRanges, junctionFilePath = '', junctionType = '', genome = '') {
+calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges, junctionFilePath = '', junctionType = '', genome = '') {
   
   if(junctionType == 'tophat') {
     print(paste0('Processing: ', junctionFilePath))
@@ -66,14 +66,14 @@ calculateJunctionReadCounts <- function(exonRanges, intronRanges, junctionFilePa
   intronRanges.overlap <- findOverlaps(intronRanges, junctionTable, type = 'equal')
   intronRanges$junctionCounts <- rep(0, length(intronRanges))
   intronRanges$junctionCounts[queryHits(intronRanges.overlap)] <- junctionTable$score[subjectHits(intronRanges.overlap)]
-  intronIdByPromoter <- as.vector(exonRanges$intronId)
+  intronIdByPromoter <- as.vector(promoterCoordinates$intronId)
   intronId.unlist <- unlist(intronIdByPromoter)
-  levels.tmp <- unique(exonRanges$promoterId)
+  levels.tmp <- unique(promoterCoordinates$promoterId)
   levels.tmp <- levels.tmp[order(as.numeric(gsub('prmtr.', '', levels.tmp)))]
-  promoterId.unlist <- factor(rep(exonRanges$promoterId, sapply(intronIdByPromoter, length)), levels = levels.tmp)
+  promoterId.unlist <- factor(rep(promoterCoordinates$promoterId, sapply(intronIdByPromoter, length)), levels = levels.tmp)
 
   junctionCounts <- tapply(intronRanges$junctionCounts[intronId.unlist], promoterId.unlist, sum)
-  names(junctionCounts) <- exonRanges$promoterId
+  names(junctionCounts) <- promoterCoordinates$promoterId
   return(junctionCounts)
 }
 
@@ -126,14 +126,14 @@ calculatePromoterReadCounts <- function(promoterAnnotationData, junctionFilePath
   if (numberOfCores > 1 & requireNamespace('BiocParallel', quietly = TRUE) == TRUE) {
     bpParameters <- BiocParallel::bpparam()
     bpParameters$workers <- numberOfCores
-    promoterReadCounts <- BiocParallel::bplapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
+    promoterReadCounts <- BiocParallel::bplapply(junctionFilePaths, calculateJunctionReadCounts, promoterCoordinates = promoterCoordinates(promoterAnnotationData),
                                                  intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, genome = genome, 
                                                  BPPARAM = bpParameters)
   } else {
     if (requireNamespace('BiocParallel', quietly = TRUE) == FALSE) {
       print('Warning: "BiocParallel" package is not available! Using sequential version instead...')
     }
-    promoterReadCounts <- lapply(junctionFilePaths, calculateJunctionReadCounts, exonRanges = reducedExonRanges(promoterAnnotationData),
+    promoterReadCounts <- lapply(junctionFilePaths, calculateJunctionReadCounts, promoterCoordinates = promoterCoordinates(promoterAnnotationData),
                                  intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, genome = genome)
   }
 
@@ -142,7 +142,7 @@ calculatePromoterReadCounts <- function(promoterAnnotationData, junctionFilePath
   } else {
     promoterReadCounts <- as.data.frame(promoterReadCounts)
   }
-  rownames(promoterReadCounts) <- reducedExonRanges(promoterAnnotationData)$promoterId
+  rownames(promoterReadCounts) <- promoterCoordinates(promoterAnnotationData)$promoterId
   colnames(promoterReadCounts) <- junctionFileLabels
   return(promoterReadCounts)
 }
