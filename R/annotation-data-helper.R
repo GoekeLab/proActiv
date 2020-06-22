@@ -50,7 +50,7 @@ getFirstExonRanges <- function(exonRangesByTx.unlist) {
 }
 
 # Reduce all first exons for each gene to identify transcripts belonging to each promoter
-#' @importFrom dplyr as_tibble mutate group_by '%>%' group_by summarise ungroup select lead
+#' @importFrom dplyr as_tibble mutate group_by '%>%' group_by summarise ungroup select lead arrange
 getReducedExonRanges <- function(exonRanges.firstExon, exonRanges.firstExon.geneId) {
   exonRanges.firstExon$geneId <- exonRanges.firstExon.geneId
   exonReducedRanges <- as_tibble(exonRanges.firstExon) %>% 
@@ -152,18 +152,6 @@ getIntronTable <- function(intronRanges.unique, intronRangesByTx.unlist) {
 
   intronTable <- inner_join(intronTable, intronRangesByTx.metadata.unique, by = 'INTRONID')
 
-  ## Extend to last intron prediction
-  intronRangesByTx.metadata <- mutate(group_by(intronRangesByTx.metadata, .data$INTRONID), MinIntronEndRank = min(.data$IntronEndRank))
-  intronRangesByTx.metadata <- mutate(group_by(intronRangesByTx.metadata, .data$INTRONID), MaxIntronEndRank = max(.data$IntronEndRank))
-
-  intronRangesByTx.metadata.unique <- group_by(intronRangesByTx.metadata, .data$INTRONID) %>%
-    filter(.data$IntronEndRank == .data$MinIntronEndRank) %>%
-    mutate(TxWidthMax = max(.data$TxWidth)) %>%
-    dplyr::select(.data$INTRONID, .data$MinIntronEndRank, .data$MaxIntronEndRank, .data$TxWidthMax) %>%
-    dplyr::rename(MinIntronEndRankTxWidthMax = .data$TxWidthMax) %>%
-    distinct()
-  intronTable <- inner_join(intronTable, intronRangesByTx.metadata.unique, by = 'INTRONID')
-
   return(intronTable)
 }
 
@@ -183,12 +171,9 @@ getPromoterMetadata <- function(intronTable.firstIntron) {
   promoterMetadata <- group_by(intronTable.firstIntron, .data$promoterId) %>%
     mutate(MinMergedIntronRank = min(.data$MinIntronRank),
            MaxMergedIntronRank = max(.data$MaxIntronRank),
-           MaxMergedIntronTxWidth = max(.data$MinIntronRankTxWidthMax),
-           MinMergedIntronEndRank = min(.data$MinIntronEndRank),
-           MaxMergedIntronEndRank = max(.data$MaxIntronEndRank),
-           SumMergedIntrons = n()) %>%
+           MaxMergedIntronTxWidth = max(.data$MinIntronRankTxWidthMax)) %>%
     filter(.data$MinIntronRank == min(.data$MinIntronRank)) %>%
-    dplyr::select(.data$promoterId, .data$MinMergedIntronRank, .data$MaxMergedIntronRank, .data$MaxMergedIntronTxWidth, .data$MinMergedIntronEndRank, .data$MaxMergedIntronEndRank, .data$SumMergedIntrons) %>%
+    dplyr::select(.data$promoterId, .data$MinMergedIntronRank, .data$MaxMergedIntronRank, .data$MaxMergedIntronTxWidth) %>%
     distinct()
   return(promoterMetadata)
 }
@@ -200,8 +185,7 @@ annotateReducedExonRanges <- function(exonReducedRanges, promoterMetadata, intro
                                ranges = IRanges(start = intronReducedTable$start, intronReducedTable$end),
                                strand = intronReducedTable$strand)
   exonReducedRanges$intronId <- as(intronIdByPromoter.firstIntron, 'IntegerList')
-  mcols(exonReducedRanges) <- cbind(mcols(exonReducedRanges), intronReducedTable[, c('promoterId', 'MinMergedIntronRank', 'MaxMergedIntronRank', 'MaxMergedIntronTxWidth',
-                                                                                     'MinMergedIntronEndRank', 'MaxMergedIntronEndRank', 'SumMergedIntrons')])
+  mcols(exonReducedRanges) <- cbind(mcols(exonReducedRanges), intronReducedTable[, c('promoterId', 'MinMergedIntronRank', 'MaxMergedIntronRank', 'MaxMergedIntronTxWidth')])
   return(exonReducedRanges)
 }
 
@@ -213,8 +197,5 @@ annotateIntronRanges <- function(intronRanges.unique, intronTable) {
   intronRanges.annotated$MinIntronRank <- intronTable$MinIntronRank
   intronRanges.annotated$MaxIntronRank <- intronTable$MaxIntronRank
   intronRanges.annotated$MinIntronRankTxWidthMax <- intronTable$MinIntronRankTxWidthMax
-  intronRanges.annotated$MinIntronEndRank <- intronTable$MinIntronEndRank
-  intronRanges.annotated$MaxIntronEndRank <- intronTable$MaxIntronEndRank
-  intronRanges.annotated$MinIntronEndRankTxWidthMax <- intronTable$MinIntronEndRankTxWidthMax
   return(intronRanges.annotated)
 }
