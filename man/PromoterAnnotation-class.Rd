@@ -4,23 +4,19 @@
 \name{PromoterAnnotation-class}
 \alias{PromoterAnnotation-class}
 \alias{PromoterAnnotation}
-\alias{reducedExonRanges,PromoterAnnotation-method}
 \alias{annotatedIntronRanges,PromoterAnnotation-method}
 \alias{promoterIdMapping,PromoterAnnotation-method}
 \alias{promoterCoordinates,PromoterAnnotation-method}
-\alias{reducedExonRanges<-,PromoterAnnotation-method}
 \alias{annotatedIntronRanges<-,PromoterAnnotation-method}
 \alias{promoterIdMapping<-,PromoterAnnotation-method}
 \alias{promoterCoordinates<-,PromoterAnnotation-method}
 \title{S4 class for promoter annotation data for a specific annotation version}
 \usage{
-PromoterAnnotation(reducedExonRanges = GRanges(),
-  annotatedIntronRanges = GRanges(), promoterIdMapping = data.frame(),
-  promoterCoordinates = GRanges())
-
-reducedExonRanges(x)
-
-\S4method{reducedExonRanges}{PromoterAnnotation}(x)
+PromoterAnnotation(
+  annotatedIntronRanges = GRanges(),
+  promoterIdMapping = data.frame(),
+  promoterCoordinates = GRanges()
+)
 
 annotatedIntronRanges(x)
 
@@ -33,10 +29,6 @@ promoterIdMapping(x)
 promoterCoordinates(x)
 
 \S4method{promoterCoordinates}{PromoterAnnotation}(x)
-
-reducedExonRanges(x) <- value
-
-\S4method{reducedExonRanges}{PromoterAnnotation}(x) <- value
 
 annotatedIntronRanges(x) <- value
 
@@ -51,8 +43,6 @@ promoterCoordinates(x) <- value
 \S4method{promoterCoordinates}{PromoterAnnotation}(x) <- value
 }
 \arguments{
-\item{reducedExonRanges}{A GRanges object containing reduced exon ranges}
-
 \item{annotatedIntronRanges}{A GRanges object containing annotated intron ranges}
 
 \item{promoterIdMapping}{A data.frame containing mapping between transcript, tss, promoter and gene ids}
@@ -60,23 +50,17 @@ promoterCoordinates(x) <- value
 \item{promoterCoordinates}{A GRanges object containing promoter coordinates}
 
 \item{x}{A PromoterAnnotation object}
-
-\item{value}{User specified value to set}
 }
 \description{
 S4 class for promoter annotation data for a specific annotation version
 
 Constructor for PromoterAnnotation class
 
-Getter for the reduced exon ranges
-
 Getter for the annotated intron ranges
 
 Getter for the promoter id mapping
 
 Getter for the promoter coordinates
-
-Setter for the reduced exon ranges
 
 Setter for the annotated intron ranges
 
@@ -87,9 +71,6 @@ Setter for the promoter coordinates
 \section{Slots}{
 
 \describe{
-\item{\code{reducedExonRanges}}{A GRanges object. The reduced first exon ranges for
-each promoter without metadata.}
-
 \item{\code{annotatedIntronRanges}}{A GRanges object. The intron ranges annotated with the promoter
 information.}
 
