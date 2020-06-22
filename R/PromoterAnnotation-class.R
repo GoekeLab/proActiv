@@ -3,8 +3,6 @@
 
 #' S4 class for promoter annotation data for a specific annotation version
 #'
-#' @slot reducedExonRanges A GRanges object. The reduced first exon ranges for
-#'   each promoter without metadata.
 #' @slot annotatedIntronRanges A GRanges object. The intron ranges annotated with the promoter
 #'   information.
 #' @slot promoterIdMapping A data.frame object. The id mapping between transcript ids, names,
@@ -18,13 +16,11 @@
 setClass(
   "PromoterAnnotation",
   slots = c(
-    reducedExonRanges = "GRanges",
     annotatedIntronRanges = "GRanges",
     promoterIdMapping = "data.frame",
     promoterCoordinates = "GRanges"
   ),
   prototype = list(
-    reducedExonRanges = GRanges(),
     annotatedIntronRanges = GRanges(),
     promoterIdMapping = data.frame(),
     promoterCoordinates = GRanges()
@@ -33,7 +29,6 @@ setClass(
 
 #' Constructor for PromoterAnnotation class
 #'
-#' @param reducedExonRanges A GRanges object containing reduced exon ranges
 #' @param annotatedIntronRanges A GRanges object containing annotated intron ranges
 #' @param promoterIdMapping A data.frame containing mapping between transcript, tss, promoter and gene ids
 #' @param promoterCoordinates A GRanges object containing promoter coordinates
@@ -46,13 +41,11 @@ setClass(
 #' @export
 #'
 PromoterAnnotation <-
-  function(reducedExonRanges = GRanges(),
-           annotatedIntronRanges = GRanges(),
+  function(annotatedIntronRanges = GRanges(),
            promoterIdMapping = data.frame(),
            promoterCoordinates = GRanges()) {
     new(
       "PromoterAnnotation",
-      reducedExonRanges = reducedExonRanges,
       annotatedIntronRanges = annotatedIntronRanges,
       promoterIdMapping = promoterIdMapping,
       promoterCoordinates = promoterCoordinates
@@ -61,9 +54,6 @@ PromoterAnnotation <-
 
 setValidity("PromoterAnnotation", function(object) {
   check <- TRUE
-  if (is(object@reducedExonRanges, 'GRanges') == FALSE) {
-    check <- FALSE
-  }
   if (is(object@annotatedIntronRanges, 'GRanges') == FALSE) {
     check <- FALSE
   }
@@ -78,20 +68,6 @@ setValidity("PromoterAnnotation", function(object) {
 
 ###############
 ### Getters ###
-
-#' Getter for the reduced exon ranges
-#'
-#' @name PromoterAnnotation-class
-#' @rdname PromoterAnnotation-class
-#' @exportMethod reducedExonRanges
-#'
-setGeneric("reducedExonRanges", function(x) standardGeneric("reducedExonRanges"))
-
-#'
-#' @rdname PromoterAnnotation-class
-#' @aliases reducedExonRanges,PromoterAnnotation-method
-#'
-setMethod("reducedExonRanges", "PromoterAnnotation", function(x) x@reducedExonRanges)
 
 #' Getter for the annotated intron ranges
 #'
@@ -139,28 +115,6 @@ setMethod("promoterCoordinates", "PromoterAnnotation", function(x) x@promoterCoo
 
 ###############
 ### Setters ###
-
-#' Setter for the reduced exon ranges
-#'
-#' @param value User specified value to set
-#'
-#' @name PromoterAnnotation-class
-#' @rdname PromoterAnnotation-class
-#' @exportMethod reducedExonRanges<-
-#'
-#' @importFrom methods validObject
-#'
-setGeneric("reducedExonRanges<-", function(x, value) standardGeneric("reducedExonRanges<-"))
-
-#'
-#' @rdname PromoterAnnotation-class
-#' @aliases reducedExonRanges<-,PromoterAnnotation-method
-#'
-setMethod("reducedExonRanges<-", "PromoterAnnotation", function(x, value) {
-  x@reducedExonRanges <- value
-  validObject(x)
-  x
-})
 
 #' Setter for the annotated intron ranges
 #'
