@@ -15,7 +15,7 @@ be used in keepStandardChromosomes(). Supported species can be seen with
 names(genomeStyles()).}
 }
 \value{
-A PromoterAnnotation object. The reduced exon ranges, annotated
+A PromoterAnnotation object. The annotated
   intron ranges, promoter coordinates and the promoter id mapping are
   attributes of the promoter annotation data.
 }
