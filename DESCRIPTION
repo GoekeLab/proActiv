@@ -13,7 +13,7 @@ Description: Estimate promoter activity using RNA-Seq data.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Depends: R (>= 2.10)
+Depends: R (>= 3.5.0)
 RoxygenNote: 7.1.0
 Imports: 
     dplyr,
@@ -27,5 +27,5 @@ Imports:
     rlang,
     SummarizedExperiment
 Suggests: 
-    parallel,
-    DESeq2
+    DESeq2,
+    BiocParallel
