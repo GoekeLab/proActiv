@@ -6,7 +6,7 @@
 #'   be used in keepStandardChromosomes(). Supported species can be seen with
 #'   names(genomeStyles()).
 #'
-#' @return A PromoterAnnotation object. The reduced exon ranges, annotated
+#' @return A PromoterAnnotation object. The annotated
 #'   intron ranges, promoter coordinates and the promoter id mapping are
 #'   attributes of the promoter annotation data.
 #' @export
@@ -90,7 +90,7 @@ preparePromoterAnnotation <- function(txdb, species) {
   ### Annotate the reduced exons with promoter metadata ###
   #########################################################
   
-  print('Prepare reduced exon ranges...')
+  print('Annotating reduced exon ranges...')
   ## Identify first intron for each promoter for each transcript 
   intronIdByPromoter.firstIntron <- getIntronIdPerPromoter(intronRangesByTx.unlist, promoterIdMapping) # this replaces revmap
   
@@ -107,21 +107,23 @@ preparePromoterAnnotation <- function(txdb, species) {
   ### Retrieve promoter coordinates ###
   #####################################
   
-  print('Prepare promoter coordinates...')
+  print('Prepare promoter coordinates and first exon ranges...')
   promoterCoordinates <- promoters(exonReducedRanges, downstream = 1, upstream = 0)
+  exonEnd <- resize(exonReducedRanges, width = 1, fix = 'end')
   promoterCoordinates.metadata <- data.frame(promoterId = promoterCoordinates$promoterId,
                                              geneId = promoterIdMapping$geneId[match(promoterCoordinates$promoterId, promoterIdMapping$promoterId)],
                                              internalPromoter = promoterCoordinates$MaxMergedIntronRank > 1,
+                                             firstExonEnd = end(exonEnd),
                                              stringsAsFactors = FALSE)
   mcols(promoterCoordinates) <- promoterCoordinates.metadata
+  promoterCoordinates$intronId <- exonReducedRanges$intronId
   
   #################################
   ### Build Promoter Annotation ###
   #################################
   
-  reducedExonRanges(promoterAnnotation) <- exonReducedRanges
-  annotatedIntronRanges(promoterAnnotation) <- intronRanges.annotated
-  promoterIdMapping(promoterAnnotation) <- promoterIdMapping
+  annotatedIntronRanges(promoterAnnotation) <- intronRanges.annotated[,c('INTRONID', 'TXNAME')]
+  promoterIdMapping(promoterAnnotation) <- promoterIdMapping[,c('transcriptName', 'promoterId', 'geneId')]
   promoterCoordinates(promoterAnnotation) <- promoterCoordinates
   return(promoterAnnotation)
 } 
