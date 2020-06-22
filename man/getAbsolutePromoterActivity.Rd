@@ -5,8 +5,12 @@
 \title{Prepare the absolute promoter activity table including the promoter and gene
 ids}
 \usage{
-getAbsolutePromoterActivity(junctionReadCounts, promoterAnnotationData,
-  log2 = TRUE, pseudocount = 1)
+getAbsolutePromoterActivity(
+  junctionReadCounts,
+  promoterAnnotationData,
+  log2 = TRUE,
+  pseudocount = 1
+)
 }
 \arguments{
 \item{junctionReadCounts}{Matrix of junction read counts (rows: promoters,
@@ -38,7 +42,7 @@ absolutePromoterActivity <- getAbsolutePromoterActivity(junctionReadCounts,
 
 }
 \seealso{
-\code{\link{preparePromoterIdMapping}} for preparing the mapping
+\code{\link{preparePromoterAnnotation}} for preparing the mapping
   between promoters and genes, \code{\link{calculatePromoterReadCounts}} and
   \code{\link{normalizePromoterReadCounts}} for obtaining junction read
   counts

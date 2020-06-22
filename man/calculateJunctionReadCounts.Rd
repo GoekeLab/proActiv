@@ -6,7 +6,7 @@
 each promoter for the input junction file}
 \usage{
 calculateJunctionReadCounts(
-  exonRanges,
+  promoterCoordinates,
   intronRanges,
   junctionFilePath = "",
   junctionType = "",
@@ -14,7 +14,7 @@ calculateJunctionReadCounts(
 )
 }
 \arguments{
-\item{exonRanges}{A GRanges object containing reduced exon ranges by gene}
+\item{promoterCoordinates}{A GRanges object containing reduced exon ranges by gene}
 
 \item{intronRanges}{A Granges object containing the annotated unique intron
 ranges. These ranges will be used for counting the reads}
@@ -37,12 +37,12 @@ each promoter for the input junction file
 \examples{
 \dontrun{
 junctionFilePath <- './sample1-tophat.bed'
-junctionCounts <- calculateJunctionReadCounts(exonReducedRanges,
+junctionCounts <- calculateJunctionReadCounts(promoterCoordinates,
                                                intronRanges.annotated,
                                                junctionFilePath,
                                                junctionType = 'tophat')
 junctionFilePath <- './sample1.bam'                                                
-junctionCounts <- calculateJunctionReadCounts(exonReducedRanges,
+junctionCounts <- calculateJunctionReadCounts(promoterCoordinates,
                                                intronRanges.annotated,
                                                junctionFilePath,
                                                junctionType = 'bam',

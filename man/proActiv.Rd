@@ -5,7 +5,7 @@
 \title{Wrapper function returning Summarized Experiment object giving promoter counts and activity}
 \usage{
 proActiv(
-  files = NULL,
+  files,
   promoterAnnotation,
   fileLabels = NULL,
   genome = NULL,
