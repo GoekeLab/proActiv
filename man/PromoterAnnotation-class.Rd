@@ -4,23 +4,23 @@
 \name{PromoterAnnotation-class}
 \alias{PromoterAnnotation-class}
 \alias{PromoterAnnotation}
-\alias{annotatedIntronRanges,PromoterAnnotation-method}
+\alias{intronRanges,PromoterAnnotation-method}
 \alias{promoterIdMapping,PromoterAnnotation-method}
 \alias{promoterCoordinates,PromoterAnnotation-method}
-\alias{annotatedIntronRanges<-,PromoterAnnotation-method}
+\alias{intronRanges<-,PromoterAnnotation-method}
 \alias{promoterIdMapping<-,PromoterAnnotation-method}
 \alias{promoterCoordinates<-,PromoterAnnotation-method}
 \title{S4 class for promoter annotation data for a specific annotation version}
 \usage{
 PromoterAnnotation(
-  annotatedIntronRanges = GRanges(),
+  intronRanges = GRanges(),
   promoterIdMapping = data.frame(),
   promoterCoordinates = GRanges()
 )
 
-annotatedIntronRanges(x)
+intronRanges(x)
 
-\S4method{annotatedIntronRanges}{PromoterAnnotation}(x)
+\S4method{intronRanges}{PromoterAnnotation}(x)
 
 promoterIdMapping(x)
 
@@ -30,9 +30,9 @@ promoterCoordinates(x)
 
 \S4method{promoterCoordinates}{PromoterAnnotation}(x)
 
-annotatedIntronRanges(x) <- value
+intronRanges(x) <- value
 
-\S4method{annotatedIntronRanges}{PromoterAnnotation}(x) <- value
+\S4method{intronRanges}{PromoterAnnotation}(x) <- value
 
 promoterIdMapping(x) <- value
 
@@ -43,7 +43,7 @@ promoterCoordinates(x) <- value
 \S4method{promoterCoordinates}{PromoterAnnotation}(x) <- value
 }
 \arguments{
-\item{annotatedIntronRanges}{A GRanges object containing annotated intron ranges}
+\item{intronRanges}{A GRanges object containing annotated intron ranges}
 
 \item{promoterIdMapping}{A data.frame containing mapping between transcript, tss, promoter and gene ids}
 
@@ -71,7 +71,7 @@ Setter for the promoter coordinates
 \section{Slots}{
 
 \describe{
-\item{\code{annotatedIntronRanges}}{A GRanges object. The intron ranges annotated with the promoter
+\item{\code{intronRanges}}{A GRanges object. The intron ranges annotated with the promoter
 information.}
 
 \item{\code{promoterIdMapping}}{A data.frame object. The id mapping between transcript ids, names,

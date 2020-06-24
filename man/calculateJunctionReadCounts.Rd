@@ -8,20 +8,21 @@ each promoter for the input junction file}
 calculateJunctionReadCounts(
   promoterCoordinates,
   intronRanges,
-  junctionFilePath = "",
-  junctionType = "",
+  file = "",
+  fileType = "",
   genome = ""
 )
 }
 \arguments{
-\item{promoterCoordinates}{A GRanges object containing reduced exon ranges by gene}
+\item{promoterCoordinates}{A GRanges object containing promoter coordinates
+and reduced exon coordinates by gene}
 
 \item{intronRanges}{A Granges object containing the annotated unique intron
 ranges. These ranges will be used for counting the reads}
 
-\item{junctionFilePath}{character path for the input junction bed or bam file}
+\item{file}{character path for the input junction bed or bam file}
 
-\item{junctionType}{character type of the junction bed file. Either 'tophat',
+\item{fileType}{character type of the junction bed file. Either 'tophat',
 'star' or 'bam'}
 
 \item{genome}{character genome version}
@@ -36,16 +37,16 @@ each promoter for the input junction file
 }
 \examples{
 \dontrun{
-junctionFilePath <- './sample1-tophat.bed'
+file <- './sample1-tophat.bed'
 junctionCounts <- calculateJunctionReadCounts(promoterCoordinates,
-                                               intronRanges.annotated,
-                                               junctionFilePath,
-                                               junctionType = 'tophat')
-junctionFilePath <- './sample1.bam'                                                
+                                               intronRanges,
+                                               file,
+                                               fileType = 'tophat')
+file <- './sample1.bam'                                                
 junctionCounts <- calculateJunctionReadCounts(promoterCoordinates,
-                                               intronRanges.annotated,
-                                               junctionFilePath,
-                                               junctionType = 'bam',
+                                               intronRanges,
+                                               file,
+                                               fileType = 'bam',
                                                genome = 'hg19')}
 
 }
