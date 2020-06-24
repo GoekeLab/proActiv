@@ -4,8 +4,8 @@
 #' @param promoterCoordinates A GRanges object containing reduced exon ranges by gene
 #' @param intronRanges A Granges object containing the annotated unique intron
 #'   ranges. These ranges will be used for counting the reads
-#' @param junctionFilePath character path for the input junction bed or bam file
-#' @param junctionType character type of the junction bed file. Either 'tophat',
+#' @param file character path for the input junction bed or bam file
+#' @param fileType character type of the junction bed file. Either 'tophat',
 #'   'star' or 'bam'
 #' @param genome character genome version
 #'
@@ -15,38 +15,38 @@
 #'
 #' @examples
 #' \dontrun{
-#' junctionFilePath <- './sample1-tophat.bed'
+#' file <- './sample1-tophat.bed'
 #' junctionCounts <- calculateJunctionReadCounts(promoterCoordinates,
-#'                                                intronRanges.annotated,
-#'                                                junctionFilePath,
-#'                                                junctionType = 'tophat')
-#' junctionFilePath <- './sample1.bam'                                                
+#'                                               intronRanges,
+#'                                               file,
+#'                                               fileType = 'tophat')
+#' file <- './sample1.bam'                                                
 #' junctionCounts <- calculateJunctionReadCounts(promoterCoordinates,
-#'                                                intronRanges.annotated,
-#'                                                junctionFilePath,
-#'                                                junctionType = 'bam',
-#'                                                genome = 'hg19')}
+#'                                               intronRanges,
+#'                                               file,
+#'                                               fileType = 'bam',
+#'                                               genome = 'hg19')}
 #'
 #' @importFrom GenomeInfoDb seqlevelsStyle
 #' @importFrom S4Vectors queryHits
 #' @importFrom S4Vectors subjectHits
 #'
-calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges, junctionFilePath = '', junctionType = '', genome = '') {
+calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges, file = '', fileType = '', genome = '') {
   
-  if(junctionType == 'tophat') {
-    print(paste0('Processing: ', junctionFilePath))
-    junctionTable <- readTopHatJunctions(junctionFilePath)
+  if(fileType == 'tophat') {
+    print(paste0('Processing: ', file))
+    junctionTable <- readTopHatJunctions(file)
     seqlevelsStyle(junctionTable) <- 'UCSC'
     print('File loaded into memory')
-  } else if(junctionType == 'star') {
-    print(paste0('Processing: ', junctionFilePath))
-    junctionTable <- readSTARJunctions(junctionFilePath)
+  } else if(fileType == 'star') {
+    print(paste0('Processing: ', file))
+    junctionTable <- readSTARJunctions(file)
     seqlevelsStyle(junctionTable) <- 'UCSC'
     junctionTable$score <- junctionTable$um_reads  # to match the tophat style, uniquely mapped reads are used as score
     print('File loaded into memory')
-  } else if (junctionType == 'bam') {
-    print(paste0('Processing: ', junctionFilePath))
-    rawBam <- readGAlignments(junctionFilePath)
+  } else if (fileType == 'bam') {
+    print(paste0('Processing: ', file))
+    rawBam <- readGAlignments(file)
     bam <- keepStandardChromosomes(rawBam, pruning.mode = 'coarse')
     rm(rawBam)
     gc()
@@ -77,19 +77,18 @@ calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges, junct
 #' Calculate the promoter read counts using junction read counts approach for
 #' all the input junction files
 #'
-#' @param promoterAnnotationData A PromoterAnnotation object containing the
-#'   reduced exon ranges, annotated intron ranges, promoter coordinates and the
-#'   promoter id mapping
-#' @param junctionFilePaths A character vector. The list of junction or BAM files 
+#' @param promoterAnnotation A PromoterAnnotation object containing
+#'   intron ranges, promoter coordinates and the promoter id mapping
+#' @param files A character vector. The list of junction or BAM files 
 #'   for which the junction read counts will be calculated
-#' @param junctionFileLabels A character vector. The labels of junction or BAM 
+#' @param fileLabels A character vector. The labels of junction or BAM 
 #'   files for which the junction read counts will be calculated. These labels 
 #'   will be used as column names for the output data.frame object
-#' @param junctionType A character. Type of the junction bed or bam file, either
+#' @param fileType A character. Type of the junction bed or bam file, either
 #'   'tophat', 'star' or 'bam
 #' @param genome A character. Genome version used. Must be specified if input is
 #'  a BAM file. Defaults to NULL
-#' @param numberOfCores A numeric value. The number of cores to be used for
+#' @param ncores A numeric value. The number of cores to be used for
 #'   counting junction reads. Defaults to 1 (no parallelization). This parameter
 #'   will be used as an argument to BiocParallel::bplapply
 #'
@@ -99,48 +98,48 @@ calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges, junct
 #'
 #' @examples
 #' \dontrun{
-#' junctionFilePaths <- c('./sample1-tophat.bed', './sample2-tophat.bed')
-#' junctionFileLabels <- c('sample1', 'sample2')
-#' promoterReadCounts <- calculatePromoterReadCounts(promoterAnnotationData,
-#'                                                    junctionFilePaths,
-#'                                                    junctionFileLabels,
-#'                                                    junctionType = 'tophat',
+#' files <- c('./sample1-tophat.bed', './sample2-tophat.bed')
+#' fileLabels <- c('sample1', 'sample2')
+#' promoterReadCounts <- calculatePromoterReadCounts(promoterAnnotation,
+#'                                                    files,
+#'                                                    fileLabels,
+#'                                                    fileType = 'tophat',
 #'                                                    genome = NULL
-#'                                                    numberOfCores = 1)
+#'                                                    ncores = 1)
 #'                                                    
-#' junctionFilePaths <- c('./sample1.bam', './sample2.bam')
-#' junctionFileLabels <- c('sample1', 'sample2')
-#' promoterReadCounts <- calculatePromoterReadCounts(promoterAnnotationData,
-#'                                                    junctionFilePaths,
-#'                                                    junctionFileLabels,
-#'                                                    junctionType = 'bam',
+#' files <- c('./sample1.bam', './sample2.bam')
+#' fileLabels <- c('sample1', 'sample2')
+#' promoterReadCounts <- calculatePromoterReadCounts(promoterAnnotation,
+#'                                                    files,
+#'                                                    fileLabels,
+#'                                                    fileType = 'bam',
 #'                                                    genome = 'hg19',
-#'                                                    numberOfCores = 1)}
+#'                                                    ncores = 1)}
 #'
-calculatePromoterReadCounts <- function(promoterAnnotationData, junctionFilePaths = NULL, junctionFileLabels = NULL,
-                                        junctionType = NULL , genome = NULL, numberOfCores = 1) {
+calculatePromoterReadCounts <- function(promoterAnnotation, files = NULL, fileLabels = NULL,
+                                        fileType = NULL , genome = NULL, ncores = 1) {
   
-  if (numberOfCores > 1 & requireNamespace('BiocParallel', quietly = TRUE) == TRUE) {
+  if (ncores > 1 & requireNamespace('BiocParallel', quietly = TRUE) == TRUE) {
     bpParameters <- BiocParallel::bpparam()
-    bpParameters$workers <- numberOfCores
-    promoterReadCounts <- BiocParallel::bplapply(junctionFilePaths, calculateJunctionReadCounts, promoterCoordinates = promoterCoordinates(promoterAnnotationData),
-                                                 intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, genome = genome, 
+    bpParameters$workers <- ncores
+    promoterReadCounts <- BiocParallel::bplapply(files, calculateJunctionReadCounts, promoterCoordinates = promoterCoordinates(promoterAnnotation),
+                                                 intronRanges = intronRanges(promoterAnnotation), fileType = fileType, genome = genome, 
                                                  BPPARAM = bpParameters)
   } else {
     if (requireNamespace('BiocParallel', quietly = TRUE) == FALSE) {
       print('Warning: "BiocParallel" package is not available! Using sequential version instead...')
     }
-    promoterReadCounts <- lapply(junctionFilePaths, calculateJunctionReadCounts, promoterCoordinates = promoterCoordinates(promoterAnnotationData),
-                                 intronRanges = annotatedIntronRanges(promoterAnnotationData), junctionType = junctionType, genome = genome)
+    promoterReadCounts <- lapply(files, calculateJunctionReadCounts, promoterCoordinates = promoterCoordinates(promoterAnnotation),
+                                 intronRanges = intronRanges(promoterAnnotation), fileType = fileType, genome = genome)
   }
 
-  if (length(junctionFilePaths) == 1) {
+  if (length(files) == 1) {
     promoterReadCounts <- data.frame(counts = promoterReadCounts)
   } else {
     promoterReadCounts <- as.data.frame(promoterReadCounts)
   }
-  rownames(promoterReadCounts) <- promoterCoordinates(promoterAnnotationData)$promoterId
-  colnames(promoterReadCounts) <- junctionFileLabels
+  rownames(promoterReadCounts) <- promoterCoordinates(promoterAnnotation)$promoterId
+  colnames(promoterReadCounts) <- fileLabels
   return(promoterReadCounts)
 }
 

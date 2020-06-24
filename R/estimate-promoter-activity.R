@@ -3,9 +3,8 @@
 #'
 #' @param junctionReadCounts Matrix of junction read counts (rows: promoters,
 #'   cols: samples)
-#' @param promoterAnnotationData A PromoterAnnotation object containing the
-#'   reduced exon ranges, annotated intron ranges, promoter coordinates and the
-#'   promoter id mapping
+#' @param promoterAnnotation A PromoterAnnotation object containing
+#'   intron ranges, promoter coordinates and promoter id mapping
 #' @param log2 Logical indicating whether log2 read counts should be used
 #'   (default: TRUE) or not
 #' @param pseudocount Number to be used for log2 as pseudocount if log2 is TRUE
@@ -16,7 +15,7 @@
 #' @examples
 #' \dontrun{
 #' absolutePromoterActivity <- getAbsolutePromoterActivity(junctionReadCounts,
-#'                                                          promoterAnnotationData,
+#'                                                          promoterAnnotation,
 #'                                                          log2 = TRUE,
 #'                                                          pseudocount = 1)
 #' }
@@ -26,9 +25,9 @@
 #'   \code{\link{normalizePromoterReadCounts}} for obtaining junction read
 #'   counts
 #'
-getAbsolutePromoterActivity <- function(junctionReadCounts, promoterAnnotationData, log2 = TRUE, pseudocount = 1) {
+getAbsolutePromoterActivity <- function(junctionReadCounts, promoterAnnotation, log2 = TRUE, pseudocount = 1) {
   print(paste0('Calculating ', ifelse(log2 == TRUE, 'log2 ', ''), 'absolute promoter activity...'))
-  conversionHelper <- unique(promoterIdMapping(promoterAnnotationData)[, c('promoterId', 'geneId')])
+  conversionHelper <- unique(promoterIdMapping(promoterAnnotation)[, c('promoterId', 'geneId')])
   conversionHelper <- conversionHelper[match(rownames(junctionReadCounts), conversionHelper$promoterId), ]
   if (log2 == TRUE & is.null(pseudocount) == FALSE) {
     junctionReadCounts <- log2(junctionReadCounts + pseudocount)
