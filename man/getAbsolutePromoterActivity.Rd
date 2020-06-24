@@ -7,7 +7,7 @@ ids}
 \usage{
 getAbsolutePromoterActivity(
   junctionReadCounts,
-  promoterAnnotationData,
+  promoterAnnotation,
   log2 = TRUE,
   pseudocount = 1
 )
@@ -16,9 +16,8 @@ getAbsolutePromoterActivity(
 \item{junctionReadCounts}{Matrix of junction read counts (rows: promoters,
 cols: samples)}
 
-\item{promoterAnnotationData}{A PromoterAnnotation object containing the
-reduced exon ranges, annotated intron ranges, promoter coordinates and the
-promoter id mapping}
+\item{promoterAnnotation}{A PromoterAnnotation object containing the
+intron ranges, promoter coordinates and the promoter id mapping}
 
 \item{log2}{Logical indicating whether log2 read counts should be used
 (default: TRUE) or not}
@@ -35,7 +34,7 @@ ids
 \examples{
 \dontrun{
 absolutePromoterActivity <- getAbsolutePromoterActivity(junctionReadCounts,
-                                                         promoterAnnotationData,
+                                                         promoterAnnotation,
                                                          log2 = TRUE,
                                                          pseudocount = 1)
 }
