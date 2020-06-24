@@ -3,8 +3,7 @@
 #' @param files A character vector. The list of input files for 
 #'   which the junction read counts will be calculated
 #' @param promoterAnnotation A PromoterAnnotation object containing the
-#'   reduced exon ranges, annotated intron ranges, promoter coordinates and the
-#'   promoter id mapping
+#'   intron ranges, promoter coordinates and the promoter id mapping
 #' @param fileLabels A character vector. The labels of input files 
 #'   for which the junction read counts will be calculated. These labels will be 
 #'   used as column names for each output data.frame object. If not provided,
