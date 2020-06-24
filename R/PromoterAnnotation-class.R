@@ -3,7 +3,7 @@
 
 #' S4 class for promoter annotation data for a specific annotation version
 #'
-#' @slot annotatedIntronRanges A GRanges object. The intron ranges annotated with the promoter
+#' @slot intronRanges A GRanges object. The intron ranges annotated with the promoter
 #'   information.
 #' @slot promoterIdMapping A data.frame object. The id mapping between transcript ids, names,
 #'   TSS ids, promoter ids and gene ids.
@@ -16,12 +16,12 @@
 setClass(
   "PromoterAnnotation",
   slots = c(
-    annotatedIntronRanges = "GRanges",
+    intronRanges = "GRanges",
     promoterIdMapping = "data.frame",
     promoterCoordinates = "GRanges"
   ),
   prototype = list(
-    annotatedIntronRanges = GRanges(),
+    intronRanges = GRanges(),
     promoterIdMapping = data.frame(),
     promoterCoordinates = GRanges()
   )
@@ -29,7 +29,7 @@ setClass(
 
 #' Constructor for PromoterAnnotation class
 #'
-#' @param annotatedIntronRanges A GRanges object containing annotated intron ranges
+#' @param intronRanges A GRanges object containing annotated intron ranges
 #' @param promoterIdMapping A data.frame containing mapping between transcript, tss, promoter and gene ids
 #' @param promoterCoordinates A GRanges object containing promoter coordinates
 #'
@@ -41,12 +41,12 @@ setClass(
 #' @export
 #'
 PromoterAnnotation <-
-  function(annotatedIntronRanges = GRanges(),
+  function(intronRanges = GRanges(),
            promoterIdMapping = data.frame(),
            promoterCoordinates = GRanges()) {
     new(
       "PromoterAnnotation",
-      annotatedIntronRanges = annotatedIntronRanges,
+      intronRanges = intronRanges,
       promoterIdMapping = promoterIdMapping,
       promoterCoordinates = promoterCoordinates
     )
@@ -54,7 +54,7 @@ PromoterAnnotation <-
 
 setValidity("PromoterAnnotation", function(object) {
   check <- TRUE
-  if (is(object@annotatedIntronRanges, 'GRanges') == FALSE) {
+  if (is(object@intronRanges, 'GRanges') == FALSE) {
     check <- FALSE
   }
   if (is(object@promoterIdMapping, 'data.frame') == FALSE) {
@@ -75,15 +75,15 @@ setValidity("PromoterAnnotation", function(object) {
 #'
 #' @name PromoterAnnotation-class
 #' @rdname PromoterAnnotation-class
-#' @exportMethod annotatedIntronRanges
+#' @exportMethod intronRanges
 #'
-setGeneric("annotatedIntronRanges", function(x) standardGeneric("annotatedIntronRanges"))
+setGeneric("intronRanges", function(x) standardGeneric("intronRanges"))
 
 #'
 #' @rdname PromoterAnnotation-class
-#' @aliases annotatedIntronRanges,PromoterAnnotation-method
+#' @aliases intronRanges,PromoterAnnotation-method
 #'
-setMethod("annotatedIntronRanges", "PromoterAnnotation", function(x) x@annotatedIntronRanges)
+setMethod("intronRanges", "PromoterAnnotation", function(x) x@intronRanges)
 
 #' Getter for the promoter id mapping
 #'
@@ -120,18 +120,18 @@ setMethod("promoterCoordinates", "PromoterAnnotation", function(x) x@promoterCoo
 #'
 #' @name PromoterAnnotation-class
 #' @rdname PromoterAnnotation-class
-#' @exportMethod annotatedIntronRanges<-
+#' @exportMethod intronRanges<-
 #'
 #' @importFrom methods validObject
 #'
-setGeneric("annotatedIntronRanges<-", function(x, value) standardGeneric("annotatedIntronRanges<-"))
+setGeneric("intronRanges<-", function(x, value) standardGeneric("intronRanges<-"))
 
 #'
 #' @rdname PromoterAnnotation-class
-#' @aliases annotatedIntronRanges<-,PromoterAnnotation-method
+#' @aliases intronRanges<-,PromoterAnnotation-method
 #'
-setMethod("annotatedIntronRanges<-", "PromoterAnnotation", function(x, value) {
-  x@annotatedIntronRanges <- value
+setMethod("intronRanges<-", "PromoterAnnotation", function(x, value) {
+  x@intronRanges <- value
   validObject(x)
   x
 })
