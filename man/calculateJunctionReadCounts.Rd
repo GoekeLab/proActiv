@@ -19,12 +19,12 @@ calculateJunctionReadCounts(
 \item{intronRanges}{A Granges object containing the annotated unique intron
 ranges. These ranges will be used for counting the reads}
 
+\item{file}{character path for the input junction bed or bam file}
+
 \item{fileType}{character type of the junction bed file. Either 'tophat',
 'star' or 'bam'}
 
 \item{genome}{character genome version}
-
-\item{files}{character path for the input junction bed or bam file}
 }
 \value{
 The total number of junction reads overlapping with each promoter for
@@ -36,15 +36,15 @@ each promoter for the input junction file
 }
 \examples{
 \dontrun{
-files <- './sample1-tophat.bed'
+file <- './sample1-tophat.bed'
 junctionCounts <- calculateJunctionReadCounts(promoterCoordinates,
                                               intronRanges,
-                                              files,
+                                              file,
                                               fileType = 'tophat')
-files <- './sample1.bam'                                                
+file <- './sample1.bam'                                                
 junctionCounts <- calculateJunctionReadCounts(promoterCoordinates,
                                               intronRanges,
-                                              files,
+                                              file,
                                               fileType = 'bam',
                                               genome = 'hg19')}
 

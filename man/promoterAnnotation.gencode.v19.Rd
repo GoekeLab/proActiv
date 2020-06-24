@@ -8,7 +8,7 @@ required for promoter activity estimation}
 \format{
 A PromoterAnnotation (S4 Class) object containing all the promoter
   annotation objects for Gencode.v19. The object has 4 slots: \describe{
-  \item{annotatedIntronRanges}{A GRanges object of 344,651 ranges corresponding
+  \item{intronRanges}{A GRanges object of 344,651 ranges corresponding
   to introns, annotated with the associated transcript.} 
   \item{promoterIdMapping}{The id mapping between transcript names, 
   promoter ids and gene ids for Gencode v19.} 

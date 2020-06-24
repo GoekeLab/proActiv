@@ -1,10 +1,9 @@
-#' Wrapper function returning Summarized Experiment object giving promoter counts and activity
+#' Wrapper function returning SummarizedExperiment object giving promoter counts and activity
 #'
 #' @param files A character vector. The list of input files for 
 #'   which the junction read counts will be calculated
 #' @param promoterAnnotation A PromoterAnnotation object containing the
-#'   reduced exon ranges, annotated intron ranges, promoter coordinates and the
-#'   promoter id mapping
+#'   intron ranges, promoter coordinates and promoter id mapping
 #' @param fileLabels A character vector. The labels of input files 
 #'   for which the junction read counts will be calculated. These labels will be 
 #'   used as column names for each output data.frame object. If not provided,
@@ -26,16 +25,16 @@
 #' files <- c('./sample1-tophat.bed', './sample2-tophat.bed')
 #' proActivFromJunctions <- proActiv(files = files,
 #'                                   promoterAnnotation = promoterAnnotation, 
-#'                                  fileLabels = NULL, 
-#'                                  genome = NULL, 
-#'                                  ncores = 1)
+#'                                   fileLabels = NULL, 
+#'                                   genome = NULL, 
+#'                                   ncores = 1)
 #' 
 #' files <- c('./sample1.bam', './sample2.bam')
 #' proActivFromBAM <- proActiv(files = files,
 #'                             promoterAnnotation  = promoterAnnotation,
-#'                            fileLabels = NULL,
-#'                            genome = 'hg19',
-#'                            ncores = 1)}
+#'                             fileLabels = NULL,
+#'                             genome = 'hg19',
+#'                             ncores = 1)}
 #'                            
 #' @import SummarizedExperiment
 #' @import S4Vectors

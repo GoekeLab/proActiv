@@ -2,7 +2,7 @@
 % Please edit documentation in R/proActiv.R
 \name{proActiv}
 \alias{proActiv}
-\title{Wrapper function returning Summarized Experiment object giving promoter counts and activity}
+\title{Wrapper function returning SummarizedExperiment object giving promoter counts and activity}
 \usage{
 proActiv(
   files,
@@ -17,8 +17,7 @@ proActiv(
 which the junction read counts will be calculated}
 
 \item{promoterAnnotation}{A PromoterAnnotation object containing the
-reduced exon ranges, annotated intron ranges, promoter coordinates and the
-promoter id mapping}
+intron ranges, promoter coordinates and promoter id mapping}
 
 \item{fileLabels}{A character vector. The labels of input files 
 for which the junction read counts will be calculated. These labels will be 
@@ -38,22 +37,22 @@ A SummarizedExperiment object with assays giving promoter counts and activity
   row data
 }
 \description{
-Wrapper function returning Summarized Experiment object giving promoter counts and activity
+Wrapper function returning SummarizedExperiment object giving promoter counts and activity
 }
 \examples{
 \dontrun{
 files <- c('./sample1-tophat.bed', './sample2-tophat.bed')
 proActivFromJunctions <- proActiv(files = files,
                                   promoterAnnotation = promoterAnnotation, 
-                                 fileLabels = NULL, 
-                                 genome = NULL, 
-                                 ncores = 1)
+                                  fileLabels = NULL, 
+                                  genome = NULL, 
+                                  ncores = 1)
 
 files <- c('./sample1.bam', './sample2.bam')
 proActivFromBAM <- proActiv(files = files,
                             promoterAnnotation  = promoterAnnotation,
-                           fileLabels = NULL,
-                           genome = 'hg19',
-                           ncores = 1)}
+                            fileLabels = NULL,
+                            genome = 'hg19',
+                            ncores = 1)}
                            
 }
