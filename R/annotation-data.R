@@ -122,7 +122,7 @@ preparePromoterAnnotation <- function(txdb, species) {
   ### Build Promoter Annotation ###
   #################################
   
-  annotatedIntronRanges(promoterAnnotation) <- intronRanges.annotated[,c('INTRONID', 'TXNAME')]
+  intronRanges(promoterAnnotation) <- intronRanges.annotated[,c('INTRONID', 'TXNAME')]
   promoterIdMapping(promoterAnnotation) <- promoterIdMapping[,c('transcriptName', 'promoterId', 'geneId')]
   promoterCoordinates(promoterAnnotation) <- promoterCoordinates
   return(promoterAnnotation)
