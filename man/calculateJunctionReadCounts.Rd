@@ -8,8 +8,8 @@ each promoter for the input junction file}
 calculateJunctionReadCounts(
   promoterCoordinates,
   intronRanges,
-  junctionFilePath = "",
-  junctionType = "",
+  file = "",
+  fileType = "",
   genome = ""
 )
 }
@@ -19,12 +19,12 @@ calculateJunctionReadCounts(
 \item{intronRanges}{A Granges object containing the annotated unique intron
 ranges. These ranges will be used for counting the reads}
 
-\item{junctionFilePath}{character path for the input junction bed or bam file}
-
-\item{junctionType}{character type of the junction bed file. Either 'tophat',
+\item{fileType}{character type of the junction bed file. Either 'tophat',
 'star' or 'bam'}
 
 \item{genome}{character genome version}
+
+\item{files}{character path for the input junction bed or bam file}
 }
 \value{
 The total number of junction reads overlapping with each promoter for
@@ -36,16 +36,16 @@ each promoter for the input junction file
 }
 \examples{
 \dontrun{
-junctionFilePath <- './sample1-tophat.bed'
+files <- './sample1-tophat.bed'
 junctionCounts <- calculateJunctionReadCounts(promoterCoordinates,
-                                               intronRanges.annotated,
-                                               junctionFilePath,
-                                               junctionType = 'tophat')
-junctionFilePath <- './sample1.bam'                                                
+                                              intronRanges,
+                                              files,
+                                              fileType = 'tophat')
+files <- './sample1.bam'                                                
 junctionCounts <- calculateJunctionReadCounts(promoterCoordinates,
-                                               intronRanges.annotated,
-                                               junctionFilePath,
-                                               junctionType = 'bam',
-                                               genome = 'hg19')}
+                                              intronRanges,
+                                              files,
+                                              fileType = 'bam',
+                                              genome = 'hg19')}
 
 }

@@ -14,7 +14,7 @@ A PromoterAnnotation (S4 Class) object containing all the promoter
   promoter ids and gene ids for Gencode v19.} 
   \item{promoterCoordinates}{A GRanges object of 113,076 ranges
   showing the tss coordinate for each promoter of Gencode v19,
-  annotated with the associated geneId, coordinate of the 3' end of the first
+  annotated with the associated gene id, coordinate of the 3' end of the first
   reduced exon, and intron id.} }
 }
 \usage{

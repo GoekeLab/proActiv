@@ -4,23 +4,23 @@
 \name{PromoterAnnotation-class}
 \alias{PromoterAnnotation-class}
 \alias{PromoterAnnotation}
-\alias{annotatedIntronRanges,PromoterAnnotation-method}
+\alias{intronRanges,PromoterAnnotation-method}
 \alias{promoterIdMapping,PromoterAnnotation-method}
 \alias{promoterCoordinates,PromoterAnnotation-method}
-\alias{annotatedIntronRanges<-,PromoterAnnotation-method}
+\alias{intronRanges<-,PromoterAnnotation-method}
 \alias{promoterIdMapping<-,PromoterAnnotation-method}
 \alias{promoterCoordinates<-,PromoterAnnotation-method}
 \title{S4 class for promoter annotation data for a specific annotation version}
 \usage{
 PromoterAnnotation(
-  annotatedIntronRanges = GRanges(),
+  intronRanges = GRanges(),
   promoterIdMapping = data.frame(),
   promoterCoordinates = GRanges()
 )
 
-annotatedIntronRanges(x)
+intronRanges(x)
 
-\S4method{annotatedIntronRanges}{PromoterAnnotation}(x)
+\S4method{intronRanges}{PromoterAnnotation}(x)
 
 promoterIdMapping(x)
 
@@ -30,9 +30,9 @@ promoterCoordinates(x)
 
 \S4method{promoterCoordinates}{PromoterAnnotation}(x)
 
-annotatedIntronRanges(x) <- value
+intronRanges(x) <- value
 
-\S4method{annotatedIntronRanges}{PromoterAnnotation}(x) <- value
+\S4method{intronRanges}{PromoterAnnotation}(x) <- value
 
 promoterIdMapping(x) <- value
 
@@ -43,7 +43,7 @@ promoterCoordinates(x) <- value
 \S4method{promoterCoordinates}{PromoterAnnotation}(x) <- value
 }
 \arguments{
-\item{annotatedIntronRanges}{A GRanges object containing annotated intron ranges}
+\item{intronRanges}{A GRanges object containing intron ranges}
 
 \item{promoterIdMapping}{A data.frame containing mapping between transcript, tss, promoter and gene ids}
 
@@ -56,13 +56,13 @@ S4 class for promoter annotation data for a specific annotation version
 
 Constructor for PromoterAnnotation class
 
-Getter for the annotated intron ranges
+Getter for the intron ranges
 
 Getter for the promoter id mapping
 
 Getter for the promoter coordinates
 
-Setter for the annotated intron ranges
+Setter for the intron ranges
 
 Setter for the promoter id mapping
 
@@ -71,12 +71,14 @@ Setter for the promoter coordinates
 \section{Slots}{
 
 \describe{
-\item{\code{annotatedIntronRanges}}{A GRanges object. The intron ranges annotated with the promoter
-information.}
+\item{\code{intronRanges}}{A GRanges object. The intron ranges annotated with each intron's 
+associated transcript}
 
 \item{\code{promoterIdMapping}}{A data.frame object. The id mapping between transcript ids, names,
 TSS ids, promoter ids and gene ids.}
 
-\item{\code{promoterCoordinates}}{A GRanges object. Promoter coordinates (TSS) with gene id and internal promoter state}
+\item{\code{promoterCoordinates}}{A GRanges object. Promoter coordinates (TSS) with gene id,
+internal promoter state, coordinates of the end of the first reduced exon corresponding
+to each TSS, and associated intron ids}
 }}
 
