@@ -5,7 +5,7 @@
 #' v19
 #'
 #' @format A PromoterAnnotation (S4 Class) object containing all the promoter
-#'   annotation objects for Gencode.v19. The object has 4 slots: \describe{
+#'   annotation objects for Gencode.v19. The object has 3 slots: \describe{
 #'   \item{intronRanges}{A GRanges object of 344,651 ranges corresponding
 #'   to introns, annotated with the associated transcript.} 
 #'   \item{promoterIdMapping}{The id mapping between transcript names, 
@@ -16,3 +16,22 @@
 #'   reduced exon, and intron id.} }
 #'
 "promoterAnnotation.gencode.v19"
+
+#' Promoter annotation data for Gencode.v34 including all the annotation objects
+#' required for promoter activity estimation
+#'
+#' A GRanges object containing the tss coordinate for each promoter for Gencode
+#' v34
+#'
+#' @format A PromoterAnnotation (S4 Class) object containing all the promoter
+#'   annotation objects for Gencode.v34. The object has 3 slots: \describe{
+#'   \item{intronRanges}{A GRanges object of 383,654 ranges corresponding
+#'   to introns, annotated with the associated transcript.} 
+#'   \item{promoterIdMapping}{The id mapping between transcript names, 
+#'   promoter ids and gene ids for Gencode v34.} 
+#'   \item{promoterCoordinates}{A GRanges object of 122,635 ranges
+#'   showing the tss coordinate for each promoter of Gencode v34,
+#'   annotated with the associated gene id, coordinate of the 3' end of the first
+#'   reduced exon, and intron id.} }
+#'
+"promoterAnnotation.gencode.v34"
