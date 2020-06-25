@@ -28,4 +28,6 @@ Imports:
     SummarizedExperiment
 Suggests: 
     DESeq2,
-    BiocParallel
+    BiocParallel,
+    testthat,
+    mockery
