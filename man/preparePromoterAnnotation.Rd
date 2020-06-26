@@ -4,11 +4,11 @@
 \alias{preparePromoterAnnotation}
 \title{Prepare promoter annotation data for the user specified txdb object}
 \usage{
-preparePromoterAnnotation(txdb, species)
+preparePromoterAnnotation(file, species)
 }
 \arguments{
-\item{txdb}{A txdb object. The txdb object of the annotation version for
-which promoters will be identified.}
+\item{file}{A character object. The file path to a gtf/gff or txdb of the 
+annotation version for which promoters will be identified.}
 
 \item{species}{A character object. The genus and species of the organism to
 be used in keepStandardChromosomes(). Supported species can be seen with
@@ -24,7 +24,7 @@ Prepare promoter annotation data for the user specified txdb object
 }
 \examples{
 \dontrun{
-promoterAnnotation <- preparePromoterAnnotation(txdb,
+promoterAnnotation <- preparePromoterAnnotation(file,
                                                 species = 'Homo_sapiens')
 }
 }
