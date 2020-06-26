@@ -44,7 +44,7 @@ test_that('proActiv handles compressed input files', {
 test_that('proActiv returns a Summarized Experiment', {
 
   ### 1) Test Tophat2 BED file input ###
-  filesTophat <- list.files(system.file('/extdata/tophat2', package = 'proActiv'), full.names = TRUE, pattern = 'sample1|sample2')
+  filesTophat <- list.files(system.file('/extdata/testdata/tophat2', package = 'proActiv'), full.names = TRUE, pattern = 'sample1|sample2')
   result <- proActiv(filesTophat, promoterAnnotation)
   
   promoterCounts <- readRDS(system.file('/extdata/testdata/tophat2', 'promoterCounts.rds', package = 'proActiv'))
@@ -62,7 +62,7 @@ test_that('proActiv returns a Summarized Experiment', {
   expect_identical(absolutePromoterActivity[,c('promoterId', 'geneId')], data.frame(rowData(result)))
 
   ## 2) Test STAR junction file input ###
-  filesSTAR <- list.files(system.file('/extdata/star', package = 'proActiv'), full.names = TRUE, pattern = 'sample1|sample2')
+  filesSTAR <- list.files(system.file('/extdata/testdata/star', package = 'proActiv'), full.names = TRUE, pattern = 'sample1|sample2')
   result <- proActiv(filesSTAR, promoterAnnotation)
 
   promoterCounts <- readRDS(system.file('/extdata/testdata/star', 'promoterCounts.rds', package = 'proActiv'))
