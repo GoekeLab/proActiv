@@ -25,7 +25,8 @@ Imports:
     S4Vectors,
     methods,
     rlang,
-    SummarizedExperiment
+    SummarizedExperiment,
+    AnnotationDbi
 Suggests: 
     DESeq2,
     BiocParallel,
