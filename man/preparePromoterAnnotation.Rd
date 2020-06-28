@@ -4,11 +4,16 @@
 \alias{preparePromoterAnnotation}
 \title{Prepare promoter annotation data for the user specified txdb object}
 \usage{
-preparePromoterAnnotation(file, species)
+preparePromoterAnnotation(txdb, file, species)
 }
 \arguments{
+\item{txdb}{A txdb object. The txdb of the annotation version for which
+promoters will be identified. Either `txdb` or `file` argument must be 
+specified, but not both.}
+
 \item{file}{A character object. The file path to a gtf/gff or txdb of the 
-annotation version for which promoters will be identified.}
+annotation version for which promoters will be identified. Either `txdb` 
+or `file` argument must be specified, but not both.}
 
 \item{species}{A character object. The genus and species of the organism to
 be used in keepStandardChromosomes(). Supported species can be seen with
@@ -24,7 +29,12 @@ Prepare promoter annotation data for the user specified txdb object
 }
 \examples{
 \dontrun{
-promoterAnnotation <- preparePromoterAnnotation(file,
+file <- 'sample.gtf'
+promoterAnnotation <- preparePromoterAnnotation(file = file,
+                                                species = 'Homo_sapiens')
+
+txdb <- AnnotationDbi::loadDb('sample.gtf')
+promoterAnnotation <- preparePromoterAnnotation(txdb = txdb,
                                                 species = 'Homo_sapiens')
 }
 }
