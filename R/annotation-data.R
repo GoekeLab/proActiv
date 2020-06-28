@@ -1,7 +1,11 @@
 #' Prepare promoter annotation data for the user specified txdb object
 #'
+#' @param txdb A txdb object. The txdb of the annotation version for which
+#'   promoters will be identified. Either `txdb` or `file` argument must be 
+#'   specified, but not both.
 #' @param file A character object. The file path to a gtf/gff or txdb of the 
-#'   annotation version for which promoters will be identified.
+#'   annotation version for which promoters will be identified. Either `txdb` 
+#'   or `file` argument must be specified, but not both.
 #' @param species A character object. The genus and species of the organism to
 #'   be used in keepStandardChromosomes(). Supported species can be seen with
 #'   names(genomeStyles()).
@@ -13,33 +17,43 @@
 #'
 #' @examples
 #' \dontrun{
-#' promoterAnnotation <- preparePromoterAnnotation(file,
+#' file <- 'sample.gtf'
+#' promoterAnnotation <- preparePromoterAnnotation(file = file,
+#'                                                 species = 'Homo_sapiens')
+#' 
+#' txdb <- AnnotationDbi::loadDb('sample.gtf')
+#' promoterAnnotation <- preparePromoterAnnotation(txdb = txdb,
 #'                                                 species = 'Homo_sapiens')
 #' }
-preparePromoterAnnotation <- function(file, species) {
+preparePromoterAnnotation <- function(txdb, file, species) {
   
-  ## Parse input file
-  checkFile <- file.exists(file)
-  if (!checkFile) {
-    stop(paste0('Error: Please specify a valid file path'))
+  if (missing(txdb) & missing(file)) {
+    stop('Either `txdb` or `file` argument must be provided')
+  } else if (!missing(txdb) & !missing(file)) {
+    stop('Both `txdb` and `file` arguments are provided: please specify only one')
+  } else if (missing(txdb)) {
+    ## Parse input file
+    checkFile <- file.exists(file)
+    if (!checkFile) {
+      stop(paste0('Error: Please specify a valid file path'))
+    }
+    ext <- tools::file_ext(file)
+    if (ext %in% c('gz', 'bz2', 'xz')){
+      file.tmp <- gsub(paste0('\\.', ext), '', file)
+      ext <- unique(tools::file_ext(file.tmp))
+    }
+    if (!(ext %in% c('gtf', 'sqlite', 'gff3'))) {
+      stop('File path must link to a GTF/GFF or TxDb object')
+    }
+    print('Parsing input file...')
+    if (ext == 'sqlite') {
+      txdb <- AnnotationDbi::loadDb(file)
+    } else if (ext %in% c('gtf', 'gff3')) {
+      txdb <- GenomicFeatures::makeTxDbFromGFF(file = file,
+                                               format = ext,
+                                               organism = sub('_', ' ', species))
+    }
   }
-  ext <- tools::file_ext(file)
-  if (ext %in% c('gz', 'bz2', 'xz')){
-    file.tmp <- gsub(paste0('\\.', ext), '', file)
-    ext <- unique(tools::file_ext(file.tmp))
-  }
-  if (!(ext %in% c('gtf', 'sqlite', 'gff3'))) {
-    stop('File path must link to a GTF/GFF or TxDb object')
-  }
-  print('Parsing input file...')
-  if (ext == 'sqlite') {
-    txdb <- AnnotationDbi::loadDb(file)
-  } else if (ext %in% c('gtf', 'gff3')) {
-    txdb <- GenomicFeatures::makeTxDbFromGFF(file = file,
-                                             format = ext,
-                                             organism = sub('_', ' ', species))
-  }
-  
   ## Instantiate Promoter Annotation
   promoterAnnotation <- PromoterAnnotation()
   
