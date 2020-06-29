@@ -49,6 +49,7 @@ calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges, file 
     print(paste0('Processing: ', file))
     rawBam <- readGAlignments(file)
     bam <- keepStandardChromosomes(rawBam, pruning.mode = 'coarse')
+    seqlevelsStyle(bam) <- 'UCSC'
     rm(rawBam)
     gc()
     junctions <- summarizeJunctions(bam, genome = genome)
