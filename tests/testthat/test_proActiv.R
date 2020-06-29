@@ -80,5 +80,11 @@ test_that('proActiv returns a Summarized Experiment', {
   expect_identical(absolutePromoterActivity[,c('promoterId', 'geneId')], data.frame(rowData(result)))
   
   # 3) Test BAM file input
-
+  bamfiles <- list.files(system.file('/extdata/testdata/bam', package = 'proActiv'), full.names = TRUE)
+  suppressWarnings(
+   result <- proActiv(bamfiles, promoterAnnotation.gencode.v34, genome = 'hg38') 
+  )
+  expect_s4_class(result, 'SummarizedExperiment')
+  expect_identical(dim(result)[1], length(promoterCoordinates(promoterAnnotation.gencode.v34)))
+  
 })

@@ -8,6 +8,7 @@ intronRanges <- intronRanges(promoterAnnotation)
 
 filesTophat <- list.files(system.file('/extdata/testdata/tophat2', package = 'proActiv'), full.names = TRUE, pattern = 'sample1|sample2')
 filesSTAR <- list.files(system.file('/extdata/testdata/star', package = 'proActiv'), full.names = TRUE, pattern = 'sample1|sample2')
+bamfiles <- list.files(system.file('/extdata/testdata/bam', package = 'proActiv'), full.names = TRUE)
 fileLabels <- paste0('sample', 1:2)
 
 test_that('calculateJunctionReadCounts returns expected output',{
@@ -25,6 +26,15 @@ test_that('calculateJunctionReadCounts returns expected output',{
   expect_equal(as.numeric(calculateJunctionReadCounts(promoterCoordinates, intronRanges, filesSTAR[1], 'star')), promoterCounts$sample1)
 
   ### BAM input ###
+  expect_type(
+    suppressWarnings(calculateJunctionReadCounts(promoterCoordinates(promoterAnnotation.gencode.v34), 
+                                          intronRanges(promoterAnnotation.gencode.v34),
+                                          bamfiles[1], 'bam', 'hg38')), 'double')
+  expect_equal(length(
+    suppressWarnings(calculateJunctionReadCounts(promoterCoordinates(promoterAnnotation.gencode.v34),
+                                                 intronRanges(promoterAnnotation.gencode.v34),
+                                                 bamfiles[1], 'bam', 'hg38'))), 
+    length(promoterCoordinates(promoterAnnotation.gencode.v34)))
 
 })
 
@@ -44,6 +54,13 @@ test_that('calculatePromoterReadCounts returns expected output', {
   expect_equal(calculatePromoterReadCounts(promoterAnnotation, filesSTAR , fileLabels, 'star'), promoterCounts)
 
   ### 3) BAM input ###
+  expect_type(
+    suppressWarnings(calculatePromoterReadCounts(promoterAnnotation.gencode.v34, bamfiles, fileLabels, 'bam', 'hg38')), 'list'
+  )
+  expect_equal(
+    suppressWarnings(dim(
+      calculatePromoterReadCounts(promoterAnnotation.gencode.v34, bamfiles, fileLabels, 'bam', 'hg38'))), 
+    c(length(promoterCoordinates(promoterAnnotation.gencode.v34)),2))
 
 })
 
