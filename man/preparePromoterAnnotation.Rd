@@ -33,7 +33,7 @@ file <- 'sample.gtf'
 promoterAnnotation <- preparePromoterAnnotation(file = file,
                                                 species = 'Homo_sapiens')
 
-txdb <- AnnotationDbi::loadDb('sample.gtf')
+txdb <- AnnotationDbi::loadDb('sample.sqlite')
 promoterAnnotation <- preparePromoterAnnotation(txdb = txdb,
                                                 species = 'Homo_sapiens')
 }
