@@ -26,9 +26,12 @@ Imports:
     methods,
     rlang,
     SummarizedExperiment,
-    AnnotationDbi
+    AnnotationDbi,
+    DESeq2
 Suggests: 
-    DESeq2,
     BiocParallel,
     testthat,
-    mockery
+    mockery,
+    BSgenome,
+    BiocManager,
+    BSgenome.Hsapiens.UCSC.hg38
