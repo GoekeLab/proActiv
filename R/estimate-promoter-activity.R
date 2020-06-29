@@ -88,5 +88,6 @@ getRelativePromoterActivity <- function(absolutePromoterActivity, geneExpression
   matchedGeneExpression <- geneExpression[match(conversionHelper$geneId, geneExpression$geneId), ]
   relativePromoterActivity <- absolutePromoterActivity[, -(1:2)] / matchedGeneExpression[, -1]
   relativePromoterActivity <- cbind(conversionHelper, relativePromoterActivity)
+  names(relativePromoterActivity) <- names(absolutePromoterActivity)
   return(relativePromoterActivity)
 }

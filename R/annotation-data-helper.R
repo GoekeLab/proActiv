@@ -50,20 +50,21 @@ getFirstExonRanges <- function(exonRangesByTx.unlist) {
 }
 
 # Reduce all first exons for each gene to identify transcripts belonging to each promoter
+#' @importFrom rlang .data
 #' @importFrom dplyr as_tibble mutate group_by '%>%' group_by summarise ungroup select lead arrange
 getReducedExonRanges <- function(exonRanges.firstExon, exonRanges.firstExon.geneId) {
   exonRanges.firstExon$geneId <- exonRanges.firstExon.geneId
   exonReducedRanges <- as_tibble(exonRanges.firstExon) %>% 
-    arrange(geneId, start) %>% 
-    group_by(geneId) %>%
-    mutate(exonClass = c(0, cumsum(lead(start) > cummax(end))[-n()])) %>%
-    group_by(geneId, exonClass, seqnames, strand) %>%
-    summarise(start = min(start), 
-              end = max(end), 
-              customId = list(customId),
+    dplyr::arrange(.data$geneId, .data$start) %>% 
+    dplyr::group_by(.data$geneId) %>%
+    dplyr::mutate(exonClass = c(0, cumsum(lead(.data$start) > cummax(.data$end))[-n()])) %>%
+    dplyr::group_by(.data$geneId, .data$exonClass, .data$seqnames, .data$strand) %>%
+    dplyr::summarise(start = min(.data$start), 
+              end = max(.data$end), 
+              customId = list(.data$customId),
               .groups = 'drop') %>%
-    ungroup() %>%
-    dplyr::select(seqnames, start, end, strand, customId)
+    dplyr::ungroup() %>%
+    dplyr::select(.data$seqnames, .data$start, .data$end, .data$strand, .data$customId)
   exonReducedRanges$promoterId <- paste0('prmtr.', 1:nrow(exonReducedRanges))
   exonReducedRanges <- makeGRangesFromDataFrame(exonReducedRanges, keep.extra.columns = TRUE)
   names(mcols(exonReducedRanges)) <- c('revmap', 'promoterId')
@@ -93,11 +94,12 @@ getUniqueIntronRanges <- function(intronRangesByTx.unlist) {
 }
 
 # Get the rank of each intron within the transcript (similar to exon ranges)
+#' @importFrom rlang .data
 #' @importFrom dplyr as_tibble mutate group_by '%>%' row_number
 getIntronRanks <- function(intronRangesByTx) {
   intronRankByTx <- as_tibble(intronRangesByTx) %>% 
-    group_by(group_name) %>% 
-    mutate(rank = ifelse(strand == '+', row_number(), rev(row_number())))
+    dplyr::group_by(.data$group_name) %>% 
+    dplyr::mutate(rank = ifelse(strand == '+', row_number(), rev(row_number())))
   intronRank <- intronRankByTx$rank
   return(intronRank)
 }
