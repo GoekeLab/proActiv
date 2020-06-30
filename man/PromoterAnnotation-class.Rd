@@ -51,22 +51,11 @@ promoterCoordinates(x) <- value
 
 \item{x}{A PromoterAnnotation object}
 }
+\value{
+A promoter annotation object with three slots detailed below:
+}
 \description{
 S4 class for promoter annotation data for a specific annotation version
-
-Constructor for PromoterAnnotation class
-
-Getter for the annotated intron ranges
-
-Getter for the promoter id mapping
-
-Getter for the promoter coordinates
-
-Setter for the annotated intron ranges
-
-Setter for the promoter id mapping
-
-Setter for the promoter coordinates
 }
 \section{Slots}{
 

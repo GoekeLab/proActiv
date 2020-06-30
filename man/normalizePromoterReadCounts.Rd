@@ -19,8 +19,12 @@ A data.frame object. The normalized number of junction reads per
 Normalize promoter read counts using DESeq2
 }
 \examples{
-\dontrun{
+
+## promoterReadCounts is an object returned from calculatePromoterReadCounts
+promoterReadCounts <- readRDS(system.file('/extdata/testdata/tophat2',
+                                          'promoterCounts.rds', 
+                                           package = 'proActiv'))
 normalizedPromoterReadCounts <- normalizePromoterReadCounts(promoterReadCounts)
-}
+
 
 }

@@ -28,13 +28,11 @@ A PromoterAnnotation object. The annotated
 Prepare promoter annotation data for the user specified txdb object
 }
 \examples{
-\dontrun{
-file <- 'sample.gtf'
-promoterAnnotation <- preparePromoterAnnotation(file = file,
-                                                species = 'Homo_sapiens')
 
-txdb <- AnnotationDbi::loadDb('sample.sqlite')
+txdbPath <- list.files(system.file('/extdata/testdata/promoterAnnotation', 
+                                   package = 'proActiv'), full.names = TRUE, pattern = 'sqlite')
+txdb <- AnnotationDbi::loadDb(txdbPath)
 promoterAnnotation <- preparePromoterAnnotation(txdb = txdb,
                                                 species = 'Homo_sapiens')
-}
+
 }

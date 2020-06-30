@@ -40,19 +40,21 @@ A SummarizedExperiment object with assays giving promoter counts and activity
 Wrapper function returning Summarized Experiment object giving promoter counts and activity
 }
 \examples{
-\dontrun{
-files <- c('./sample1-tophat.bed', './sample2-tophat.bed')
+
+files <- list.files(system.file('/extdata/testdata/tophat2', package = 'proActiv'), 
+                    full.names = TRUE, pattern = 'sample')
 proActivFromJunctions <- proActiv(files = files,
-                                  promoterAnnotation = promoterAnnotation, 
+                                  promoterAnnotation = promoterAnnotation.gencode.v19, 
                                  fileLabels = NULL, 
                                  genome = NULL, 
                                  ncores = 1)
 
-files <- c('./sample1.bam', './sample2.bam')
+files <- list.files(system.file('/extdata/testdata/bam', package = 'proActiv'), 
+                    full.names = TRUE)
 proActivFromBAM <- proActiv(files = files,
-                            promoterAnnotation  = promoterAnnotation,
+                            promoterAnnotation  = promoterAnnotation.gencode.v34,
                            fileLabels = NULL,
-                           genome = 'hg19',
-                           ncores = 1)}
+                           genome = 'hg38',
+                           ncores = 1)
                            
 }
