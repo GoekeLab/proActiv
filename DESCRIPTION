@@ -47,8 +47,13 @@ Suggests:
     BSgenome.Hsapiens.UCSC.hg38
 URL: https://github.com/GoekeLab/proActiv
 biocViews:
-    Sequencing,
     RNASeq,
     GeneExpression,
     Transcription,
-    Annotation
+    AlternativeSplicing,
+    GeneRegulation,
+    DifferentialSplicing,
+    FunctionalGenomics,
+    Epigenetics,
+    Transcriptomics,
+    Preprocessing
