@@ -4,11 +4,17 @@
 \name{PromoterAnnotation-class}
 \alias{PromoterAnnotation-class}
 \alias{PromoterAnnotation}
+\alias{intronRanges}
 \alias{intronRanges,PromoterAnnotation-method}
+\alias{promoterIdMapping}
 \alias{promoterIdMapping,PromoterAnnotation-method}
+\alias{promoterCoordinates}
 \alias{promoterCoordinates,PromoterAnnotation-method}
+\alias{intronRanges<-}
 \alias{intronRanges<-,PromoterAnnotation-method}
+\alias{promoterIdMapping<-}
 \alias{promoterIdMapping<-,PromoterAnnotation-method}
+\alias{promoterCoordinates<-}
 \alias{promoterCoordinates<-,PromoterAnnotation-method}
 \title{S4 class for promoter annotation data for a specific annotation version}
 \usage{
@@ -50,24 +56,43 @@ promoterCoordinates(x) <- value
 \item{promoterCoordinates}{A GRanges object containing promoter coordinates}
 
 \item{x}{A PromoterAnnotation object}
+
+\item{value}{intronRanges, promoterIdMapping or promoterCoordinates to be assigned}
+}
+\value{
+A promoter annotation object with three slots: intronRanges, promoterIdMapping 
+  and promoter Coordinates
 }
 \description{
 S4 class for promoter annotation data for a specific annotation version
-
-Constructor for PromoterAnnotation class
-
-Getter for the annotated intron ranges
-
-Getter for the promoter id mapping
-
-Getter for the promoter coordinates
-
-Setter for the annotated intron ranges
-
-Setter for the promoter id mapping
-
-Setter for the promoter coordinates
 }
+\section{Functions}{
+\itemize{
+\item \code{intronRanges}: Getter for intronRanges
+
+\item \code{intronRanges,PromoterAnnotation-method}: Getter for intronRanges
+
+\item \code{promoterIdMapping}: Getter for promoterIdMapping
+
+\item \code{promoterIdMapping,PromoterAnnotation-method}: Getter for promoterIdMapping
+
+\item \code{promoterCoordinates}: Getter for promoterCoordinates
+
+\item \code{promoterCoordinates,PromoterAnnotation-method}: Getter for promoterCoordinates
+
+\item \code{intronRanges<-}: Setter for intronRanges
+
+\item \code{intronRanges<-,PromoterAnnotation-method}: Setter for intronRanges
+
+\item \code{promoterIdMapping<-}: Setter for promoterIdMapping
+
+\item \code{promoterIdMapping<-,PromoterAnnotation-method}: Setter for promoterIdMapping
+
+\item \code{promoterCoordinates<-}: Setter for promoterCoordinates
+
+\item \code{promoterCoordinates<-,PromoterAnnotation-method}: Setter for promoterCoordinates
+}}
+
 \section{Slots}{
 
 \describe{

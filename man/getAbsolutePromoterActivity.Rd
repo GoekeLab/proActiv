@@ -32,12 +32,15 @@ Prepare the absolute promoter activity table including the promoter and gene
 ids
 }
 \examples{
-\dontrun{
+
+## junctionReadCounts is an object returned from normalizePromoterReadCounts
+junctionReadCounts <- readRDS(system.file('extdata/testdata/tophat2',
+                                            'normalizedPromoterCounts.rds', 
+                                             package = 'proActiv'))
 absolutePromoterActivity <- getAbsolutePromoterActivity(junctionReadCounts,
-                                                         promoterAnnotation,
+                                                         promoterAnnotation.gencode.v19,
                                                          log2 = TRUE,
                                                          pseudocount = 1)
-}
 
 }
 \seealso{

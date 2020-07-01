@@ -36,17 +36,14 @@ Calculate the total number of junction reads overlapping with the introns of
 each promoter for the input junction file
 }
 \examples{
-\dontrun{
-file <- './sample1-tophat.bed'
+
+file <- list.files(system.file('extdata/testdata/tophat2', package = 'proActiv'), 
+                   full.names = TRUE, pattern = 'sample1')
+promoterCoordinates <- promoterCoordinates(promoterAnnotation.gencode.v19)
+intronRanges <- intronRanges(promoterAnnotation.gencode.v19)
 junctionCounts <- calculateJunctionReadCounts(promoterCoordinates,
                                                intronRanges,
                                                file,
                                                fileType = 'tophat')
-file <- './sample1.bam'                                                
-junctionCounts <- calculateJunctionReadCounts(promoterCoordinates,
-                                               intronRanges,
-                                               file,
-                                               fileType = 'bam',
-                                               genome = 'hg19')}
 
 }

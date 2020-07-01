@@ -45,23 +45,15 @@ Calculate the promoter read counts using junction read counts approach for
 all the input junction files
 }
 \examples{
-\dontrun{
-files <- c('./sample1-tophat.bed', './sample2-tophat.bed')
+
+files <- list.files(system.file('extdata/testdata/tophat2', package = 'proActiv'), 
+                    full.names = TRUE, pattern = 'sample')
 fileLabels <- c('sample1', 'sample2')
-promoterReadCounts <- calculatePromoterReadCounts(promoterAnnotation,
+promoterReadCounts <- calculatePromoterReadCounts(promoterAnnotation.gencode.v19,
                                                    files,
                                                    fileLabels,
                                                    fileType = 'tophat',
-                                                   genome = NULL
+                                                   genome = NULL,
                                                    numberOfCores = 1)
-                                                   
-files <- c('./sample1.bam', './sample2.bam')
-fileLabels <- c('sample1', 'sample2')
-promoterReadCounts <- calculatePromoterReadCounts(promoterAnnotation,
-                                                   files,
-                                                   fileLabels,
-                                                   fileType = 'bam',
-                                                   genome = 'hg19',
-                                                   numberOfCores = 1)}
 
 }

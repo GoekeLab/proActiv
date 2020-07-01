@@ -21,73 +21,73 @@
 #'   row data
 #' 
 #' @examples
-#' \dontrun{
-#' files <- c('./sample1-tophat.bed', './sample2-tophat.bed')
+#' 
+#' files <- list.files(system.file('extdata/testdata/tophat2', package = 'proActiv'), 
+#'                     full.names = TRUE, pattern = 'sample')
 #' proActivFromJunctions <- proActiv(files = files,
-#'                                   promoterAnnotation = promoterAnnotation, 
+#'                                   promoterAnnotation = promoterAnnotation.gencode.v19, 
 #'                                  fileLabels = NULL, 
 #'                                  genome = NULL, 
 #'                                  ncores = 1)
 #' 
-#' files <- c('./sample1.bam', './sample2.bam')
+#' files <- list.files(system.file('extdata/testdata/bam', package = 'proActiv'), 
+#'                     full.names = TRUE)
 #' proActivFromBAM <- proActiv(files = files,
-#'                             promoterAnnotation  = promoterAnnotation,
+#'                             promoterAnnotation  = promoterAnnotation.gencode.v34,
 #'                            fileLabels = NULL,
-#'                            genome = 'hg19',
-#'                            ncores = 1)}
+#'                            genome = 'hg38',
+#'                            ncores = 1)
 #'                            
 #' @import SummarizedExperiment
 #' @import S4Vectors
 #'
 proActiv <- function(files, promoterAnnotation, fileLabels = NULL, 
-                     genome = NULL, ncores = 1) {
-  
-  checkFile <- file.exists(files)
-  if (any(!checkFile)) {
-    stop(paste0('Error: Please specify valid file paths. The following file does not exist: ', files[!checkFile]))
-  }
-  
-  if (is.null(fileLabels)) {
-    fileLabels <- make.names(tools::file_path_sans_ext(basename(files), compression = TRUE), unique = TRUE)
-  }
-  
-  ext <- unique(tools::file_ext(files))
-  if (length(ext) != 1) {
-    stop("Error: More than one file type detected from given file path")
-  }
-  
-  if (ext == 'gz' | ext == 'bz2' | ext == 'xz'){
-    files.tmp <- gsub(paste0('\\.', ext), '', files)
-    ext <- unique(tools::file_ext(files.tmp))
-  }
-
-  if (ext == 'bam') {
-    fileType <- 'bam'
-    if (is.null(genome)) {
-      stop('Error: Please specify genome.')
+                        genome = NULL, ncores = 1) {
+    checkFile <- file.exists(files)
+    if (any(!checkFile)) {
+        stop(paste0('Error: Please specify valid file paths. The following file does not exist: ', files[!checkFile]))
     }
-  } else if (ext == 'bed') {
-    fileType <- 'tophat' 
-  } else if (ext == 'junctions') {
-    fileType <- 'star'
-  } else {
-    stop('Invalid input files: Input must either be a BAM file (.bam), 
-       Tophat junctions file (.bed) or STAR junctions file (.junctions)')
-  }
-  
-  promoterCounts <- calculatePromoterReadCounts(promoterAnnotation, files, fileLabels, 
-                                                fileType, genome, ncores)
-  normalizedPromoterCounts <- normalizePromoterReadCounts(promoterCounts)
-  absolutePromoterActivity <- getAbsolutePromoterActivity(normalizedPromoterCounts, promoterAnnotation)
-  geneExpression <- getGeneExpression(absolutePromoterActivity)
-  relativePromoterActivity <- getRelativePromoterActivity(absolutePromoterActivity, geneExpression)
-  
-  summarizedResults <- SummarizedExperiment(assays = list(promoterCounts = promoterCounts,
-                                                          normalizedPromoterCounts = normalizedPromoterCounts,
-                                                          absolutePromoterActivity = subset(absolutePromoterActivity, select = -c(promoterId, geneId)),
-                                                          relativePromoterActivity = subset(relativePromoterActivity, select = -c(promoterId, geneId))),
-                                            rowData = absolutePromoterActivity[,c('promoterId', 'geneId')])
-  metadata(summarizedResults) <- list(geneExpression = subset(geneExpression, select = -c(geneId)))
-  
-  summarizedResults 
+
+    if (is.null(fileLabels)) {
+        fileLabels <- make.names(tools::file_path_sans_ext(basename(files), compression = TRUE), unique = TRUE)
+    }
+
+    ext <- unique(tools::file_ext(files))
+    if (length(ext) != 1) {
+        stop("Error: More than one file type detected from given file path")
+    }
+
+    if (ext == 'gz' | ext == 'bz2' | ext == 'xz'){
+        files.tmp <- gsub(paste0('\\.', ext), '', files)
+        ext <- unique(tools::file_ext(files.tmp))
+    }
+
+    if (ext == 'bam') {
+        fileType <- 'bam'
+        if (is.null(genome)) {
+            stop('Error: Please specify genome.')
+        }
+    } else if (ext == 'bed') {
+        fileType <- 'tophat' 
+    } else if (ext == 'junctions') {
+        fileType <- 'star'
+    } else {
+        stop('Invalid input files: Input must either be a BAM file (.bam), 
+            Tophat junctions file (.bed) or STAR junctions file (.junctions)')
+    }
+
+    promoterCounts <- calculatePromoterReadCounts(promoterAnnotation, files, fileLabels, 
+                                                    fileType, genome, ncores)
+    normalizedPromoterCounts <- normalizePromoterReadCounts(promoterCounts)
+    absolutePromoterActivity <- getAbsolutePromoterActivity(normalizedPromoterCounts, promoterAnnotation)
+    geneExpression <- getGeneExpression(absolutePromoterActivity)
+    relativePromoterActivity <- getRelativePromoterActivity(absolutePromoterActivity, geneExpression)
+
+    summarizedResults <- SummarizedExperiment(assays = list(promoterCounts = promoterCounts,
+                                                            normalizedPromoterCounts = normalizedPromoterCounts,
+                                                            absolutePromoterActivity = absolutePromoterActivity[, fileLabels, drop = FALSE],
+                                                            relativePromoterActivity = relativePromoterActivity[, fileLabels, drop = FALSE]),
+                                                rowData = absolutePromoterActivity[,c('promoterId', 'geneId')])
+    metadata(summarizedResults) <- list(geneExpression = geneExpression[, fileLabels, drop = FALSE])
+    summarizedResults 
 }
