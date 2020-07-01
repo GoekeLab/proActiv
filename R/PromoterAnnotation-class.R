@@ -40,7 +40,8 @@ setClass(
 #' @importFrom methods new
 #'
 #' @export
-#' @return A promoter annotation object with three slots detailed below:
+#' @return A promoter annotation object with three slots: intronRanges, promoterIdMapping 
+#'   and promoter Coordinates
 
 PromoterAnnotation <-
     function(intronRanges = GRanges(),
@@ -73,35 +74,32 @@ setValidity("PromoterAnnotation", function(object) {
 
 #' @param x A PromoterAnnotation object
 #'
-#' @name PromoterAnnotation-class
-#' @rdname PromoterAnnotation-class
+#' @describeIn PromoterAnnotation-class Getter for intronRanges
 #' @exportMethod intronRanges
 
 setGeneric("intronRanges", function(x) standardGeneric("intronRanges"))
 
-#' @rdname PromoterAnnotation-class
+#' @describeIn PromoterAnnotation-class Getter for intronRanges
 #' @aliases intronRanges,PromoterAnnotation-method
 
 setMethod("intronRanges", "PromoterAnnotation", function(x) x@intronRanges)
 
-#' @name PromoterAnnotation-class
-#' @rdname PromoterAnnotation-class
+#' @describeIn PromoterAnnotation-class Getter for promoterIdMapping
 #' @exportMethod promoterIdMapping
 
 setGeneric("promoterIdMapping", function(x) standardGeneric("promoterIdMapping"))
 
-#' @rdname PromoterAnnotation-class
+#' @describeIn PromoterAnnotation-class Getter for promoterIdMapping
 #' @aliases promoterIdMapping,PromoterAnnotation-method
 
 setMethod("promoterIdMapping", "PromoterAnnotation", function(x) x@promoterIdMapping)
 
-#' @name PromoterAnnotation-class
-#' @rdname PromoterAnnotation-class
+#' @describeIn PromoterAnnotation-class Getter for promoterCoordinates
 #' @exportMethod promoterCoordinates
 
 setGeneric("promoterCoordinates", function(x) standardGeneric("promoterCoordinates"))
 
-#' @rdname PromoterAnnotation-class
+#' @describeIn PromoterAnnotation-class Getter for promoterCoordinates
 #' @aliases promoterCoordinates,PromoterAnnotation-method
 
 setMethod("promoterCoordinates", "PromoterAnnotation", function(x) x@promoterCoordinates)
@@ -109,14 +107,15 @@ setMethod("promoterCoordinates", "PromoterAnnotation", function(x) x@promoterCoo
 ###############
 ### Setters ###
 
-#' @name PromoterAnnotation-class
-#' @rdname PromoterAnnotation-class
+#' @param value intronRanges, promoterIdMapping or promoterCoordinates to be assigned
+#' 
+#' @describeIn PromoterAnnotation-class Setter for intronRanges
 #' @exportMethod intronRanges<-
 #' @importFrom methods validObject
 
 setGeneric("intronRanges<-", function(x, value) standardGeneric("intronRanges<-"))
 
-#' @rdname PromoterAnnotation-class
+#' @describeIn PromoterAnnotation-class Setter for intronRanges
 #' @aliases intronRanges<-,PromoterAnnotation-method
 
 setMethod("intronRanges<-", "PromoterAnnotation", function(x, value) {
@@ -125,14 +124,13 @@ setMethod("intronRanges<-", "PromoterAnnotation", function(x, value) {
     x
 })
 
-#' @name PromoterAnnotation-class
-#' @rdname PromoterAnnotation-class
+#' @describeIn PromoterAnnotation-class Setter for promoterIdMapping
 #' @exportMethod promoterIdMapping<-
 #' @importFrom methods validObject
 
 setGeneric("promoterIdMapping<-", function(x, value) standardGeneric("promoterIdMapping<-"))
 
-#' @rdname PromoterAnnotation-class
+#' @describeIn PromoterAnnotation-class Setter for promoterIdMapping
 #' @aliases promoterIdMapping<-,PromoterAnnotation-method
 
 setMethod("promoterIdMapping<-", "PromoterAnnotation", function(x, value) {
@@ -141,14 +139,13 @@ setMethod("promoterIdMapping<-", "PromoterAnnotation", function(x, value) {
     x
 })
 
-#' @name PromoterAnnotation-class
-#' @rdname PromoterAnnotation-class
+#' @describeIn PromoterAnnotation-class Setter for promoterCoordinates
 #' @exportMethod promoterCoordinates<-
 #' @importFrom methods validObject
 
 setGeneric("promoterCoordinates<-", function(x, value) standardGeneric("promoterCoordinates<-"))
 
-#' @rdname PromoterAnnotation-class
+#' @describeIn PromoterAnnotation-class Setter for promoterCoordinates
 #' @aliases promoterCoordinates<-,PromoterAnnotation-method
 
 setMethod("promoterCoordinates<-", "PromoterAnnotation", function(x, value) {
