@@ -21,7 +21,7 @@ Normalize promoter read counts using DESeq2
 \examples{
 
 ## promoterReadCounts is an object returned from calculatePromoterReadCounts
-promoterReadCounts <- readRDS(system.file('/extdata/testdata/tophat2',
+promoterReadCounts <- readRDS(system.file('extdata/testdata/tophat2',
                                           'promoterCounts.rds', 
                                            package = 'proActiv'))
 normalizedPromoterReadCounts <- normalizePromoterReadCounts(promoterReadCounts)

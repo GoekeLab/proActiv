@@ -24,10 +24,10 @@ ids
 
 ## absolutePromoterActivity is an object returned from getAbsolutePromoterActivity
 ## geneExpression is an object returned from getGeneExpression
-absolutePromoterActivity <- readRDS(system.file('/extdata/testdata/tophat2', 
+absolutePromoterActivity <- readRDS(system.file('extdata/testdata/tophat2', 
                                                 'absolutePromoterActivity.rds', 
                                                  package = 'proActiv'))
-geneExpression <- readRDS(system.file('/extdata/testdata/tophat2', 
+geneExpression <- readRDS(system.file('extdata/testdata/tophat2', 
                                         'geneExpression.rds', 
                                          package = 'proActiv'))
 relativePromoterActivity <- getRelativePromoterActivity(absolutePromoterActivity,

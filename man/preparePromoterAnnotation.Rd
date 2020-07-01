@@ -29,7 +29,7 @@ Prepare promoter annotation data for the user specified txdb object
 }
 \examples{
 
-txdbPath <- list.files(system.file('/extdata/testdata/promoterAnnotation', 
+txdbPath <- list.files(system.file('extdata/testdata/promoterAnnotation', 
                                    package = 'proActiv'), full.names = TRUE, pattern = 'sqlite')
 txdb <- AnnotationDbi::loadDb(txdbPath)
 promoterAnnotation <- preparePromoterAnnotation(txdb = txdb,

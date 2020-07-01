@@ -15,7 +15,7 @@
 #' @examples
 #' 
 #' ## junctionReadCounts is an object returned from normalizePromoterReadCounts
-#' junctionReadCounts <- readRDS(system.file('/extdata/testdata/tophat2',
+#' junctionReadCounts <- readRDS(system.file('extdata/testdata/tophat2',
 #'                                             'normalizedPromoterCounts.rds', 
 #'                                              package = 'proActiv'))
 #' absolutePromoterActivity <- getAbsolutePromoterActivity(junctionReadCounts,
@@ -51,7 +51,7 @@ getAbsolutePromoterActivity <- function(junctionReadCounts, promoterAnnotation, 
 #' @examples
 #' 
 #' ## absolutePromoterActivity is an object returned from getAbsolutePromoterActivity
-#' absolutePromoterActivity <- readRDS(system.file('/extdata/testdata/tophat2', 
+#' absolutePromoterActivity <- readRDS(system.file('extdata/testdata/tophat2', 
 #'                                                  'absolutePromoterActivity.rds', 
 #'                                                   package = 'proActiv')) 
 #' geneExpression <- getGeneExpression(absolutePromoterActivity)
@@ -84,10 +84,10 @@ getGeneExpression <- function(absolutePromoterActivity) {
 #' 
 #' ## absolutePromoterActivity is an object returned from getAbsolutePromoterActivity
 #' ## geneExpression is an object returned from getGeneExpression
-#' absolutePromoterActivity <- readRDS(system.file('/extdata/testdata/tophat2', 
+#' absolutePromoterActivity <- readRDS(system.file('extdata/testdata/tophat2', 
 #'                                                 'absolutePromoterActivity.rds', 
 #'                                                  package = 'proActiv'))
-#' geneExpression <- readRDS(system.file('/extdata/testdata/tophat2', 
+#' geneExpression <- readRDS(system.file('extdata/testdata/tophat2', 
 #'                                         'geneExpression.rds', 
 #'                                          package = 'proActiv'))
 #' relativePromoterActivity <- getRelativePromoterActivity(absolutePromoterActivity,

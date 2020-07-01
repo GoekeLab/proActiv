@@ -36,7 +36,7 @@ test_that('proActiv expects genome argument with BAM input', {
 
 test_that('proActiv handles compressed input files', {
 
-  files <- list.files(system.file('/extdata/vignette', package = 'proActiv'), full.names = TRUE, pattern = 'Rep1')
+  files <- list.files(system.file('extdata/vignette', package = 'proActiv'), full.names = TRUE, pattern = 'Rep1')
   expect_s4_class(proActiv(files, promoterAnnotation.gencode.v34), 'SummarizedExperiment')
 
 })
@@ -44,14 +44,14 @@ test_that('proActiv handles compressed input files', {
 test_that('proActiv returns a Summarized Experiment', {
 
   ### 1) Test Tophat2 BED file input ###
-  filesTophat <- list.files(system.file('/extdata/testdata/tophat2', package = 'proActiv'), full.names = TRUE, pattern = 'sample1|sample2')
+  filesTophat <- list.files(system.file('extdata/testdata/tophat2', package = 'proActiv'), full.names = TRUE, pattern = 'sample1|sample2')
   result <- proActiv(filesTophat, promoterAnnotation)
   
-  promoterCounts <- readRDS(system.file('/extdata/testdata/tophat2', 'promoterCounts.rds', package = 'proActiv'))
-  normalizedPromoterCounts <- readRDS(system.file('/extdata/testdata/tophat2', 'normalizedPromoterCounts.rds', package = 'proActiv'))
-  absolutePromoterActivity <- readRDS(system.file('/extdata/testdata/tophat2', 'absolutePromoterActivity.rds', package = 'proActiv'))
-  geneExpression <- readRDS(system.file('/extdata/testdata/tophat2', 'geneExpression.rds', package = 'proActiv'))
-  relativePromoterActivity <- readRDS(system.file('/extdata/testdata/tophat2', 'relativePromoterActivity.rds', package = 'proActiv'))
+  promoterCounts <- readRDS(system.file('extdata/testdata/tophat2', 'promoterCounts.rds', package = 'proActiv'))
+  normalizedPromoterCounts <- readRDS(system.file('extdata/testdata/tophat2', 'normalizedPromoterCounts.rds', package = 'proActiv'))
+  absolutePromoterActivity <- readRDS(system.file('extdata/testdata/tophat2', 'absolutePromoterActivity.rds', package = 'proActiv'))
+  geneExpression <- readRDS(system.file('extdata/testdata/tophat2', 'geneExpression.rds', package = 'proActiv'))
+  relativePromoterActivity <- readRDS(system.file('extdata/testdata/tophat2', 'relativePromoterActivity.rds', package = 'proActiv'))
   
   expect_s4_class(result, 'SummarizedExperiment')
   expect_identical(promoterCounts, assays(result)$promoterCounts)
@@ -62,14 +62,14 @@ test_that('proActiv returns a Summarized Experiment', {
   expect_identical(absolutePromoterActivity[,c('promoterId', 'geneId')], data.frame(rowData(result)))
 
   ## 2) Test STAR junction file input ###
-  filesSTAR <- list.files(system.file('/extdata/testdata/star', package = 'proActiv'), full.names = TRUE, pattern = 'sample1|sample2')
+  filesSTAR <- list.files(system.file('extdata/testdata/star', package = 'proActiv'), full.names = TRUE, pattern = 'sample1|sample2')
   result <- proActiv(filesSTAR, promoterAnnotation)
 
-  promoterCounts <- readRDS(system.file('/extdata/testdata/star', 'promoterCounts.rds', package = 'proActiv'))
-  normalizedPromoterCounts <- readRDS(system.file('/extdata/testdata/star', 'normalizedPromoterCounts.rds', package = 'proActiv'))
-  absolutePromoterActivity <- readRDS(system.file('/extdata/testdata/star', 'absolutePromoterActivity.rds', package = 'proActiv'))
-  geneExpression <- readRDS(system.file('/extdata/testdata/star', 'geneExpression.rds', package = 'proActiv'))
-  relativePromoterActivity <- readRDS(system.file('/extdata/testdata/star', 'relativePromoterActivity.rds', package = 'proActiv'))
+  promoterCounts <- readRDS(system.file('extdata/testdata/star', 'promoterCounts.rds', package = 'proActiv'))
+  normalizedPromoterCounts <- readRDS(system.file('extdata/testdata/star', 'normalizedPromoterCounts.rds', package = 'proActiv'))
+  absolutePromoterActivity <- readRDS(system.file('extdata/testdata/star', 'absolutePromoterActivity.rds', package = 'proActiv'))
+  geneExpression <- readRDS(system.file('extdata/testdata/star', 'geneExpression.rds', package = 'proActiv'))
+  relativePromoterActivity <- readRDS(system.file('extdata/testdata/star', 'relativePromoterActivity.rds', package = 'proActiv'))
 
   expect_s4_class(result, 'SummarizedExperiment')
   expect_identical(promoterCounts, assays(result)$promoterCounts)
@@ -80,7 +80,7 @@ test_that('proActiv returns a Summarized Experiment', {
   expect_identical(absolutePromoterActivity[,c('promoterId', 'geneId')], data.frame(rowData(result)))
   
   # 3) Test BAM file input
-  bamfiles <- list.files(system.file('/extdata/testdata/bam', package = 'proActiv'), full.names = TRUE)
+  bamfiles <- list.files(system.file('extdata/testdata/bam', package = 'proActiv'), full.names = TRUE)
   suppressWarnings(
    result <- proActiv(bamfiles, promoterAnnotation.gencode.v34, genome = 'hg38') 
   )

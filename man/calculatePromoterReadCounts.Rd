@@ -46,7 +46,7 @@ all the input junction files
 }
 \examples{
 
-files <- list.files(system.file('/extdata/testdata/tophat2', package = 'proActiv'), 
+files <- list.files(system.file('extdata/testdata/tophat2', package = 'proActiv'), 
                     full.names = TRUE, pattern = 'sample')
 fileLabels <- c('sample1', 'sample2')
 promoterReadCounts <- calculatePromoterReadCounts(promoterAnnotation.gencode.v19,

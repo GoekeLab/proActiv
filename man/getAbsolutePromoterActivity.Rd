@@ -34,7 +34,7 @@ ids
 \examples{
 
 ## junctionReadCounts is an object returned from normalizePromoterReadCounts
-junctionReadCounts <- readRDS(system.file('/extdata/testdata/tophat2',
+junctionReadCounts <- readRDS(system.file('extdata/testdata/tophat2',
                                             'normalizedPromoterCounts.rds', 
                                              package = 'proActiv'))
 absolutePromoterActivity <- getAbsolutePromoterActivity(junctionReadCounts,

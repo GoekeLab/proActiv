@@ -41,7 +41,7 @@ Wrapper function returning Summarized Experiment object giving promoter counts a
 }
 \examples{
 
-files <- list.files(system.file('/extdata/testdata/tophat2', package = 'proActiv'), 
+files <- list.files(system.file('extdata/testdata/tophat2', package = 'proActiv'), 
                     full.names = TRUE, pattern = 'sample')
 proActivFromJunctions <- proActiv(files = files,
                                   promoterAnnotation = promoterAnnotation.gencode.v19, 
@@ -49,7 +49,7 @@ proActivFromJunctions <- proActiv(files = files,
                                  genome = NULL, 
                                  ncores = 1)
 
-files <- list.files(system.file('/extdata/testdata/bam', package = 'proActiv'), 
+files <- list.files(system.file('extdata/testdata/bam', package = 'proActiv'), 
                     full.names = TRUE)
 proActivFromBAM <- proActiv(files = files,
                             promoterAnnotation  = promoterAnnotation.gencode.v34,

@@ -16,7 +16,7 @@
 #'
 #' @examples
 #' 
-#' file <- list.files(system.file('/extdata/testdata/tophat2', package = 'proActiv'), 
+#' file <- list.files(system.file('extdata/testdata/tophat2', package = 'proActiv'), 
 #'                    full.names = TRUE, pattern = 'sample1')
 #' promoterCoordinates <- promoterCoordinates(promoterAnnotation.gencode.v19)
 #' intronRanges <- intronRanges(promoterAnnotation.gencode.v19)
@@ -99,7 +99,7 @@ calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges, file 
 #'
 #' @examples
 #' 
-#' files <- list.files(system.file('/extdata/testdata/tophat2', package = 'proActiv'), 
+#' files <- list.files(system.file('extdata/testdata/tophat2', package = 'proActiv'), 
 #'                     full.names = TRUE, pattern = 'sample')
 #' fileLabels <- c('sample1', 'sample2')
 #' promoterReadCounts <- calculatePromoterReadCounts(promoterAnnotation.gencode.v19,
@@ -148,7 +148,7 @@ calculatePromoterReadCounts <- function(promoterAnnotation, files = NULL, fileLa
 #' @examples
 #' 
 #' ## promoterReadCounts is an object returned from calculatePromoterReadCounts
-#' promoterReadCounts <- readRDS(system.file('/extdata/testdata/tophat2',
+#' promoterReadCounts <- readRDS(system.file('extdata/testdata/tophat2',
 #'                                           'promoterCounts.rds', 
 #'                                            package = 'proActiv'))
 #' normalizedPromoterReadCounts <- normalizePromoterReadCounts(promoterReadCounts)

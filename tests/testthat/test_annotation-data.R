@@ -2,15 +2,15 @@ context('Calculating Promoter Annotation')
 library(proActiv)
 library(mockery)
 
-gtfPath <- list.files(system.file('/extdata/testdata/promoterAnnotation', package = 'proActiv'), full.names = TRUE, pattern = 'gtf')
-txdbPath <- list.files(system.file('/extdata/testdata/promoterAnnotation', package = 'proActiv'), full.names = TRUE, pattern = 'sqlite')
+gtfPath <- list.files(system.file('extdata/testdata/promoterAnnotation', package = 'proActiv'), full.names = TRUE, pattern = 'gtf')
+txdbPath <- list.files(system.file('extdata/testdata/promoterAnnotation', package = 'proActiv'), full.names = TRUE, pattern = 'sqlite')
 
 txdb <- AnnotationDbi::loadDb(txdbPath)
 
-reducedExonRanges <- readRDS(system.file('/extdata/testdata/promoterAnnotation', 'reducedExonRanges.rds', package = 'proActiv'))
-annotatedIntronRanges <- readRDS(system.file('/extdata/testdata/promoterAnnotation', 'annotatedIntronRanges.rds', package = 'proActiv'))
-promoterIdMapping <- readRDS(system.file('/extdata/testdata/promoterAnnotation', 'promoterIdMapping.rds', package = 'proActiv'))
-promoterCoordinates <- readRDS(system.file('/extdata/testdata/promoterAnnotation', 'promoterCoordinates.rds', package = 'proActiv'))
+reducedExonRanges <- readRDS(system.file('extdata/testdata/promoterAnnotation', 'reducedExonRanges.rds', package = 'proActiv'))
+annotatedIntronRanges <- readRDS(system.file('extdata/testdata/promoterAnnotation', 'annotatedIntronRanges.rds', package = 'proActiv'))
+promoterIdMapping <- readRDS(system.file('extdata/testdata/promoterAnnotation', 'promoterIdMapping.rds', package = 'proActiv'))
+promoterCoordinates <- readRDS(system.file('extdata/testdata/promoterAnnotation', 'promoterCoordinates.rds', package = 'proActiv'))
 
 test_that('preparePromoterAnnotation handles ambiguous argument specification', {
   expect_error(preparePromoterAnnotation(gtfPath, 'Homo_sapiens'))
