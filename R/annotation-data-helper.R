@@ -65,7 +65,7 @@ getReducedExonRanges <- function(exonRanges.firstExon, exonRanges.firstExon.gene
             .groups = 'drop') %>%
         dplyr::ungroup() %>%
         dplyr::select(.data$seqnames, .data$start, .data$end, .data$strand, .data$customId)
-    exonReducedRanges$promoterId <- paste0('prmtr.', seq_len(nrow(exonReducedRanges)))
+    exonReducedRanges$promoterId <- seq_len(nrow(exonReducedRanges))
     exonReducedRanges <- makeGRangesFromDataFrame(exonReducedRanges, keep.extra.columns = TRUE)
     names(mcols(exonReducedRanges)) <- c('revmap', 'promoterId')
     return(exonReducedRanges)
@@ -159,7 +159,7 @@ getIntronTable <- function(intronRanges.unique, intronRangesByTx.unlist) {
 getIntronIdPerPromoter <- function(intronRangesByTx.unlist, promoterIdMapping) {
     intronRanges.firstIntron <- intronRangesByTx.unlist[intronRangesByTx.unlist$INTRONRANK == 1]
     intronIdByPromoter.firstIntron <- split(intronRanges.firstIntron$INTRONID, 
-                                            factor(intronRanges.firstIntron$promoterId, levels = paste0('prmtr.', seq_len(length(unique(promoterIdMapping$promoterId))))))
+                                            factor(intronRanges.firstIntron$promoterId, levels = seq_len(length(unique(promoterIdMapping$promoterId)))))
     intronIdByPromoter.firstIntron <- lapply(intronIdByPromoter.firstIntron, unique)
     return(intronIdByPromoter.firstIntron)
 }

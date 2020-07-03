@@ -65,7 +65,7 @@ calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges, file 
     intronIdByPromoter <- as.vector(promoterCoordinates$intronId)
     intronId.unlist <- unlist(intronIdByPromoter)
     levels.tmp <- unique(promoterCoordinates$promoterId)
-    levels.tmp <- levels.tmp[order(as.numeric(gsub('prmtr.', '', levels.tmp)))]
+    levels.tmp <- levels.tmp[order(levels.tmp)]
     promoterId.unlist <- factor(rep(promoterCoordinates$promoterId, 
                                 vapply(intronIdByPromoter, FUN = length, FUN.VALUE = numeric(1))), levels = levels.tmp)
 
