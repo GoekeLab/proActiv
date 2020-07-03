@@ -36,7 +36,7 @@ test_that('proActiv expects genome argument with BAM input', {
 
 test_that('proActiv handles compressed input files', {
 
-  files <- list.files(system.file('extdata/vignette', package = 'proActiv'), full.names = TRUE, pattern = 'Rep1')
+  files <- list.files(system.file('extdata/vignette', package = 'proActiv'), full.names = TRUE, pattern = 'replicate1')
   expect_s4_class(proActiv(files, promoterAnnotation.gencode.v34), 'SummarizedExperiment')
 
 })

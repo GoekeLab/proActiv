@@ -45,13 +45,13 @@ test_that('calculatePromoterReadCounts returns expected output', {
   promoterCounts <- readRDS(system.file('extdata/testdata/tophat2', 'promoterCounts.rds', package = 'proActiv'))
 
   expect_type(calculatePromoterReadCounts(promoterAnnotation, filesTophat, fileLabels, 'tophat'), 'list')
-  expect_equal(calculatePromoterReadCounts(promoterAnnotation, filesTophat, fileLabels, 'tophat'), promoterCounts)
+  expect_equivalent(calculatePromoterReadCounts(promoterAnnotation, filesTophat, fileLabels, 'tophat'), promoterCounts)
 
   ### 2) STAR input ###
   promoterCounts <- readRDS(system.file('extdata/testdata/star', 'promoterCounts.rds', package = 'proActiv'))
 
   expect_type(calculatePromoterReadCounts(promoterAnnotation, filesSTAR , fileLabels, 'star'), 'list')
-  expect_equal(calculatePromoterReadCounts(promoterAnnotation, filesSTAR , fileLabels, 'star'), promoterCounts)
+  expect_equivalent(calculatePromoterReadCounts(promoterAnnotation, filesSTAR , fileLabels, 'star'), promoterCounts)
 
   ### 3) BAM input ###
   expect_type(
@@ -69,7 +69,7 @@ test_that('parallelised calculatePromoterReadCounts returns correct output', {
   promoterCounts <- readRDS(system.file('extdata/testdata/tophat2', 'promoterCounts.rds', package = 'proActiv'))
 
   suppressWarnings(
-    expect_equal(calculatePromoterReadCounts(promoterAnnotation, filesTophat, fileLabels, 'tophat', numberOfCores = 2), promoterCounts)
+    expect_equivalent(calculatePromoterReadCounts(promoterAnnotation, filesTophat, fileLabels, 'tophat', numberOfCores = 2), promoterCounts)
   )
 
 })
@@ -80,7 +80,7 @@ test_that('normalizedReadCounts returns expected output', {
   tophatPromoterCounts <- calculatePromoterReadCounts(promoterAnnotation, filesTophat, fileLabels, 'tophat')
 
   expect_type(normalizePromoterReadCounts(tophatPromoterCounts), 'list')
-  expect_equal(normalizePromoterReadCounts(tophatPromoterCounts), normalizedPromoterCounts)
+  expect_equivalent(normalizePromoterReadCounts(tophatPromoterCounts), normalizedPromoterCounts)
 
 })
 

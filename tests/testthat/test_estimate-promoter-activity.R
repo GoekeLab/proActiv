@@ -13,7 +13,7 @@ test_that('getAbsolutePromoterActivity returns expected output', {
   absolutePromoterActivity <- readRDS(system.file('extdata/testdata/tophat2', 'absolutePromoterActivity.rds', package = 'proActiv'))
   
   expect_type(getAbsolutePromoterActivity(tophatNormCounts, promoterAnnotation), 'list')
-  expect_equal(getAbsolutePromoterActivity(tophatNormCounts, promoterAnnotation), absolutePromoterActivity)
+  expect_equivalent(getAbsolutePromoterActivity(tophatNormCounts, promoterAnnotation), absolutePromoterActivity)
   
 })
 
@@ -24,7 +24,7 @@ test_that('getGeneExpression returns expected output', {
   tophatAbsProActiv <- getAbsolutePromoterActivity(tophatNormCounts, promoterAnnotation)
 
   expect_type(getGeneExpression(tophatAbsProActiv), 'list')
-  expect_equal(getGeneExpression(tophatAbsProActiv), geneExpression)
+  expect_equivalent(getGeneExpression(tophatAbsProActiv), geneExpression)
 
 })
 
@@ -36,6 +36,6 @@ test_that('getRelativePromoterActivity returns expected output', {
   tophatGeneExp <- getGeneExpression(tophatAbsProActiv) 
 
   expect_type(getRelativePromoterActivity(tophatAbsProActiv, tophatGeneExp), 'list')
-  expect_identical(getRelativePromoterActivity(tophatAbsProActiv, tophatGeneExp), relativePromoterActivity)
+  expect_equivalent(getRelativePromoterActivity(tophatAbsProActiv, tophatGeneExp), relativePromoterActivity)
 
 })
