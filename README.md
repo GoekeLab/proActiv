@@ -30,7 +30,7 @@ TCGA, ICGC, GTEx, and PCAWG can be downloaded here:
   - [Estimating Promoter Activity](#estimating-promoter-activity)
   - [Limitations](#limitations)
   - [Release History](#release-history)
-  - [Citing proActiv](#reference)
+  - [Reference](#reference)
   - [Contributors](#contributors)
 
 ### Installation
@@ -51,9 +51,11 @@ proActiv with STAR junction files (Human genome GRCh38 Gencode v34) as
 input:
 
 ``` r
-files <- list.files(system.file('extdata/vignette', package = 'proActiv'), pattern = 'replicate3', full.names = TRUE)
+library(proActiv)
+
+files <- list.files(system.file('extdata/vignette', package = 'proActiv'), full.names = TRUE)
 result <- proActiv(files = files, 
-                   promoterAnnotation = proActiv::promoterAnnotation.gencode.v34)
+                   promoterAnnotation = promoterAnnotation.gencode.v34)
 ```
 
 `result` is a summarizedExperiment object which can be accessed as
@@ -62,14 +64,15 @@ follows:
   - `assays(results)` returns raw/normalized promoter counts and
     absolute/relative promoter activity  
   - `metadata(results)` returns gene expression data  
-  - `rowData(results)` returns a promoter to gene ID mapping
+  - `rowData(results)` returns a promoter to gene ID mapping and
+    promoter metadata
 
 Below we describe the steps to create a promoter annotation object and
 
 ### Creating a Promoter Annotation object
 
-In order to quantify promoter activity, promoters in the genome first
-have to be identified. proActiv allows the creation of a promoter
+In order to quantify promoter activity, proActiv uses a set of promoters
+based on genome annotations. proActiv allows the creation of a promoter
 annotation object for any genome from a TxDb with the
 `preparePromoterAnnotation` function. Users have the option to either
 pass the file path of the GTF/GFF or TxDb to be used, or use the TxDb
@@ -79,7 +82,6 @@ and TxDb. We use a subset of the GTF/TxDb which includes only chromosome
 22 annotations.
 
 ``` r
-library(proActiv)
 
 ## From GTF file path
 gtf.file <- list.files(system.file('extdata/testdata/promoterAnnotation', package = 'proActiv'), pattern = 'gtf', full.names = TRUE)
@@ -111,11 +113,14 @@ activity at each annotated promoter from RNA-Seq data aligned with
 TopHat2 or STAR. Users have the option to either pass junction files
 (TopHat2 or STAR) or BAM files to `proActiv`. proActiv takes the paths
 of the input files, together with the relevant promoter annotation, and
-returns a summarizedExperiment object. The returned object summarizes
-promoter counts and activity. Gene expression is stored as metadata,
-while a promoter-to-gene mapping is stored as row data. Below, we
-demonstrate running `proActiv` with input STAR junction files and BAM
-files (truncated). This data is taken from the [SGNEx
+a vector describing experimental condition corresponding to each input
+file, and returns a summarizedExperiment object. The returned object
+summarizes promoter counts and activity, while gene expression is stored
+as metadata. Row data stores promoter metadata and mean absolute
+promoter activity summarized across conditions.
+
+Below, we demonstrate running `proActiv` with input STAR junction files
+and BAM files (truncated). This data is taken from the [SGNEx
 project](https://github.com/GoekeLab/sg-nex-data). The reference genome
 used for alignment is Gencode v34 (GRCh38). These files can can be found
 at ‘extdata/vignette’:
@@ -123,15 +128,13 @@ at ‘extdata/vignette’:
   - extdata/vignette/SGNEx\_A549\_Illumina\_replicate1-run1.junctions.gz
   - extdata/vignette/SGNEx\_A549\_Illumina\_replicate3-run1.junctions.gz
   - extdata/vignette/SGNEx\_A549\_Illumina\_replicate5-run1.junctions.gz
-  - extdata/vignette/SGNEx\_MCF7\_Illumina\_replicate2-run1.junctions.gz
-  - extdata/vignette/SGNEx\_MCF7\_Illumina\_replicate3-run1.junctions.gz
-  - extdata/vignette/SGNEx\_MCF7\_Illumina\_replicate4-run1.junctions.gz
+  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate2-run1.junctions.gz
+  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate4-run1.junctions.gz
+  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate5-run1.junctions.gz
 
 <!-- end list -->
 
 ``` r
-library(SummarizedExperiment)
-
 ## From BAM files - genome parameter must be provided
 files <- list.files(system.file('extdata/testdata/bam', package = 'proActiv'), full.names = TRUE)
 result <- proActiv(files = files, 
@@ -139,14 +142,10 @@ result <- proActiv(files = files,
                    genome = 'hg38')
 
 ## From STAR junction files
-files <- list.files(system.file('extdata/vignette', package = 'proActiv'), pattern = 'replicate3', full.names = TRUE)
+files <- list.files(system.file('extdata/vignette', package = 'proActiv'), full.names = TRUE)
 result <- proActiv(files = files, 
-                   promoterAnnotation = proActiv::promoterAnnotation.gencode.v34)
-## Gene Expression
-head(metadata(result)$geneExpression)
-
-## Absolute Promoter Activity
-head(assays(result)$absolutePromoterActivity)
+                   promoterAnnotation = promoterAnnotation.gencode.v34,
+                   condition = rep(c('A549','HepG2'), each = 3))
 ```
 
 ## Release History
