@@ -37,7 +37,9 @@ Imports:
     rlang,
     SummarizedExperiment,
     AnnotationDbi,
-    DESeq2
+    DESeq2,
+    data.table,
+    tibble
 Suggests: 
     BiocParallel,
     testthat,
