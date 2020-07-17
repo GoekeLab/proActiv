@@ -8,6 +8,7 @@ proActiv(
   files,
   promoterAnnotation,
   fileLabels = NULL,
+  condition = NULL,
   genome = NULL,
   ncores = 1
 )
@@ -23,6 +24,10 @@ intron ranges, promoter coordinates and the promoter id mapping}
 for which the junction read counts will be calculated. These labels will be 
 used as column names for each output data.frame object. If not provided,
 filenames will be used as labels. Defaults to NULL}
+
+\item{condition}{A character vector. The condition to which each sample
+belong to. Must correspond to the order of the files. If supplied, 
+results are summarized by condition. Defaults to NULL}
 
 \item{genome}{A character. Genome version. Must be specified if input file
 type is a BAM file. Defaults to NULL}
@@ -46,6 +51,7 @@ files <- list.files(system.file('extdata/testdata/tophat2', package = 'proActiv'
 proActivFromJunctions <- proActiv(files = files,
                                   promoterAnnotation = promoterAnnotation.gencode.v19, 
                                  fileLabels = NULL, 
+                                 condition = c('A', 'B'),
                                  genome = NULL, 
                                  ncores = 1)
 
@@ -54,6 +60,7 @@ files <- list.files(system.file('extdata/testdata/bam', package = 'proActiv'),
 proActivFromBAM <- proActiv(files = files,
                             promoterAnnotation  = promoterAnnotation.gencode.v34,
                            fileLabels = NULL,
+                           condition = c('A549', 'MCF7'),
                            genome = 'hg38',
                            ncores = 1)
                            
