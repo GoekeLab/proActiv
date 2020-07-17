@@ -42,6 +42,14 @@ setClass(
 #' @export
 #' @return A promoter annotation object with three slots: intronRanges, promoterIdMapping 
 #'   and promoter Coordinates
+#'   
+#' @examples 
+#' 
+#' promoterAnnotation <- PromoterAnnotation()
+#' intronRanges(promoterAnnotation) <- intronRanges(promoterAnnotation.gencode.v19)
+#' promoterIdMapping(promoterAnnotation) <- promoterIdMapping(promoterAnnotation.gencode.v19)
+#' promoterCoordinates(promoterAnnotation) <- promoterCoordinates(promoterAnnotation.gencode.v19)
+#' 
 
 PromoterAnnotation <-
     function(intronRanges = GRanges(),

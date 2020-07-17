@@ -105,3 +105,11 @@ TSS ids, promoter ids and gene ids.}
 \item{\code{promoterCoordinates}}{A GRanges object. Promoter coordinates (TSS) with gene id and internal promoter state}
 }}
 
+\examples{
+
+promoterAnnotation <- PromoterAnnotation()
+intronRanges(promoterAnnotation) <- intronRanges(promoterAnnotation.gencode.v19)
+promoterIdMapping(promoterAnnotation) <- promoterIdMapping(promoterAnnotation.gencode.v19)
+promoterCoordinates(promoterAnnotation) <- promoterCoordinates(promoterAnnotation.gencode.v19)
+
+}
