@@ -3,6 +3,7 @@
 \docType{import}
 \name{reexports}
 \alias{reexports}
+\alias{loadDb}
 \alias{assays}
 \alias{rowData}
 \alias{colData}
@@ -22,6 +23,8 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
+  \item{AnnotationDbi}{\code{\link[AnnotationDbi:AnnotationDb-class]{loadDb}}}
+
   \item{dplyr}{\code{\link[dplyr:reexports]{\%>\%}}, \code{\link[dplyr]{arrange}}, \code{\link[dplyr:reexports]{as_tibble}}, \code{\link[dplyr]{filter}}, \code{\link[dplyr]{group_by}}, \code{\link[dplyr]{mutate}}, \code{\link[dplyr:context]{n}}}
 
   \item{S4Vectors}{\code{\link[S4Vectors:Annotated-class]{metadata}}}

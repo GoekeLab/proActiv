@@ -51,17 +51,19 @@ promoterCoordinates(x) <- value
 \arguments{
 \item{intronRanges}{A GRanges object containing annotated intron ranges}
 
-\item{promoterIdMapping}{A data.frame containing mapping between transcript, tss, promoter and gene ids}
+\item{promoterIdMapping}{A data.frame containing mapping between transcript, 
+TSS, promoter and gene ids}
 
 \item{promoterCoordinates}{A GRanges object containing promoter coordinates}
 
 \item{x}{A PromoterAnnotation object}
 
-\item{value}{intronRanges, promoterIdMapping or promoterCoordinates to be assigned}
+\item{value}{intronRanges, promoterIdMapping or promoterCoordinates to 
+be assigned}
 }
 \value{
-A promoter annotation object with three slots: intronRanges, promoterIdMapping 
-  and promoter Coordinates
+A promoter annotation object with three slots: intronRanges, 
+  promoterIdMapping and promoter Coordinates
 }
 \description{
 S4 class for promoter annotation data for a specific annotation version
@@ -96,20 +98,24 @@ S4 class for promoter annotation data for a specific annotation version
 \section{Slots}{
 
 \describe{
-\item{\code{intronRanges}}{A GRanges object. The intron ranges annotated with the promoter
-information.}
+\item{\code{intronRanges}}{A GRanges object. The intron ranges annotated with the 
+promoter information.}
 
-\item{\code{promoterIdMapping}}{A data.frame object. The id mapping between transcript ids, names,
-TSS ids, promoter ids and gene ids.}
+\item{\code{promoterIdMapping}}{A data.frame object. The id mapping between 
+transcript ids, names, TSS ids, promoter ids and gene ids.}
 
-\item{\code{promoterCoordinates}}{A GRanges object. Promoter coordinates (TSS) with gene id and internal promoter state}
+\item{\code{promoterCoordinates}}{A GRanges object. Promoter coordinates (TSS) with 
+gene id and internal promoter state}
 }}
 
 \examples{
 
 promoterAnnotation <- PromoterAnnotation()
-intronRanges(promoterAnnotation) <- intronRanges(promoterAnnotation.gencode.v19)
-promoterIdMapping(promoterAnnotation) <- promoterIdMapping(promoterAnnotation.gencode.v19)
-promoterCoordinates(promoterAnnotation) <- promoterCoordinates(promoterAnnotation.gencode.v19)
+intronRanges(promoterAnnotation) <- intronRanges(
+                                            promoterAnnotation.gencode.v19)
+promoterIdMapping(promoterAnnotation) <- promoterIdMapping(
+                                            promoterAnnotation.gencode.v19)
+promoterCoordinates(promoterAnnotation) <- promoterCoordinates(
+                                            promoterAnnotation.gencode.v19)
 
 }

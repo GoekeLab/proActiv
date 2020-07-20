@@ -37,7 +37,8 @@ each promoter for the input junction file
 }
 \examples{
 
-file <- list.files(system.file('extdata/testdata/tophat2', package = 'proActiv'), 
+file <- list.files(system.file('extdata/testdata/tophat2', 
+                   package = 'proActiv'), 
                    full.names = TRUE, pattern = 'sample1')
 promoterCoordinates <- promoterCoordinates(promoterAnnotation.gencode.v19)
 intronRanges <- intronRanges(promoterAnnotation.gencode.v19)
