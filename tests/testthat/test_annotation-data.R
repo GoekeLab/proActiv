@@ -2,8 +2,8 @@ context('Calculating Promoter Annotation')
 library(proActiv)
 library(mockery)
 
-gtfPath <- list.files(system.file('extdata/testdata/promoterAnnotation', package = 'proActiv'), full.names = TRUE, pattern = 'gtf')
-txdbPath <- list.files(system.file('extdata/testdata/promoterAnnotation', package = 'proActiv'), full.names = TRUE, pattern = 'sqlite')
+gtfPath <- system.file('extdata/vignette/annotations/gencode.v34.annotation.chr22.gtf.gz', package = 'proActiv')
+txdbPath <- system.file('extdata/vignette/annotations/gencode.v34.annotation.chr22.sqlite', package = 'proActiv')
 
 txdb <- AnnotationDbi::loadDb(txdbPath)
 

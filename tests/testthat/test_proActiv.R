@@ -36,7 +36,7 @@ test_that('proActiv expects genome argument with BAM input', {
 
 test_that('proActiv handles invalid condition argument', {
   
-  files <- list.files(system.file('extdata/vignette', package = 'proActiv'), 
+  files <- list.files(system.file('extdata/vignette/junctions', package = 'proActiv'), 
                       full.names = TRUE, pattern = 'replicate5')
   expect_warning(proActiv(files = files, 
                            promoterAnnotation = promoterAnnotation.gencode.v34,
@@ -46,7 +46,7 @@ test_that('proActiv handles invalid condition argument', {
 
 test_that('proActiv handles compressed input files', {
 
-  files <- list.files(system.file('extdata/vignette', package = 'proActiv'), 
+  files <- list.files(system.file('extdata/vignette/junctions', package = 'proActiv'), 
                       full.names = TRUE, pattern = 'replicate5')
   expect_s4_class(proActiv(files = files, 
                            promoterAnnotation = promoterAnnotation.gencode.v34,
