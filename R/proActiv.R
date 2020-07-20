@@ -1,4 +1,5 @@
-#' Wrapper function returning Summarized Experiment object giving promoter counts and activity
+#' Wrapper function returning Summarized Experiment object giving promoter 
+#' counts and activity
 #'
 #' @param files A character vector. The list of input files for 
 #'   which the junction read counts will be calculated
@@ -19,71 +20,40 @@
 #' 
 #'
 #' @export
-#' @return A SummarizedExperiment object with assays giving promoter counts and activity 
-#'   with gene expression stored as column data and promoter gene id mapping stored as 
-#'   row data
+#' @return A SummarizedExperiment object with assays giving promoter counts 
+#'   and activity with gene expression stored as metadata. rowData contains
+#'   promoter metadata and absolute promoter activity summarized across
+#'   conditions (if condition is provided)
 #' 
 #' @examples
 #' 
-#' files <- list.files(system.file('extdata/testdata/bam', package = 'proActiv'), 
-#'                     full.names = TRUE)
-#' proActivFromBAM <- proActiv(files = files,
-#'                             promoterAnnotation  = promoterAnnotation.gencode.v34,
-#'                            fileLabels = NULL,
-#'                            condition = c('A549', 'MCF7'),
-#'                            genome = 'hg38',
-#'                            ncores = 1)
+#' files <- list.files(system.file('extdata/vignette/junctions', 
+#'                        package = 'proActiv'), 
+#'                        full.names = TRUE, pattern = 'replicate5')
+#' result <- proActiv(files = files,
+#'                        promoterAnnotation  = promoterAnnotation.gencode.v34,
+#'                        fileLabels = NULL,
+#'                        ncores = 1)
 #'                            
-#' @import SummarizedExperiment
-#' @import S4Vectors
-#' @importFrom dplyr as_tibble '%>%' group_by mutate row_number 
-#' @importFrom rlang .data
 proActiv <- function(files, promoterAnnotation, fileLabels = NULL, 
                     condition = NULL, genome = NULL, ncores = 1) {
+    
     parser <- parseFile(files, fileLabels, genome)
     fileLabels <- parser$fileLabels
     fileType <- parser$fileType
     
-    promoterCounts <- calculatePromoterReadCounts(promoterAnnotation, files, fileLabels, fileType, genome, ncores)
-    normalizedPromoterCounts <- normalizePromoterReadCounts(promoterCounts)
-    absolutePromoterActivity <- getAbsolutePromoterActivity(normalizedPromoterCounts, promoterAnnotation)
-    geneExpression <- getGeneExpression(absolutePromoterActivity)
-    relativePromoterActivity <- getRelativePromoterActivity(absolutePromoterActivity, geneExpression)
-
-    result <- SummarizedExperiment(assays = list(promoterCounts = promoterCounts,
-                                                            normalizedPromoterCounts = normalizedPromoterCounts,
-                                                            absolutePromoterActivity = absolutePromoterActivity[, fileLabels, drop = FALSE],
-                                                            relativePromoterActivity = relativePromoterActivity[, fileLabels, drop = FALSE]))
-    metadata(result) <- list(geneExpression = geneExpression[, fileLabels, drop = FALSE])
-    
-    print('Calculating positions of promoters...')
-    promoterCoordinates <- promoterCoordinates(promoterAnnotation)
-    promoterIdMapping <- promoterIdMapping(promoterAnnotation)
-    promoterCoordinates$geneId <- promoterIdMapping$geneId[match(promoterCoordinates$promoterId, promoterIdMapping$promoterId)]
-    promoterCoordinates <- as_tibble(promoterCoordinates) %>%
-        group_by(.data$geneId) %>%
-        mutate(promoterPosition = ifelse(strand == '+', row_number(), rev(row_number()))) 
-    rowData(result) <- data.frame(absolutePromoterActivity[,c('promoterId', 'geneId')], 
-                                    promoterCoordinates[,c("seqnames","start", "strand", "promoterPosition")])
+    result <- buildSummarizedExperiment(promoterAnnotation, files, fileLabels,
+                                        fileType, genome, ncores)
     
     if (!is.null(condition)) {
         if (length(condition) != length(files)) {
             warning('Condition argument is invalid. 
-                    Please ensure a one-to-one correspondence between each condition and each file.
-                    Returning results not summarized by condition.')
+                Please ensure a 1-1 map between each condition and each file.
+                Returning results not summarized across conditions.')
             return(result)
+        } else {
+            result <- summarizeAcrossCondition(result, condition) 
         }
-        colData(result) <- DataFrame(sampleName = colnames(result), 
-                                    condition=condition)
-        colnames(result) <- colData(result)$sampleName
-        print('Summarising gene expression and promoter activity across conditions...')
-        for (group in unique(condition)) {
-            rowData(result)[,paste0(group, '.mean')] <- 
-                rowMeans(assays(result[,colData(result)$condition==group])$abs) 
-            metadata(result)$geneExpression[,paste0(group, '.mean')] <- 
-                rowMeans(metadata(result)$geneExpression[,colData(result)$condition==group, drop=FALSE])
-        }
-        rowData(result) <- categorizePromoters(rowData(result), condition)
     }
     return(result) 
 }
@@ -98,8 +68,8 @@ parseFile <- function(files, fileLabels, genome) {
     
     if (is.null(fileLabels)) {
         fileLabels <- make.names(tools::file_path_sans_ext(basename(files), 
-                                                           compression = TRUE),
-                                 unique = TRUE)
+                                                            compression = TRUE),
+                                unique = TRUE)
     }
     
     ext <- unique(tools::file_ext(files))
@@ -129,8 +99,77 @@ parseFile <- function(files, fileLabels, genome) {
     return(parsed)
 }
 
+# Call functions to get activity and build summarized experiment
+#' @import SummarizedExperiment
+#' @importFrom data.table as.data.table .N ':='
+#' @importFrom rlang .data
+#' @importFrom S4Vectors metadata
+buildSummarizedExperiment <- function(promoterAnnotation, 
+                                        files, fileLabels, fileType, 
+                                        genome, ncores) {
+    promoterCounts <- calculatePromoterReadCounts(promoterAnnotation, 
+                                                    files, fileLabels, fileType, 
+                                                    genome, ncores)
+    normalizedPromoterCounts <- normalizePromoterReadCounts(promoterCounts)
+    absolutePromoterActivity <- getAbsolutePromoterActivity(
+                                                    normalizedPromoterCounts, 
+                                                    promoterAnnotation)
+    geneExpression <- getGeneExpression(absolutePromoterActivity)
+    relativePromoterActivity <- getRelativePromoterActivity(
+                                                    absolutePromoterActivity, 
+                                                    geneExpression)
+    result <- SummarizedExperiment(assays = list(
+            promoterCounts = promoterCounts,
+            normalizedPromoterCounts = normalizedPromoterCounts,
+            absolutePromoterActivity = absolutePromoterActivity[, 
+                                                    fileLabels, drop = FALSE],
+            relativePromoterActivity = relativePromoterActivity[, 
+                                                    fileLabels, drop = FALSE]))
+    metadata(result) <- list(geneExpression = 
+                                    geneExpression[, fileLabels, drop = FALSE])
+    print('Calculating positions of promoters...')
+    promoterCoordinates <- promoterCoordinates(promoterAnnotation)
+    promoterIdMapping <- promoterIdMapping(promoterAnnotation)
+    promoterCoordinates$geneId <- promoterIdMapping$geneId[match(
+                promoterCoordinates$promoterId, promoterIdMapping$promoterId)]
+    promoterCoordinates <- as.data.table(promoterCoordinates)
+    promoterPosition <- NULL
+    geneId <- NULL
+    promoterCoordinates[, promoterPosition := ifelse(strand == '+', seq_len(.N), 
+                                                rev(seq_len(.N))), by=geneId]
+    ## Build row data
+    rowData(result) <- data.frame(
+                        absolutePromoterActivity[,c('promoterId', 'geneId')], 
+                        promoterCoordinates[,c("seqnames","start", 
+                                                "strand", "promoterPosition")])
+    transcriptByGene <- split(promoterIdMapping$transcriptName, 
+                                promoterIdMapping$geneId)
+    rowData(result)$txId <- transcriptByGene[match(rowData(result)$geneId, 
+                                                names(transcriptByGene))]
+    return(result)
+}
+
+
+# Helper function to summarize results across condition
+#' @importFrom S4Vectors DataFrame metadata
+#' @importFrom SummarizedExperiment rowData colData assays
+summarizeAcrossCondition <- function(result, condition) {
+        colData(result) <- DataFrame(sampleName = colnames(result), 
+                                    condition=condition)
+        colnames(result) <- colData(result)$sampleName
+        print('Summarising expression and activity across conditions...')
+        for (group in unique(condition)) {
+            rowData(result)[,paste0(group, '.mean')] <- 
+                rowMeans(assays(result[,colData(result)$condition==group])$abs) 
+            metadata(result)$geneExpression[,paste0(group, '.mean')] <- 
+                rowMeans(metadata(result)$geneExpression[
+                    ,colData(result)$condition==group, drop=FALSE])
+        }
+        rowData(result) <- categorizePromoters(rowData(result), condition)
+    return(result)
+}
+
 # Helper function to categorize promoters
-#' @import S4Vectors
 #' @importFrom data.table as.data.table .I setorder
 categorizePromoters <- function(rdata, condition) {
     ## Avoid undefined global vars
