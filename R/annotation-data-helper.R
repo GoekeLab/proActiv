@@ -10,9 +10,12 @@ NULL
 #' @importFrom GenomeInfoDb 'seqlevelsStyle<-'
 getTranscriptRanges <- function(txdb, species = 'Homo_sapiens') {
     # Retrieve transcript ranges with detailed metadata
-    transcriptRanges <- transcripts(txdb, columns = c('TXID', 'TXSTART', 'TXEND', 'GENEID', 'TXNAME'))
+    transcriptRanges <- transcripts(txdb, columns = 
+                            c('TXID', 'TXSTART', 'TXEND', 'GENEID', 'TXNAME'))
     names(transcriptRanges) <- transcriptRanges$TXNAME
-    transcriptRanges <- keepStandardChromosomes(x = transcriptRanges, species = species, pruning.mode = "tidy")
+    transcriptRanges <- keepStandardChromosomes(x = transcriptRanges, 
+                                                species = species, 
+                                                pruning.mode = "tidy")
     GenomeInfoDb::seqlevelsStyle(transcriptRanges) <- 'UCSC'
     return(transcriptRanges)
 }
@@ -25,9 +28,13 @@ getTssRanges <- function(transcriptRanges) {
     tssCoordinates <- promoters(transcriptRanges, upstream = 0, downstream = 1)
     seqlevelsStyle(tssCoordinates) <- 'UCSC'
     tssCoordinates.unique <- unique(tssCoordinates)
-    tssCoordinates.unique$tssId <- paste0('tss.', seq_len(length(tssCoordinates.unique)))
-    tssCoordinates.overlap <- findOverlaps(tssCoordinates, tssCoordinates.unique, type = 'equal')
-    tssCoordinates$tssId <- tssCoordinates.unique$tssId[subjectHits(tssCoordinates.overlap)]
+    tssCoordinates.unique$tssId <- paste0('tss.',
+                                        seq_len(length(tssCoordinates.unique)))
+    tssCoordinates.overlap <- findOverlaps(tssCoordinates, 
+                                            tssCoordinates.unique, 
+                                            type = 'equal')
+    tssCoordinates$tssId <- tssCoordinates.unique$tssId[
+                                            subjectHits(tssCoordinates.overlap)]
     return(tssCoordinates)
 }
 
@@ -36,37 +43,47 @@ getTssRanges <- function(transcriptRanges) {
 #' @importFrom GenomeInfoDb 'seqlevelsStyle<-'
 getExonRangesByTx <- function(txdb, species = 'Homo_sapiens') {
     exonRangesByTx <- exonsBy(txdb, by = 'tx', use.names = TRUE)
-    exonRangesByTx <- keepStandardChromosomes(x = exonRangesByTx, species = species, pruning.mode = "tidy")
+    exonRangesByTx <- keepStandardChromosomes(x = exonRangesByTx, 
+                                                species = species, 
+                                                pruning.mode = "tidy")
     seqlevelsStyle(exonRangesByTx) <- 'UCSC'
     return(exonRangesByTx)
 }
 
 # Get the first exon of each transcript
 getFirstExonRanges <- function(exonRangesByTx.unlist) {
-    exonRanges.firstExon <- exonRangesByTx.unlist[exonRangesByTx.unlist$exon_rank == 1]
+    exonRanges.firstExon <- exonRangesByTx.unlist[
+                                        exonRangesByTx.unlist$exon_rank == 1]
     exonRanges.firstExon$tx_name <- names(exonRanges.firstExon)
     exonRanges.firstExon$customId <- seq_len(length(exonRanges.firstExon))
     return(exonRanges.firstExon)
 }
 
-# Reduce all first exons for each gene to identify transcripts belonging to each promoter
+# Reduce all first exons for each gene to identify transcripts 
+# belonging to each promoter
 #' @importFrom rlang .data
-#' @importFrom dplyr as_tibble mutate group_by '%>%' group_by summarise ungroup select lead arrange
-getReducedExonRanges <- function(exonRanges.firstExon, exonRanges.firstExon.geneId) {
+#' @importFrom dplyr as_tibble '%>%' arrange group_by mutate lead summarise 
+#'   ungroup select n 
+getReducedExonRanges <- function(exonRanges.firstExon, 
+                                exonRanges.firstExon.geneId) {
     exonRanges.firstExon$geneId <- exonRanges.firstExon.geneId
     exonReducedRanges <- as_tibble(exonRanges.firstExon) %>% 
         dplyr::arrange(.data$geneId, .data$start) %>% 
         dplyr::group_by(.data$geneId) %>%
-        dplyr::mutate(exonClass = c(0, cumsum(lead(.data$start) > cummax(.data$end))[-n()])) %>%
-        dplyr::group_by(.data$geneId, .data$exonClass, .data$seqnames, .data$strand) %>%
+        dplyr::mutate(exonClass = 
+                c(0, cumsum(lead(.data$start) > cummax(.data$end))[-n()])) %>%
+        dplyr::group_by(.data$geneId, .data$exonClass, 
+                        .data$seqnames, .data$strand) %>%
         dplyr::summarise(start = min(.data$start), 
-            end = max(.data$end), 
-            customId = list(.data$customId),
-            .groups = 'drop') %>%
+                            end = max(.data$end), 
+                            customId = list(.data$customId),
+                            .groups = 'drop') %>%
         dplyr::ungroup() %>%
-        dplyr::select(.data$seqnames, .data$start, .data$end, .data$strand, .data$customId)
+        dplyr::select(.data$seqnames, .data$start, 
+                        .data$end, .data$strand, .data$customId)
     exonReducedRanges$promoterId <- seq_len(nrow(exonReducedRanges))
-    exonReducedRanges <- makeGRangesFromDataFrame(exonReducedRanges, keep.extra.columns = TRUE)
+    exonReducedRanges <- makeGRangesFromDataFrame(exonReducedRanges, 
+                                                    keep.extra.columns = TRUE)
     names(mcols(exonReducedRanges)) <- c('revmap', 'promoterId')
     return(exonReducedRanges)
 }
@@ -74,10 +91,13 @@ getReducedExonRanges <- function(exonRanges.firstExon, exonRanges.firstExon.gene
 # Get intron ranges for each promoter
 #' @importFrom GenomeInfoDb keepStandardChromosomes
 #' @importFrom GenomeInfoDb 'seqlevelsStyle<-'
-getIntronRangesByTx <- function(txdb, transcriptRanges, species = 'Homo_sapiens') {
+getIntronRangesByTx <- function(txdb, transcriptRanges, 
+                                species = 'Homo_sapiens') {
     # Retrieve intron ranges for each promoter
     intronRangesByTx <- intronsByTranscript(txdb, use.names = TRUE)
-    intronRangesByTx <- keepStandardChromosomes(x = intronRangesByTx, species = species, pruning.mode = "tidy")
+    intronRangesByTx <- keepStandardChromosomes(x = intronRangesByTx, 
+                                                species = species, 
+                                                pruning.mode = "tidy")
     seqlevelsStyle(intronRangesByTx) <- 'UCSC'
     intronRangesByTx <- intronRangesByTx[names(transcriptRanges)]
     return(intronRangesByTx)
@@ -99,68 +119,113 @@ getUniqueIntronRanges <- function(intronRangesByTx.unlist) {
 getIntronRanks <- function(intronRangesByTx) {
     intronRankByTx <- as_tibble(intronRangesByTx) %>% 
         dplyr::group_by(.data$group_name) %>% 
-        dplyr::mutate(rank = ifelse(strand == '+', row_number(), rev(row_number())))
+        dplyr::mutate(rank = ifelse(strand == '+', 
+                                    row_number(), rev(row_number())))
     intronRank <- intronRankByTx$rank
     return(intronRank)
 }
 
 # Annotate all the intron ranges with the metadata
-annotateAllIntronRanges <- function(intronRankByTx, intronRangesByTx.unlist, transcriptRanges, promoterIdMapping) {
+annotateAllIntronRanges <- function(intronRankByTx, intronRangesByTx.unlist, 
+                                    transcriptRanges, promoterIdMapping) {
     # Annotate all intron ranges with corresponding ids
     intronRangesByTx.unlist$INTRONRANK <- intronRankByTx
-    intronRangesByTx.unlist$TXID <- transcriptRanges$TXID[match(names(intronRangesByTx.unlist), transcriptRanges$TXNAME)]
-    intronRangesByTx.unlist$TXSTART <- transcriptRanges$TXSTART[match(names(intronRangesByTx.unlist), transcriptRanges$TXNAME)]
-    intronRangesByTx.unlist$TXEND <- transcriptRanges$TXEND[match(names(intronRangesByTx.unlist), transcriptRanges$TXNAME)]
-    intronRangesByTx.unlist$GENEID <- as.character(transcriptRanges$GENEID)[match(names(intronRangesByTx.unlist), transcriptRanges$TXNAME)]
-    intronRangesByTx.unlist$TXNAME <- transcriptRanges$TXNAME[match(names(intronRangesByTx.unlist), transcriptRanges$TXNAME)]
-    intronRangesByTx.unlist$TxWidth <- transcriptRanges$TxWidth[match(names(intronRangesByTx.unlist), transcriptRanges$TXNAME)]
-    intronRangesByTx.unlist$promoterId <- promoterIdMapping$promoterId[match(intronRangesByTx.unlist$TXID, promoterIdMapping$transcriptId)]
+    intronRangesByTx.unlist$TXID <- transcriptRanges$TXID[match(
+                    names(intronRangesByTx.unlist), transcriptRanges$TXNAME)]
+    intronRangesByTx.unlist$TXSTART <- transcriptRanges$TXSTART[match(
+                    names(intronRangesByTx.unlist), transcriptRanges$TXNAME)]
+    intronRangesByTx.unlist$TXEND <- transcriptRanges$TXEND[match(
+                    names(intronRangesByTx.unlist), transcriptRanges$TXNAME)]
+    intronRangesByTx.unlist$GENEID <- as.character(transcriptRanges$GENEID)[
+                    match(names(intronRangesByTx.unlist), 
+                    transcriptRanges$TXNAME)]
+    intronRangesByTx.unlist$TXNAME <- transcriptRanges$TXNAME[match(
+                    names(intronRangesByTx.unlist), transcriptRanges$TXNAME)]
+    intronRangesByTx.unlist$TxWidth <- transcriptRanges$TxWidth[match(
+                    names(intronRangesByTx.unlist), transcriptRanges$TXNAME)]
+    intronRangesByTx.unlist$promoterId <- promoterIdMapping$promoterId[match(
+                    intronRangesByTx.unlist$TXID, 
+                    promoterIdMapping$transcriptId)]
     names(intronRangesByTx.unlist) <- NULL
     return(intronRangesByTx.unlist)
 }
 
 # Annotate unique intorn ranges with metadata
-annotateUniqueIntronRanges <- function(intronRanges.unique, intronRangesByTx.unlist) {
+annotateUniqueIntronRanges <- function(intronRanges.unique, 
+                                        intronRangesByTx.unlist) {
     # Annotate unique intron ranges with corresponding ids
-    intronRanges.unique$INTRONRANK <- as(split(intronRangesByTx.unlist$INTRONRANK, intronRangesByTx.unlist$INTRONID), 'IntegerList')
-    intronRanges.unique$TXID <- as(split(intronRangesByTx.unlist$TXID, intronRangesByTx.unlist$INTRONID), 'IntegerList')
-    intronRanges.unique$TXSTART <- as(split(intronRangesByTx.unlist$TXSTART, intronRangesByTx.unlist$INTRONID), 'IntegerList') 
-    intronRanges.unique$TXEND <- as(split(intronRangesByTx.unlist$TXEND, intronRangesByTx.unlist$INTRONID), 'IntegerList')
-    intronRanges.unique$GENEID <- as(split(intronRangesByTx.unlist$GENEID, intronRangesByTx.unlist$INTRONID), 'CharacterList')
-    intronRanges.unique$TXNAME <- as(split(intronRangesByTx.unlist$TXNAME, intronRangesByTx.unlist$INTRONID), 'CharacterList')
-    intronRanges.unique$TxWidth <- as(split(intronRangesByTx.unlist$TxWidth, intronRangesByTx.unlist$INTRONID), 'IntegerList')
-    intronRanges.unique$promoterId <- as(split(intronRangesByTx.unlist$promoterId, intronRangesByTx.unlist$INTRONID), 'CharacterList')
+    intronRanges.unique$INTRONRANK <- as(split(
+                                            intronRangesByTx.unlist$INTRONRANK, 
+                                            intronRangesByTx.unlist$INTRONID), 
+                                            'IntegerList')
+    intronRanges.unique$TXID <- as(split(intronRangesByTx.unlist$TXID, 
+                                            intronRangesByTx.unlist$INTRONID), 
+                                            'IntegerList')
+    intronRanges.unique$TXSTART <- as(split(intronRangesByTx.unlist$TXSTART, 
+                                            intronRangesByTx.unlist$INTRONID), 
+                                            'IntegerList') 
+    intronRanges.unique$TXEND <- as(split(intronRangesByTx.unlist$TXEND, 
+                                            intronRangesByTx.unlist$INTRONID), 
+                                            'IntegerList')
+    intronRanges.unique$GENEID <- as(split(intronRangesByTx.unlist$GENEID, 
+                                            intronRangesByTx.unlist$INTRONID), 
+                                            'CharacterList')
+    intronRanges.unique$TXNAME <- as(split(intronRangesByTx.unlist$TXNAME, 
+                                            intronRangesByTx.unlist$INTRONID), 
+                                            'CharacterList')
+    intronRanges.unique$TxWidth <- as(split(intronRangesByTx.unlist$TxWidth, 
+                                            intronRangesByTx.unlist$INTRONID), 
+                                            'IntegerList')
+    intronRanges.unique$promoterId <- as(split(
+                                            intronRangesByTx.unlist$promoterId, 
+                                            intronRangesByTx.unlist$INTRONID), 
+                                            'CharacterList')
     return(intronRanges.unique)
 }
 
-# Prepare metadata for each unique intron range considering all of its uses across transcripts
+# Prepare metadata for each unique intron range considering all of its uses 
+# across transcripts
 #' @importFrom rlang .data
 #' @importFrom dplyr as_tibble mutate group_by '%>%' filter distinct inner_join
 getIntronTable <- function(intronRanges.unique, intronRangesByTx.unlist) {
     intronTable <- as_tibble(as.data.frame(intronRanges.unique)) 
     # Prepare metadata for each intron
-    intronRangesByTx.metadata <- as_tibble(as.data.frame(mcols(intronRangesByTx.unlist)))
-    intronRangesByTx.metadata <- mutate(group_by(intronRangesByTx.metadata, .data$TXNAME), IntronEndRank = max(.data$INTRONRANK) - .data$INTRONRANK + 1)
-    intronRangesByTx.metadata <- mutate(group_by(intronRangesByTx.metadata, .data$INTRONID), MinIntronRank = min(.data$INTRONRANK))
-    intronRangesByTx.metadata <- mutate(group_by(intronRangesByTx.metadata, .data$INTRONID), MaxIntronRank = max(.data$INTRONRANK))
+    intronRangesByTx.metadata <- as_tibble(as.data.frame(
+                                            mcols(intronRangesByTx.unlist)))
+    intronRangesByTx.metadata <- mutate(
+                group_by(intronRangesByTx.metadata, .data$TXNAME), 
+                IntronEndRank = max(.data$INTRONRANK) - .data$INTRONRANK + 1)
+    intronRangesByTx.metadata <- mutate(
+                group_by(intronRangesByTx.metadata, .data$INTRONID),
+                MinIntronRank = min(.data$INTRONRANK))
+    intronRangesByTx.metadata <- mutate(
+                group_by(intronRangesByTx.metadata, .data$INTRONID), 
+                MaxIntronRank = max(.data$INTRONRANK))
 
-    intronRangesByTx.metadata.unique <- group_by(intronRangesByTx.metadata, .data$INTRONID) %>%
+    intronRangesByTx.metadata.unique <- group_by(intronRangesByTx.metadata, 
+                                                    .data$INTRONID) %>%
         filter(.data$INTRONRANK == .data$MinIntronRank) %>%
         mutate(TxWidthMax = max(.data$TxWidth)) %>%
-        dplyr::select(.data$INTRONID, .data$MinIntronRank, .data$MaxIntronRank, .data$TxWidthMax) %>%
+        dplyr::select(.data$INTRONID, .data$MinIntronRank, 
+                        .data$MaxIntronRank, .data$TxWidthMax) %>%
         dplyr::rename(MinIntronRankTxWidthMax = .data$TxWidthMax) %>%
         distinct()
 
-    intronTable <- inner_join(intronTable, intronRangesByTx.metadata.unique, by = 'INTRONID')
+    intronTable <- inner_join(intronTable, 
+                            intronRangesByTx.metadata.unique, by = 'INTRONID')
     return(intronTable)
 }
 
 # Get the ids of introns contributing to the transcription for each promoter
 getIntronIdPerPromoter <- function(intronRangesByTx.unlist, promoterIdMapping) {
-    intronRanges.firstIntron <- intronRangesByTx.unlist[intronRangesByTx.unlist$INTRONRANK == 1]
+    intronRanges.firstIntron <- intronRangesByTx.unlist[
+                                intronRangesByTx.unlist$INTRONRANK == 1]
     intronIdByPromoter.firstIntron <- split(intronRanges.firstIntron$INTRONID, 
-                                            factor(intronRanges.firstIntron$promoterId, levels = seq_len(length(unique(promoterIdMapping$promoterId)))))
-    intronIdByPromoter.firstIntron <- lapply(intronIdByPromoter.firstIntron, unique)
+                                factor(intronRanges.firstIntron$promoterId, 
+                                        levels = seq_len(length(
+                                        unique(promoterIdMapping$promoterId)))))
+    intronIdByPromoter.firstIntron <- lapply(intronIdByPromoter.firstIntron, 
+                                                unique)
     return(intronIdByPromoter.firstIntron)
 }
 
@@ -174,19 +239,27 @@ getPromoterMetadata <- function(intronTable.firstIntron) {
             MaxMergedIntronRank = max(.data$MaxIntronRank),
             MaxMergedIntronTxWidth = max(.data$MinIntronRankTxWidthMax)) %>%
         filter(.data$MinIntronRank == min(.data$MinIntronRank)) %>%
-        dplyr::select(.data$promoterId, .data$MinMergedIntronRank, .data$MaxMergedIntronRank, .data$MaxMergedIntronTxWidth) %>%
+        dplyr::select(.data$promoterId, .data$MinMergedIntronRank, 
+                .data$MaxMergedIntronRank, .data$MaxMergedIntronTxWidth) %>%
         distinct()
     return(promoterMetadata)
 }
 
 # Annotate the reduced exon ranges for each promoter with the intron metadata
-annotateReducedExonRanges <- function(exonReducedRanges, promoterMetadata, intronIdByPromoter.firstIntron) {
-    intronReducedTable <- cbind(as.data.frame(exonReducedRanges), as.data.frame(promoterMetadata[match(exonReducedRanges$promoterId, promoterMetadata$promoterId), -1]))
+annotateReducedExonRanges <- function(exonReducedRanges, promoterMetadata, 
+                                        intronIdByPromoter.firstIntron) {
+    intronReducedTable <- cbind(as.data.frame(exonReducedRanges), 
+            as.data.frame(promoterMetadata[match(exonReducedRanges$promoterId, 
+                                            promoterMetadata$promoterId), -1]))
     exonReducedRanges <- GRanges(intronReducedTable$seqnames,
-                                ranges = IRanges(start = intronReducedTable$start, intronReducedTable$end),
-                                strand = intronReducedTable$strand)
-    exonReducedRanges$intronId <- as(intronIdByPromoter.firstIntron, 'IntegerList')
-    mcols(exonReducedRanges) <- cbind(mcols(exonReducedRanges), intronReducedTable[, c('promoterId', 'MinMergedIntronRank', 'MaxMergedIntronRank', 'MaxMergedIntronTxWidth')])
+                            ranges = IRanges(start = intronReducedTable$start, 
+                                            intronReducedTable$end),
+                                            strand = intronReducedTable$strand)
+    exonReducedRanges$intronId <- as(intronIdByPromoter.firstIntron, 
+                                            'IntegerList')
+    mcols(exonReducedRanges) <- cbind(mcols(exonReducedRanges), 
+            intronReducedTable[, c('promoterId', 'MinMergedIntronRank', 
+                            'MaxMergedIntronRank', 'MaxMergedIntronTxWidth')])
     return(exonReducedRanges)
 }
 
@@ -197,6 +270,43 @@ annotateIntronRanges <- function(intronRanges.unique, intronTable) {
     intronRanges.annotated <- intronRanges.unique
     intronRanges.annotated$MinIntronRank <- intronTable$MinIntronRank
     intronRanges.annotated$MaxIntronRank <- intronTable$MaxIntronRank
-    intronRanges.annotated$MinIntronRankTxWidthMax <- intronTable$MinIntronRankTxWidthMax
+    intronRanges.annotated$MinIntronRankTxWidthMax <- 
+        intronTable$MinIntronRankTxWidthMax
     return(intronRanges.annotated)
+}
+
+# Helper to parse input file
+#' @importFrom AnnotationDbi loadDb
+#' @importFrom GenomicFeatures makeTxDbFromGFF
+parseTxdb <- function(txdb, file, species) {
+    
+    if (missing(txdb) & missing(file)) {
+        stop('Either `txdb` or `file` argument must be provided')
+    } else if (!missing(txdb) & !missing(file)) {
+        stop('Both `txdb` and `file` arguments are provided: 
+                Please specify only one')
+    } else if (missing(txdb)) {
+        ## Parse input file
+        checkFile <- file.exists(file)
+        if (!checkFile) {
+            stop(paste0('Error: Please specify a valid file path'))
+        }
+        ext <- tools::file_ext(file)
+        if (ext %in% c('gz', 'bz2', 'xz')){
+            file.tmp <- gsub(paste0('\\.', ext), '', file)
+            ext <- unique(tools::file_ext(file.tmp))
+        }
+        if (!(ext %in% c('gtf', 'sqlite', 'gff3'))) {
+            stop('File path must link to a GTF/GFF or TxDb object')
+        }
+        print('Parsing input file...')
+        if (ext == 'sqlite') {
+            txdb <- AnnotationDbi::loadDb(file)
+        } else if (ext %in% c('gtf', 'gff3')) {
+            txdb <- GenomicFeatures::makeTxDbFromGFF(file = file,
+                                            format = ext,
+                                            organism = sub('_', ' ', species))
+        }
+    }
+    return(txdb)
 }

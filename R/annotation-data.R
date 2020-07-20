@@ -17,71 +17,44 @@
 #'
 #' @examples
 #' 
-#' txdbPath <- list.files(system.file('extdata/testdata/promoterAnnotation', 
-#'                                    package = 'proActiv'), full.names = TRUE, pattern = 'sqlite')
+#' txdbPath <- system.file('extdata/vignette/annotations/',
+#'                             'gencode.v34.annotation.chr22.sqlite', 
+#'                              package = 'proActiv')
 #' txdb <- AnnotationDbi::loadDb(txdbPath)
 #' promoterAnnotation <- preparePromoterAnnotation(txdb = txdb,
 #'                                                 species = 'Homo_sapiens')
 #' 
 preparePromoterAnnotation <- function(txdb, file, species) {
-    if (missing(txdb) & missing(file)) {
-        stop('Either `txdb` or `file` argument must be provided')
-    } else if (!missing(txdb) & !missing(file)) {
-        stop('Both `txdb` and `file` arguments are provided: please specify only one')
-    } else if (missing(txdb)) {
-        ## Parse input file
-        checkFile <- file.exists(file)
-        if (!checkFile) {
-            stop(paste0('Error: Please specify a valid file path'))
-        }
-        ext <- tools::file_ext(file)
-        if (ext %in% c('gz', 'bz2', 'xz')){
-            file.tmp <- gsub(paste0('\\.', ext), '', file)
-            ext <- unique(tools::file_ext(file.tmp))
-        }
-        if (!(ext %in% c('gtf', 'sqlite', 'gff3'))) {
-            stop('File path must link to a GTF/GFF or TxDb object')
-        }
-        print('Parsing input file...')
-        if (ext == 'sqlite') {
-            txdb <- AnnotationDbi::loadDb(file)
-        } else if (ext %in% c('gtf', 'gff3')) {
-        txdb <- GenomicFeatures::makeTxDbFromGFF(file = file,
-                                                format = ext,
-                                                organism = sub('_', ' ', species))
-        }
-    }
-    ## Instantiate Promoter Annotation
+    txdb <- parseTxdb(txdb, file, species)
     promoterAnnotation <- PromoterAnnotation()
     
-    ############################################################################# 
-    ### Reduce first exons to identify transcripts belonging to each promoter ###
-    ############################################################################# 
-    
-    ## Extract Transcript Ranges
+    ### Reduce first exons to identify transcripts belonging to each promoter 
     print('Extract exons by transcripts...')
     transcriptRanges <- getTranscriptRanges(txdb, species) 
     exonRangesByTx <- getExonRangesByTx(txdb, species = species) 
-    transcriptRanges$TxWidth <- vapply(width(exonRangesByTx), FUN = sum, FUN.VALUE = numeric(1)) 
+    transcriptRanges$TxWidth <- vapply(width(exonRangesByTx), 
+                                        FUN = sum, FUN.VALUE = numeric(1)) 
     
     ## Annotate first exons of each transcript 
     exonRangesByTx.unlist <- unlist(exonRangesByTx)
     exonRanges.firstExon <- getFirstExonRanges(exonRangesByTx.unlist)
-    exonRanges.firstExon.geneId <- as.character(transcriptRanges$GENEID)[match(exonRanges.firstExon$tx_name, transcriptRanges$TXNAME)]
+    exonRanges.firstExon.geneId <- as.character(
+        transcriptRanges$GENEID)[match(exonRanges.firstExon$tx_name, 
+                                        transcriptRanges$TXNAME)]
     
-    ## Identify overlapping first exons for each gene and annotate with promoter ids
+    ## Identify overlapping first exons by gene and annotate with promoter ids
     print('Identify overlapping first exons for each gene...')
-    exonReducedRanges <- getReducedExonRanges(exonRanges.firstExon, exonRanges.firstExon.geneId)
+    exonReducedRanges <- getReducedExonRanges(exonRanges.firstExon, 
+                                                exonRanges.firstExon.geneId)
     
-    ##################################################################### 
     ### Prepare the id mapping transcripts, TSSs, promoters and genes ###
-    ##################################################################### 
-    
     print('Prepare mapping between transcripts, tss, promoters and genes...')
     tssCoordinates <- getTssRanges(transcriptRanges)
     revmapTMP <- as.vector(exonReducedRanges$revmap)
     txName.all <- exonRanges.firstExon$tx_name[unlist(revmapTMP)]
-    promoterId.all <- rep(exonReducedRanges$promoterId, vapply(revmapTMP, FUN = length, FUN.VALUE = numeric(1)))
+    promoterId.all <- rep(exonReducedRanges$promoterId, vapply(revmapTMP, 
+                                                        FUN = length, 
+                                                        FUN.VALUE = numeric(1)))
     txId.all <- transcriptRanges$TXID[match(txName.all, transcriptRanges$TXNAME)]
     tssId.all <- tssCoordinates$tssId[match(txName.all, tssCoordinates$TXNAME)]
     geneId.all <- as.character(transcriptRanges$GENEID)[match(txName.all, transcriptRanges$TXNAME)]
@@ -93,39 +66,37 @@ preparePromoterAnnotation <- function(txdb, file, species) {
                                     stringsAsFactors = FALSE)
     promoterIdMapping <- promoterIdMapping[match(seq_len(nrow(promoterIdMapping)), promoterIdMapping$txId), ]
     rownames(promoterIdMapping) <- NULL
-    colnames(promoterIdMapping) <- c('transcriptId', 'transcriptName', 'tssId', 'promoterId', 'geneId')
+    colnames(promoterIdMapping) <- c('transcriptId', 'transcriptName', 
+                                        'tssId', 'promoterId', 'geneId')
     
-    ########################################################################################## 
     ### Prepare the annotated intron ranges to be used as input for junction read counting ###
-    ##########################################################################################
-    
     print('Prepare annotated intron ranges...')
     intronRangesByTx <- getIntronRangesByTx(txdb, transcriptRanges, species) 
     intronRangesByTx.unlist <- unlist(intronRangesByTx)
     intronRanges.unique <- getUniqueIntronRanges(intronRangesByTx.unlist) 
     
     ## Annotate full length intron ranges with intron id
-    intronRanges.overlap <- findOverlaps(intronRangesByTx.unlist, intronRanges.unique, type = 'equal')
+    intronRanges.overlap <- findOverlaps(intronRangesByTx.unlist, 
+                                        intronRanges.unique, type = 'equal')
     intronRangesByTx.unlist$INTRONID <- subjectHits(intronRanges.overlap)
     
     ## Extract ranks of introns for each transcript
     intronRankByTx <- getIntronRanks(intronRangesByTx)
-    
     ## Annotate all intron ranges with corresponding ids
-    intronRangesByTx.unlist <- annotateAllIntronRanges(intronRankByTx, intronRangesByTx.unlist, transcriptRanges, promoterIdMapping) #OK
+    intronRangesByTx.unlist <- annotateAllIntronRanges(intronRankByTx, 
+                                                        intronRangesByTx.unlist, 
+                                                        transcriptRanges, 
+                                                        promoterIdMapping)
     
     ## Annotate unique intron ranges with corresponding ids
     intronRanges.unique <- annotateUniqueIntronRanges(intronRanges.unique, intronRangesByTx.unlist)
     intronTable <- getIntronTable(intronRanges.unique, intronRangesByTx.unlist)
     intronRanges.annotated <- annotateIntronRanges(intronRanges.unique, intronTable)
     
-    #########################################################
-    ### Annotate the reduced exons with promoter metadata ###
-    #########################################################
-    
+    ### Annotate the reduced exons with promoter metadata
     print('Annotating reduced exon ranges...')
     ## Identify first intron for each promoter for each transcript 
-    intronIdByPromoter.firstIntron <- getIntronIdPerPromoter(intronRangesByTx.unlist, promoterIdMapping) # this replaces revmap
+    intronIdByPromoter.firstIntron <- getIntronIdPerPromoter(intronRangesByTx.unlist, promoterIdMapping)
     
     ## Retrieve first intron ranges
     intronRanges.firstIntron <- intronRangesByTx.unlist[intronRangesByTx.unlist$INTRONRANK == 1]
@@ -133,13 +104,9 @@ preparePromoterAnnotation <- function(txdb, file, species) {
     intronTable.firstIntron$promoterId <- intronRanges.firstIntron$promoterId
     
     promoterMetadata <- getPromoterMetadata(intronTable.firstIntron)
-    
     exonReducedRanges <- annotateReducedExonRanges(exonReducedRanges, promoterMetadata, intronIdByPromoter.firstIntron)
     
-    #####################################
-    ### Retrieve promoter coordinates ###
-    #####################################
-    
+    ### Retrieve promoter coordinates
     print('Prepare promoter coordinates and first exon ranges...')
     promoterCoordinates <- promoters(exonReducedRanges, downstream = 1, upstream = 0)
     exonEnd <- resize(exonReducedRanges, width = 1, fix = 'end')
@@ -151,10 +118,7 @@ preparePromoterAnnotation <- function(txdb, file, species) {
     mcols(promoterCoordinates) <- promoterCoordinates.metadata
     promoterCoordinates$intronId <- exonReducedRanges$intronId
     
-    #################################
-    ### Build Promoter Annotation ###
-    #################################
-    
+    ### Build Promoter Annotation
     intronRanges(promoterAnnotation) <- intronRanges.annotated[,c('INTRONID', 'TXNAME')]
     promoterIdMapping(promoterAnnotation) <- promoterIdMapping[,c('transcriptName', 'promoterId', 'geneId')]
     promoterCoordinates(promoterAnnotation) <- promoterCoordinates[,c('promoterId', 'internalPromoter', 'firstExonEnd', 'intronId')]
