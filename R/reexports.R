@@ -1,5 +1,11 @@
 # Re-exports
 
+# AnnotationDbi
+
+#' @importFrom AnnotationDbi loadDb
+#' @export
+AnnotationDbi::loadDb
+
 # summarizedExperiment 
 
 #' @importFrom SummarizedExperiment assays
