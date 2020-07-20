@@ -19,19 +19,23 @@
 #'                                             'normalizedPromoterCounts.rds', 
 #'                                              package = 'proActiv'))
 #' absolutePromoterActivity <- getAbsolutePromoterActivity(junctionReadCounts,
-#'                                                          promoterAnnotation.gencode.v19,
-#'                                                          log2 = TRUE,
-#'                                                          pseudocount = 1)
+#'                                              promoterAnnotation.gencode.v19,
+#'                                              log2 = TRUE,
+#'                                              pseudocount = 1)
 #'
 #' @seealso \code{\link{preparePromoterAnnotation}} for preparing the mapping
 #'   between promoters and genes, \code{\link{calculatePromoterReadCounts}} and
 #'   \code{\link{normalizePromoterReadCounts}} for obtaining junction read
 #'   counts
 #'
-getAbsolutePromoterActivity <- function(junctionReadCounts, promoterAnnotation, log2 = TRUE, pseudocount = 1) {
-    print(paste0('Calculating ', ifelse(log2 == TRUE, 'log2 ', ''), 'absolute promoter activity...'))
-    conversionHelper <- unique(promoterIdMapping(promoterAnnotation)[, c('promoterId', 'geneId')])
-    conversionHelper <- conversionHelper[match(rownames(junctionReadCounts), conversionHelper$promoterId), ]
+getAbsolutePromoterActivity <- function(junctionReadCounts, promoterAnnotation,
+                                        log2 = TRUE, pseudocount = 1) {
+    print(paste0('Calculating ', ifelse(log2 == TRUE, 'log2 ', ''), 
+                    'absolute promoter activity...'))
+    promoterIdMapping <- promoterIdMapping(promoterAnnotation)
+    conversionHelper <- unique(promoterIdMapping[, c('promoterId', 'geneId')])
+    conversionHelper <- conversionHelper[match(rownames(junctionReadCounts), 
+                                                conversionHelper$promoterId), ]
     if (log2 == TRUE & is.null(pseudocount) == FALSE) {
         junctionReadCounts <- log2(junctionReadCounts + pseudocount)
         junctionReadCounts <- as.data.frame(junctionReadCounts)
@@ -43,17 +47,19 @@ getAbsolutePromoterActivity <- function(junctionReadCounts, promoterAnnotation, 
 
 #' Prepare the gene expression table including the gene ids
 #'
-#' @param absolutePromoterActivity data.frame of absolute promoter activity with promoter and gene ids
+#' @param absolutePromoterActivity data.frame of absolute promoter activity 
+#'   with promoter and gene ids
 #'
 #' @return data.frame of gene expression with gene ids
 #' @export
 #'
 #' @examples
 #' 
-#' ## absolutePromoterActivity is an object returned from getAbsolutePromoterActivity
+#' ## absolutePromoterActivity is an object returned 
+#' ## from getAbsolutePromoterActivity
 #' absolutePromoterActivity <- readRDS(system.file('extdata/testdata/tophat2', 
-#'                                                  'absolutePromoterActivity.rds', 
-#'                                                   package = 'proActiv')) 
+#'                                              'absolutePromoterActivity.rds', 
+#'                                               package = 'proActiv')) 
 #' geneExpression <- getGeneExpression(absolutePromoterActivity)
 #' 
 #'
@@ -61,9 +67,13 @@ getGeneExpression <- function(absolutePromoterActivity) {
     print('Calculating gene expression...')
     conversionHelper <- absolutePromoterActivity[, c('promoterId', 'geneId')]
     if (ncol(absolutePromoterActivity) == 3) {
-        geneExpression <- data.frame(counts = tapply(absolutePromoterActivity[, 3], conversionHelper$geneId, sum, na.rm = TRUE))
+        geneExpression <- data.frame(counts = tapply(
+                                    absolutePromoterActivity[, 3], 
+                                    conversionHelper$geneId, sum, na.rm = TRUE))
     } else {
-        geneExpression <- as.data.frame(apply(absolutePromoterActivity[, -c(1,2)], 2, tapply, conversionHelper$geneId, sum, na.rm = TRUE))
+        geneExpression <- as.data.frame(apply(
+                                absolutePromoterActivity[, -c(1,2)], 2, tapply, 
+                                conversionHelper$geneId, sum, na.rm = TRUE))
     }
     colnames(geneExpression) <- colnames(absolutePromoterActivity)[-c(1,2)]
     geneExpression <- cbind(geneId = rownames(geneExpression), geneExpression)
@@ -82,26 +92,32 @@ getGeneExpression <- function(absolutePromoterActivity) {
 #'
 #' @examples
 #' 
-#' ## absolutePromoterActivity is an object returned from getAbsolutePromoterActivity
+#' ## absolutePromoterActivity is an object returned 
+#' ## from getAbsolutePromoterActivity
 #' ## geneExpression is an object returned from getGeneExpression
 #' absolutePromoterActivity <- readRDS(system.file('extdata/testdata/tophat2', 
-#'                                                 'absolutePromoterActivity.rds', 
-#'                                                  package = 'proActiv'))
+#'                                             'absolutePromoterActivity.rds', 
+#'                                             package = 'proActiv'))
 #' geneExpression <- readRDS(system.file('extdata/testdata/tophat2', 
 #'                                         'geneExpression.rds', 
 #'                                          package = 'proActiv'))
-#' relativePromoterActivity <- getRelativePromoterActivity(absolutePromoterActivity,
-#'                                                         geneExpression)
+#' relativePromoterActivity <- getRelativePromoterActivity(
+#'                                          absolutePromoterActivity,
+#'                                          geneExpression)
 #'
-getRelativePromoterActivity <- function(absolutePromoterActivity, geneExpression) {
+getRelativePromoterActivity <- function(absolutePromoterActivity, 
+                                        geneExpression) {
     print(paste0('Calculating relative promoter activity...'))
     conversionHelper <- absolutePromoterActivity[, c('promoterId', 'geneId')]
     if (is.null(geneExpression) == TRUE) {
         geneExpression <- getGeneExpression(absolutePromoterActivity)
     }
-    matchedGeneExpression <- geneExpression[match(conversionHelper$geneId, geneExpression$geneId), ]
-    relativePromoterActivity <- absolutePromoterActivity[, -c(1,2)] / matchedGeneExpression[, -1]
-    relativePromoterActivity <- cbind(conversionHelper, relativePromoterActivity)
+    matchedGeneExpression <- geneExpression[match(conversionHelper$geneId, 
+                                                    geneExpression$geneId), ]
+    relativePromoterActivity <- absolutePromoterActivity[, -c(1,2)] / 
+                                                    matchedGeneExpression[, -1]
+    relativePromoterActivity <- cbind(conversionHelper, 
+                                                    relativePromoterActivity)
     names(relativePromoterActivity) <- names(absolutePromoterActivity)
     return(relativePromoterActivity)
 }

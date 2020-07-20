@@ -3,11 +3,12 @@
 
 #' S4 class for promoter annotation data for a specific annotation version
 #'
-#' @slot intronRanges A GRanges object. The intron ranges annotated with the promoter
-#'   information.
-#' @slot promoterIdMapping A data.frame object. The id mapping between transcript ids, names,
-#'   TSS ids, promoter ids and gene ids.
-#' @slot promoterCoordinates A GRanges object. Promoter coordinates (TSS) with gene id and internal promoter state
+#' @slot intronRanges A GRanges object. The intron ranges annotated with the 
+#'   promoter information.
+#' @slot promoterIdMapping A data.frame object. The id mapping between 
+#'   transcript ids, names, TSS ids, promoter ids and gene ids.
+#' @slot promoterCoordinates A GRanges object. Promoter coordinates (TSS) with 
+#'   gene id and internal promoter state
 #'
 #' @name PromoterAnnotation-class
 #' @rdname PromoterAnnotation-class
@@ -31,7 +32,8 @@ setClass(
 ### Constructor ###
 
 #' @param intronRanges A GRanges object containing annotated intron ranges
-#' @param promoterIdMapping A data.frame containing mapping between transcript, tss, promoter and gene ids
+#' @param promoterIdMapping A data.frame containing mapping between transcript, 
+#'   TSS, promoter and gene ids
 #' @param promoterCoordinates A GRanges object containing promoter coordinates
 #'
 #' @name PromoterAnnotation
@@ -40,15 +42,18 @@ setClass(
 #' @importFrom methods new
 #'
 #' @export
-#' @return A promoter annotation object with three slots: intronRanges, promoterIdMapping 
-#'   and promoter Coordinates
+#' @return A promoter annotation object with three slots: intronRanges, 
+#'   promoterIdMapping and promoter Coordinates
 #'   
 #' @examples 
 #' 
 #' promoterAnnotation <- PromoterAnnotation()
-#' intronRanges(promoterAnnotation) <- intronRanges(promoterAnnotation.gencode.v19)
-#' promoterIdMapping(promoterAnnotation) <- promoterIdMapping(promoterAnnotation.gencode.v19)
-#' promoterCoordinates(promoterAnnotation) <- promoterCoordinates(promoterAnnotation.gencode.v19)
+#' intronRanges(promoterAnnotation) <- intronRanges(
+#'                                             promoterAnnotation.gencode.v19)
+#' promoterIdMapping(promoterAnnotation) <- promoterIdMapping(
+#'                                             promoterAnnotation.gencode.v19)
+#' promoterCoordinates(promoterAnnotation) <- promoterCoordinates(
+#'                                             promoterAnnotation.gencode.v19)
 #' 
 
 PromoterAnnotation <-
@@ -95,33 +100,39 @@ setMethod("intronRanges", "PromoterAnnotation", function(x) x@intronRanges)
 #' @describeIn PromoterAnnotation-class Getter for promoterIdMapping
 #' @exportMethod promoterIdMapping
 
-setGeneric("promoterIdMapping", function(x) standardGeneric("promoterIdMapping"))
+setGeneric("promoterIdMapping", 
+            function(x) standardGeneric("promoterIdMapping"))
 
 #' @describeIn PromoterAnnotation-class Getter for promoterIdMapping
 #' @aliases promoterIdMapping,PromoterAnnotation-method
 
-setMethod("promoterIdMapping", "PromoterAnnotation", function(x) x@promoterIdMapping)
+setMethod("promoterIdMapping", "PromoterAnnotation", 
+            function(x) x@promoterIdMapping)
 
 #' @describeIn PromoterAnnotation-class Getter for promoterCoordinates
 #' @exportMethod promoterCoordinates
 
-setGeneric("promoterCoordinates", function(x) standardGeneric("promoterCoordinates"))
+setGeneric("promoterCoordinates", 
+            function(x) standardGeneric("promoterCoordinates"))
 
 #' @describeIn PromoterAnnotation-class Getter for promoterCoordinates
 #' @aliases promoterCoordinates,PromoterAnnotation-method
 
-setMethod("promoterCoordinates", "PromoterAnnotation", function(x) x@promoterCoordinates)
+setMethod("promoterCoordinates", "PromoterAnnotation", 
+            function(x) x@promoterCoordinates)
 
 ###############
 ### Setters ###
 
-#' @param value intronRanges, promoterIdMapping or promoterCoordinates to be assigned
+#' @param value intronRanges, promoterIdMapping or promoterCoordinates to 
+#'   be assigned
 #' 
 #' @describeIn PromoterAnnotation-class Setter for intronRanges
 #' @exportMethod intronRanges<-
 #' @importFrom methods validObject
 
-setGeneric("intronRanges<-", function(x, value) standardGeneric("intronRanges<-"))
+setGeneric("intronRanges<-", 
+            function(x, value) standardGeneric("intronRanges<-"))
 
 #' @describeIn PromoterAnnotation-class Setter for intronRanges
 #' @aliases intronRanges<-,PromoterAnnotation-method
@@ -136,7 +147,8 @@ setMethod("intronRanges<-", "PromoterAnnotation", function(x, value) {
 #' @exportMethod promoterIdMapping<-
 #' @importFrom methods validObject
 
-setGeneric("promoterIdMapping<-", function(x, value) standardGeneric("promoterIdMapping<-"))
+setGeneric("promoterIdMapping<-", 
+            function(x, value) standardGeneric("promoterIdMapping<-"))
 
 #' @describeIn PromoterAnnotation-class Setter for promoterIdMapping
 #' @aliases promoterIdMapping<-,PromoterAnnotation-method
@@ -151,7 +163,8 @@ setMethod("promoterIdMapping<-", "PromoterAnnotation", function(x, value) {
 #' @exportMethod promoterCoordinates<-
 #' @importFrom methods validObject
 
-setGeneric("promoterCoordinates<-", function(x, value) standardGeneric("promoterCoordinates<-"))
+setGeneric("promoterCoordinates<-", 
+            function(x, value) standardGeneric("promoterCoordinates<-"))
 
 #' @describeIn PromoterAnnotation-class Setter for promoterCoordinates
 #' @aliases promoterCoordinates<-,PromoterAnnotation-method
