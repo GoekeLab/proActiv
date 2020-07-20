@@ -39,9 +39,10 @@ Imports:
     AnnotationDbi,
     DESeq2,
     data.table,
-    tibble
+    tibble,
+    Gviz,
+    BiocParallel
 Suggests: 
-    BiocParallel,
     testthat,
     mockery,
     BSgenome,
@@ -52,7 +53,6 @@ Suggests:
     DEXSeq,
     Rtsne,
     ggplot2,
-    Gviz,
     TxDb.Hsapiens.UCSC.hg38.knownGene,
     tidyr
 URL: https://github.com/GoekeLab/proActiv
