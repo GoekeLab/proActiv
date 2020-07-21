@@ -16,7 +16,8 @@
 #'
 #' @examples
 #' 
-#' file <- list.files(system.file('extdata/testdata/tophat2', package = 'proActiv'), 
+#' file <- list.files(system.file('extdata/testdata/tophat2', 
+#'                    package = 'proActiv'), 
 #'                    full.names = TRUE, pattern = 'sample1')
 #' promoterCoordinates <- promoterCoordinates(promoterAnnotation.gencode.v19)
 #' intronRanges <- intronRanges(promoterAnnotation.gencode.v19)
@@ -29,8 +30,8 @@
 #' @importFrom S4Vectors queryHits
 #' @importFrom S4Vectors subjectHits
 #'
-calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges, file = '', fileType = '', genome = '') {
-
+calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges, 
+                                        file = '', fileType = '', genome = '') {
     if(fileType == 'tophat') {
         print(paste0('Processing: ', file))
         junctionTable <- readTopHatJunctions(file)
@@ -40,7 +41,7 @@ calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges, file 
         print(paste0('Processing: ', file))
         junctionTable <- readSTARJunctions(file)
         seqlevelsStyle(junctionTable) <- 'UCSC'
-        junctionTable$score <- junctionTable$um_reads  # to match the tophat style, uniquely mapped reads are used as score
+        junctionTable$score <- junctionTable$um_reads  
         print('File loaded into memory')
     } else if (fileType == 'bam') {
         print(paste0('Processing: ', file))
@@ -52,24 +53,28 @@ calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges, file 
         junctions <- summarizeJunctions(bam, genome = genome)
         rm(bam)
         gc()
-        junctionTable <- keepStandardChromosomes(junctions, pruning.mode = 'coarse')
+        junctionTable <- keepStandardChromosomes(junctions, 
+                                                    pruning.mode = 'coarse')
         strand(junctionTable) <- junctionTable$intron_strand
         junctionTable <- junctionTable[,c('score')]
         print('Junctions extracted from BAM file')
     }
-
     print('Calculating junction counts')
-    intronRanges.overlap <- findOverlaps(intronRanges, junctionTable, type = 'equal')
+    intronRanges.overlap <- findOverlaps(intronRanges, junctionTable, 
+                                            type = 'equal')
     intronRanges$junctionCounts <- rep(0, length(intronRanges))
-    intronRanges$junctionCounts[queryHits(intronRanges.overlap)] <- junctionTable$score[subjectHits(intronRanges.overlap)]
+    intronRanges$junctionCounts[queryHits(intronRanges.overlap)] <- 
+                        junctionTable$score[subjectHits(intronRanges.overlap)]
     intronIdByPromoter <- as.vector(promoterCoordinates$intronId)
     intronId.unlist <- unlist(intronIdByPromoter)
     levels.tmp <- unique(promoterCoordinates$promoterId)
-    levels.tmp <- levels.tmp[order(as.numeric(gsub('prmtr.', '', levels.tmp)))]
+    levels.tmp <- levels.tmp[order(levels.tmp)]
     promoterId.unlist <- factor(rep(promoterCoordinates$promoterId, 
-                                vapply(intronIdByPromoter, FUN = length, FUN.VALUE = numeric(1))), levels = levels.tmp)
+                                vapply(intronIdByPromoter, FUN = length, 
+                                FUN.VALUE = numeric(1))), levels = levels.tmp)
 
-    junctionCounts <- tapply(intronRanges$junctionCounts[intronId.unlist], promoterId.unlist, sum)
+    junctionCounts <- tapply(intronRanges$junctionCounts[intronId.unlist], 
+                                promoterId.unlist, sum)
     names(junctionCounts) <- promoterCoordinates$promoterId
     return(junctionCounts)
 }
@@ -99,37 +104,49 @@ calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges, file 
 #'
 #' @examples
 #' 
-#' files <- list.files(system.file('extdata/testdata/tophat2', package = 'proActiv'), 
+#' files <- list.files(system.file('extdata/testdata/tophat2', 
+#'                     package = 'proActiv'), 
 #'                     full.names = TRUE, pattern = 'sample')
 #' fileLabels <- c('sample1', 'sample2')
-#' promoterReadCounts <- calculatePromoterReadCounts(promoterAnnotation.gencode.v19,
+#' promoterAnnotation <- promoterAnnotation.gencode.v19
+#' promoterReadCounts <- calculatePromoterReadCounts(promoterAnnotation,
 #'                                                    files,
 #'                                                    fileLabels,
 #'                                                    fileType = 'tophat',
 #'                                                    genome = NULL,
 #'                                                    numberOfCores = 1)
-#'
-calculatePromoterReadCounts <- function(promoterAnnotation, files = NULL, fileLabels = NULL,
-                                        fileType = NULL , genome = NULL, numberOfCores = 1) {
-    if (numberOfCores > 1 & requireNamespace('BiocParallel', quietly = TRUE) == TRUE) {
+#' @importFrom BiocParallel bpparam bplapply
+calculatePromoterReadCounts <- function(promoterAnnotation, files = NULL, 
+                                        fileLabels = NULL, fileType = NULL , 
+                                        genome = NULL, numberOfCores = 1) {
+    promoterCoordinates <- promoterCoordinates(promoterAnnotation)
+    intronRanges <- intronRanges(promoterAnnotation)
+    if (numberOfCores > 1 & 
+        requireNamespace('BiocParallel', quietly = TRUE) == TRUE) {
         bpParameters <- BiocParallel::bpparam()
         bpParameters$workers <- numberOfCores
-        promoterReadCounts <- BiocParallel::bplapply(files, calculateJunctionReadCounts, promoterCoordinates = promoterCoordinates(promoterAnnotation),
-                                                    intronRanges = intronRanges(promoterAnnotation), fileType = fileType, genome = genome, 
-                                                    BPPARAM = bpParameters)
+        promoterReadCounts <- BiocParallel::bplapply(files, 
+                                    calculateJunctionReadCounts, 
+                                    promoterCoordinates = promoterCoordinates,
+                                    intronRanges = intronRanges, 
+                                    fileType = fileType, genome = genome, 
+                                    BPPARAM = bpParameters)
     } else {
         if (requireNamespace('BiocParallel', quietly = TRUE) == FALSE) {
-            print('Warning: "BiocParallel" package is not available! Using sequential version instead...')
+            print('Warning: "BiocParallel" package is not available! 
+                    Using sequential version instead...')
         }
-        promoterReadCounts <- lapply(files, calculateJunctionReadCounts, promoterCoordinates = promoterCoordinates(promoterAnnotation),
-                                    intronRanges = intronRanges(promoterAnnotation), fileType = fileType, genome = genome)
+        promoterReadCounts <- lapply(files, calculateJunctionReadCounts, 
+                                    promoterCoordinates = promoterCoordinates,
+                                    intronRanges = intronRanges, 
+                                    fileType = fileType, genome = genome)
     }
     if (length(files) == 1) {
         promoterReadCounts <- data.frame(counts = promoterReadCounts)
     } else {
         promoterReadCounts <- as.data.frame(promoterReadCounts)
     }
-    rownames(promoterReadCounts) <- promoterCoordinates(promoterAnnotation)$promoterId
+    rownames(promoterReadCounts) <- promoterCoordinates$promoterId
     colnames(promoterReadCounts) <- fileLabels
     return(promoterReadCounts)
 }
@@ -151,9 +168,10 @@ calculatePromoterReadCounts <- function(promoterAnnotation, files = NULL, fileLa
 #' promoterReadCounts <- readRDS(system.file('extdata/testdata/tophat2',
 #'                                           'promoterCounts.rds', 
 #'                                            package = 'proActiv'))
-#' normalizedPromoterReadCounts <- normalizePromoterReadCounts(promoterReadCounts)
+#' normalizedPromoterReadCounts <- normalizePromoterReadCounts(
+#'                                            promoterReadCounts)
 #' 
-#'
+#' @importFrom DESeq2 DESeqDataSetFromMatrix estimateSizeFactors counts
 normalizePromoterReadCounts <- function(promoterReadCounts) {
     if (ncol(promoterReadCounts) == 1) {
         return(promoterReadCounts)
@@ -165,11 +183,15 @@ normalizePromoterReadCounts <- function(promoterReadCounts) {
 
     print('Calculating normalized read counts...')
     if (requireNamespace('DESeq2', quietly = TRUE) == FALSE) {
-        stop('Error: DESeq2 is not installed! For normalization DESeq2 is needed, please install it.')
+        stop('DESeq2 is not installed! 
+                For normalization DESeq2 is needed, please install it.')
     }
 
-    dds <- DESeq2::DESeqDataSetFromMatrix(countData = promoterReadCounts[activePromoters, ], colData = colData, design = ~ 1)
+    dds <- DESeq2::DESeqDataSetFromMatrix(countData = 
+                                        promoterReadCounts[activePromoters, ], 
+                                        colData = colData, design = ~ 1)
     dds <- DESeq2::estimateSizeFactors(dds)
-    promoterReadCounts[activePromoters, ] <- DESeq2::counts(dds, normalized = TRUE)
+    promoterReadCounts[activePromoters, ] <- DESeq2::counts(dds, 
+                                                            normalized = TRUE)
     return(promoterReadCounts)
 }

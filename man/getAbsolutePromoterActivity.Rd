@@ -38,9 +38,9 @@ junctionReadCounts <- readRDS(system.file('extdata/testdata/tophat2',
                                             'normalizedPromoterCounts.rds', 
                                              package = 'proActiv'))
 absolutePromoterActivity <- getAbsolutePromoterActivity(junctionReadCounts,
-                                                         promoterAnnotation.gencode.v19,
-                                                         log2 = TRUE,
-                                                         pseudocount = 1)
+                                             promoterAnnotation.gencode.v19,
+                                             log2 = TRUE,
+                                             pseudocount = 1)
 
 }
 \seealso{

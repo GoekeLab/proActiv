@@ -2,8 +2,8 @@ context('Calculating Promoter Annotation')
 library(proActiv)
 library(mockery)
 
-gtfPath <- list.files(system.file('extdata/testdata/promoterAnnotation', package = 'proActiv'), full.names = TRUE, pattern = 'gtf')
-txdbPath <- list.files(system.file('extdata/testdata/promoterAnnotation', package = 'proActiv'), full.names = TRUE, pattern = 'sqlite')
+gtfPath <- system.file('extdata/vignette/annotations/gencode.v34.annotation.chr22.gtf.gz', package = 'proActiv')
+txdbPath <- system.file('extdata/vignette/annotations/gencode.v34.annotation.chr22.sqlite', package = 'proActiv')
 
 txdb <- AnnotationDbi::loadDb(txdbPath)
 
@@ -51,39 +51,40 @@ test_that('preparePromoterAnnotation returns expected output with gtf file path'
   
   expect_equal(intronRanges(promoterAnnotation), annotatedIntronRanges[,c('INTRONID', 'TXNAME')])
   expect_equal(promoterIdMapping(promoterAnnotation), promoterIdMapping[,c('transcriptName', 'promoterId', 'geneId')])
-  expect_equal(promoterCoordinates(promoterAnnotation)[,c('promoterId', 'geneId', 'internalPromoter')], promoterCoordinates)
-  expect_equal(mcols(promoterCoordinates(promoterAnnotation))$intronId, mcols(reducedExonRanges)$intronId)
+  expect_equal(promoterCoordinates(promoterAnnotation)[,c('promoterId', 'internalPromoter')], promoterCoordinates[,-2])
+  expect_equal(as.numeric(unlist(promoterCoordinates(promoterAnnotation)$intronId)), 
+               as.numeric(unlist(reducedExonRanges$intronId)))
   
 })
 
 test_that('preparePromoterAnnotation returns expected output with txdb file path',{
   
-  suppressWarnings(
-    promoterAnnotation <- preparePromoterAnnotation(file = txdbPath, species = 'Homo_sapiens')
-  )
+  promoterAnnotation <- preparePromoterAnnotation(file = txdbPath, species = 'Homo_sapiens')
+  
   expect_s4_class(intronRanges(promoterAnnotation), 'GRanges')
   expect_type(promoterIdMapping(promoterAnnotation), 'list')
   expect_s4_class(promoterCoordinates(promoterAnnotation), 'GRanges')
   
   expect_equal(intronRanges(promoterAnnotation), annotatedIntronRanges[,c('INTRONID', 'TXNAME')])
   expect_equal(promoterIdMapping(promoterAnnotation), promoterIdMapping[,c('transcriptName', 'promoterId', 'geneId')])
-  expect_equal(promoterCoordinates(promoterAnnotation)[,c('promoterId', 'geneId', 'internalPromoter')], promoterCoordinates)
-  expect_equal(mcols(promoterCoordinates(promoterAnnotation))$intronId, mcols(reducedExonRanges)$intronId)
+  expect_equal(promoterCoordinates(promoterAnnotation)[,c('promoterId', 'internalPromoter')], promoterCoordinates[,-2])
+  expect_equal(as.numeric(unlist(promoterCoordinates(promoterAnnotation)$intronId)), 
+               as.numeric(unlist(reducedExonRanges$intronId)))
   
 })
 
 test_that('preparePromoterAnnotation returns expected output with txdb object', {
   
-  suppressWarnings(
-    promoterAnnotation <- preparePromoterAnnotation(txdb = txdb, species = 'Homo_sapiens')
-  )
+  promoterAnnotation <- preparePromoterAnnotation(txdb = txdb, species = 'Homo_sapiens')
+  
   expect_s4_class(intronRanges(promoterAnnotation), 'GRanges')
   expect_type(promoterIdMapping(promoterAnnotation), 'list')
   expect_s4_class(promoterCoordinates(promoterAnnotation), 'GRanges')
   
   expect_equal(intronRanges(promoterAnnotation), annotatedIntronRanges[,c('INTRONID', 'TXNAME')])
   expect_equal(promoterIdMapping(promoterAnnotation), promoterIdMapping[,c('transcriptName', 'promoterId', 'geneId')])
-  expect_equal(promoterCoordinates(promoterAnnotation)[,c('promoterId', 'geneId', 'internalPromoter')], promoterCoordinates)
-  expect_equal(mcols(promoterCoordinates(promoterAnnotation))$intronId, mcols(reducedExonRanges)$intronId)
+  expect_equal(promoterCoordinates(promoterAnnotation)[,c('promoterId', 'internalPromoter')], promoterCoordinates[,-2])
+  expect_equal(as.numeric(unlist(promoterCoordinates(promoterAnnotation)$intronId)), 
+               as.numeric(unlist(reducedExonRanges$intronId)))
   
 })

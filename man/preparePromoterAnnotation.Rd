@@ -29,8 +29,9 @@ Prepare promoter annotation data for the user specified txdb object
 }
 \examples{
 
-txdbPath <- list.files(system.file('extdata/testdata/promoterAnnotation', 
-                                   package = 'proActiv'), full.names = TRUE, pattern = 'sqlite')
+txdbPath <- system.file('extdata/vignette/annotations/',
+                            'gencode.v34.annotation.chr22.sqlite', 
+                             package = 'proActiv')
 txdb <- AnnotationDbi::loadDb(txdbPath)
 promoterAnnotation <- preparePromoterAnnotation(txdb = txdb,
                                                 species = 'Homo_sapiens')

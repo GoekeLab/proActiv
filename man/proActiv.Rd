@@ -2,12 +2,14 @@
 % Please edit documentation in R/proActiv.R
 \name{proActiv}
 \alias{proActiv}
-\title{Wrapper function returning Summarized Experiment object giving promoter counts and activity}
+\title{Wrapper function returning Summarized Experiment object giving promoter 
+counts and activity}
 \usage{
 proActiv(
   files,
   promoterAnnotation,
   fileLabels = NULL,
+  condition = NULL,
   genome = NULL,
   ncores = 1
 )
@@ -24,6 +26,10 @@ for which the junction read counts will be calculated. These labels will be
 used as column names for each output data.frame object. If not provided,
 filenames will be used as labels. Defaults to NULL}
 
+\item{condition}{A character vector. The condition to which each sample
+belong to. Must correspond to the order of the files. If supplied, 
+results are summarized by condition. Defaults to NULL}
+
 \item{genome}{A character. Genome version. Must be specified if input file
 type is a BAM file. Defaults to NULL}
 
@@ -32,29 +38,23 @@ counting junction reads. Defaults to 1 (no parallelization). This parameter
 will be used as an argument to BiocParallel::bplapply}
 }
 \value{
-A SummarizedExperiment object with assays giving promoter counts and activity 
-  with gene expression stored as column data and promoter gene id mapping stored as 
-  row data
+A SummarizedExperiment object with assays giving promoter counts 
+  and activity with gene expression stored as metadata. rowData contains
+  promoter metadata and absolute promoter activity summarized across
+  conditions (if condition is provided)
 }
 \description{
-Wrapper function returning Summarized Experiment object giving promoter counts and activity
+Wrapper function returning Summarized Experiment object giving promoter 
+counts and activity
 }
 \examples{
 
-files <- list.files(system.file('extdata/testdata/tophat2', package = 'proActiv'), 
-                    full.names = TRUE, pattern = 'sample')
-proActivFromJunctions <- proActiv(files = files,
-                                  promoterAnnotation = promoterAnnotation.gencode.v19, 
-                                 fileLabels = NULL, 
-                                 genome = NULL, 
-                                 ncores = 1)
-
-files <- list.files(system.file('extdata/testdata/bam', package = 'proActiv'), 
-                    full.names = TRUE)
-proActivFromBAM <- proActiv(files = files,
-                            promoterAnnotation  = promoterAnnotation.gencode.v34,
-                           fileLabels = NULL,
-                           genome = 'hg38',
-                           ncores = 1)
+files <- list.files(system.file('extdata/vignette/junctions', 
+                       package = 'proActiv'), 
+                       full.names = TRUE, pattern = 'replicate5')
+result <- proActiv(files = files,
+                       promoterAnnotation  = promoterAnnotation.gencode.v34,
+                       fileLabels = NULL,
+                       ncores = 1)
                            
 }

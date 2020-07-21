@@ -37,14 +37,24 @@ Imports:
     rlang,
     SummarizedExperiment,
     AnnotationDbi,
-    DESeq2
+    DESeq2,
+    data.table,
+    tibble,
+    Gviz,
+    BiocParallel
 Suggests: 
-    BiocParallel,
     testthat,
     mockery,
     BSgenome,
     BiocManager,
-    BSgenome.Hsapiens.UCSC.hg38
+    BSgenome.Hsapiens.UCSC.hg38,
+    knitr,
+    rmarkdown,
+    DEXSeq,
+    Rtsne,
+    ggplot2,
+    TxDb.Hsapiens.UCSC.hg38.knownGene,
+    tidyr
 URL: https://github.com/GoekeLab/proActiv
 biocViews:
     RNASeq,
@@ -57,3 +67,4 @@ biocViews:
     Epigenetics,
     Transcriptomics,
     Preprocessing
+VignetteBuilder: knitr

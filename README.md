@@ -24,13 +24,13 @@ TCGA, ICGC, GTEx, and PCAWG can be downloaded here:
 ### Content
 
   - [Installation](#installation)
-  - [Estimate Promoter Activity](#estimate-promoter-activity)
-  - [Annotation and Example Data](#annotation-and-example-data)
-  - [Creating your own promoter
-    annotations](#creating-your-own-promoter-annotations)
+  - [Quick Start](#quick-start)
+  - [Creating a Promoter Annotation
+    object](#creating-a-promoter-annotation-object)
+  - [Estimating Promoter Activity](#estimating-promoter-activity)
   - [Limitations](#limitations)
   - [Release History](#release-history)
-  - [Citing proActiv](#reference)
+  - [Reference](#reference)
   - [Contributors](#contributors)
 
 ### Installation
@@ -42,121 +42,173 @@ library("devtools")
 devtools::install_github("GoekeLab/proActiv")
 ```
 
-### Estimate Promoter Activity
+### Quick Start
 
-This is a basic example to estimate promoter activity from a set of
-RNA-Seq data which was aligned with TopHat2 (or STAR). proActiv will use
-the junction file from the TopHat2 (STAR) alignment, and a set of
-annotation objects that describe the associations of promoters,
-transcripts, and genes, to calculate promoter activity.
+proActiv estimates promoter activity from RNA-Seq data. Promoter
+activity is defined as the total amount of transcription initiated at
+each promoter. proActiv takes as input either BAM files or junction
+files (TopHat2 or STAR), and a promoter annotation object of the
+relevant genome. An optional argument `condition` can be supplied,
+describing the condition corresponding to each input file. Here we
+demonstrate proActiv with STAR junction files (Human genome GRCh38
+GENCODE v34) as input:
 
 ``` r
 library(proActiv)
 
-# Preprocessed annotations are available as part of the R package for the human genome (hg19):
-# proActiv::promoterAnnotationData.gencode.v19
+## List of STAR junction files as input
+files <- list.files(system.file('extdata/vignette/junctions', 
+                                package = 'proActiv'), full.names = TRUE)
+## Vector describing experimental condition
+condition <- rep(c('A549','HepG2'), each=3)
+## Promoter annotation for human genome GENCODE v34
+promoterAnnotation <- promoterAnnotation.gencode.v34
 
-# The paths and labels for samples
-junctionFiles <- list.files(system.file('extdata/tophat2', package = 'proActiv'), full.names = TRUE)
-
-# for STAR alignment
-# junctionFiles <- list.files(system.file('extdata/star', package = 'proActiv'), full.names = TRUE)
-
-junctionFileLabels <- paste0('s', 1:length(junctionFiles))
-
-# Count the total number of junction reads for each promoter
-promoterCounts <- calculatePromoterReadCounts(proActiv::promoterAnnotationData.gencode.v19,
-                                                      junctionFilePaths = junctionFiles,
-                                                      junctionFileLabels =  junctionFileLabels,
-                                                      junctionType = 'tophat')  # use junctionType = 'star' for STAR aligned reads
-
-# Normalize promoter read counts by DESeq2 (optional)
-normalizedPromoterCounts <- normalizePromoterReadCounts(promoterCounts)
-
-# Calculate absolute promoter activity
-absolutePromoterActivity <- getAbsolutePromoterActivity(normalizedPromoterCounts,
-                                                               proActiv::promoterAnnotationData.gencode.v19)
-# Calculate gene expression
-geneExpression <- getGeneExpression(absolutePromoterActivity)
-
-# Calculate relative promoter activity
-relativePromoterActivity <- getRelativePromoterActivity(absolutePromoterActivity,
-                                                               geneExpression)
+result <- proActiv(files = files, 
+                   promoterAnnotation = promoterAnnotation,
+                   condition = condition)
 ```
 
-### Annotation and Example Data
+`result` is a summarizedExperiment object which can be accessed as
+follows:
 
-Pre-calculated promoter annotation data for Gencode v19 (GRCh37) is
-available as part of the proActiv package. The PromoterAnnotation object
-has 4 slots:
+  - `assays(results)` returns raw/normalized promoter counts and
+    absolute/relative promoter activity  
+  - `metadata(results)` returns gene expression data  
+  - `rowData(results)` returns promoter metadata and summarized absolute
+    promoter activity by conditions
 
-  - reducedExonRanges : The reduced first exon ranges for each promoter
-    with promoter metadata for Gencode v19
-  - promoterIdMapping : The id mapping between transcript ids, names,
-    TSS ids, promoter ids and gene ids for Gencode v19
-  - annotatedIntronRanges : The intron ranges annotated with the
-    promoter information for Gencode v19
-  - promoterCoordinates : Promoter coordinates (TSS) with gene id and
-    internal promoter state for Gencode v19
+### Creating a Promoter Annotation object
 
-Example junction files as produced by TopHat2 and STAR are available as
-external data. The reference genome used for alignment is Gencode v19
-(GRCh37). The TopHat2 and STAR example files (5 files each) can be found
-at ‘extdata/tophat2’ and ‘extdata/star’ folders respectively.
+In order to quantify promoter activity, proActiv uses a set of promoters
+based on genome annotations. proActiv allows the creation of a promoter
+annotation object for any genome from a TxDb object or from a GTF file
+with the `preparePromoterAnnotation` function. Users have the option to
+either pass the file path of the GTF/GFF or TxDb to be used, or use the
+TxDb object directly as input. proActiv includes pre-calculated promoter
+annotations for human and mouse genomes:
 
-Example TopHat2 files:
+  - GENCODE Release 19 / GRCh37 / hg19 :
+    `promoterAnnotation.gencode.v19`
+  - GENCODE Release 34 / GRCh38 / hg38 :
+    `promoterAnnotation.gencode.v34`
+  - GENCODE Release M1 / NCBIM37 / mm9 :
+    `promoterAnnotation.gencode.vM1`
+  - GENCODE Release M25 / GRCm38.p6 / mm10 :
+    `promoterAnnotation.gencode.vM25`
 
-  - extdata/tophat2/sample1.bed
-  - extdata/tophat2/sample2.bed
-  - extdata/tophat2/sample3.bed
-  - extdata/tophat2/sample4.bed
-  - extdata/tophat2/sample5.bed
+GTF files can be downloaded from the
+[GENCODE](https://www.gencodegenes.org) page.
 
-Example STAR files:
-
-  - extdata/tophat2/sample1.junctions
-  - extdata/tophat2/sample2.junctions
-  - extdata/tophat2/sample3.junctions
-  - extdata/tophat2/sample4.junctions
-  - extdata/tophat2/sample5.junctions
-
-### Creating your own promoter annotations
-
-proActiv provides functions to create promoter annotation objects for
-any genome. Here we describe how the annotation can be created using a
-TxDb object (please see the TxDb documentation for how to create
-annotations from a GTF file).
-
-A TxDb object for the human genome version hg19 (Grch37) can be
-downloaded here:
-[inputFiles](http://s3.ap-southeast-1.amazonaws.com/all-public-data.store.genome.sg/DemirciogluEtAl2019/annotations/gencode.v19.annotation.sqlite)
+Here, we demonstrate creating the promoter annotation for the Human
+genome (GENCODE v34) with both GTF and TxDb. To keep the run-time small,
+we use a subset of the GTF/TxDb which includes only chromosome 22
+annotations.
 
 ``` r
-library(GenomicRanges)
-library(GenomicFeatures)
-library(GenomicAlignments)
-library(dplyr)
-library(proActiv)
+## From GTF file path
+gtf.file <- system.file('extdata/vignette/annotation/gencode.v34.annotation.chr22.gtf.gz', 
+                        package = 'proActiv')
+promoterAnnotation.gencode.v34.chr22 <- preparePromoterAnnotation(file = gtf.file,
+                                                                  species = 'Homo_sapiens')
+## From TxDb object
+txdb.file <- system.file('extdata/vignette/annotation/gencode.v34.annotation.chr22.sqlite', 
+                         package = 'proActiv')
+txdb <- loadDb(txdb.file)
+promoterAnnotation.gencode.v34.chr22 <- preparePromoterAnnotation(txdb = txdb, 
+                                                                  species = 'Homo_sapiens')
+```
 
-# Load the txdb object for your annotation of choice (Gencode v19 used here)
-txdb <- loadDb('./inputFiles/annotation/gencode.v19.annotation.sqlite')
+The `PromoterAnnotation` object has 3 slots:
 
-# The species argument to be used for GenomeInfoDb::keepStandardChromosomes
-species <- 'Homo_sapiens'
-# The number of cores to be used for parallel execution (mc.cores argument for parallel::mclappy), optional
-numberOfCores <- 1
+  - `intronRanges` : Intron ranges, giving the corresponding transcripts
+    of each intron
+  - `promoterIdMapping` : An ID mapping between transcripts, promoter
+    IDs and gene IDs  
+  - `promoterCoordinates` : Promoter coordinates (TSS) and internal
+    promoter state, along with the 3’ coordinate of the first exon
 
-### Annotation data preparation
-promoterAnnotationData <- preparePromoterAnnotationData(txdb, species = species, numberOfCores = numberOfCores)
+### Estimating Promoter Activity
 
-# Retrieve the id mapping between transcripts, TSSs, promoters and genes
-head(promoterIdMapping(promoterAnnotationData))
+Once promoters in the genome are identified, proActiv estimates promoter
+activity at each annotated promoter from RNA-Seq data aligned with
+TopHat2 or STAR. Users have the option to either pass junction files
+(TopHat2 or STAR) or BAM files to `proActiv`. proActiv takes the paths
+of the input files, together with the relevant promoter annotation, and
+a vector describing experimental condition corresponding to each input
+file, and returns a summarizedExperiment object. The returned object
+summarizes promoter counts and activity, while gene expression is stored
+as metadata. Row data stores promoter metadata and mean absolute
+promoter activity summarized across conditions.
 
-# Retrieve promoter coordinates
-head(promoterCoordinates(promoterAnnotationData))
+Below, we demonstrate running `proActiv` with input STAR junction files
+and BAM files (truncated). This data is taken from the [SGNEx
+project](https://github.com/GoekeLab/sg-nex-data). The reference genome
+used for alignment is GENCODE v34 (GRCh38). These files can can be found
+at ‘extdata/vignette’:
+
+  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate1-run1.junctions.gz
+  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate3-run1.junctions.gz
+  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate5-run1.junctions.gz
+  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate2-run1.junctions.gz
+  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate4-run1.junctions.gz
+  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate5-run1.junctions.gz
+
+<!-- end list -->
+
+``` r
+## From BAM files - genome parameter must be provided
+files <- list.files(system.file('extdata/testdata/bam', package = 'proActiv'), full.names = TRUE)
+result <- proActiv(files = files, 
+                   promoterAnnotation = promoterAnnotation.gencode.v34,
+                   genome = 'hg38')
+
+## From STAR junction files
+files <- list.files(system.file('extdata/vignette', package = 'proActiv'), full.names = TRUE)
+result <- proActiv(files = files, 
+                   promoterAnnotation = promoterAnnotation.gencode.v34,
+                   condition = rep(c('A549','HepG2'), each = 3))
 ```
 
 ## Release History
+
+**Release 0.99.0**
+
+Release date: 21st July 2020
+
+Changes in version 0.99.0:
+
+  - Workflow: The wrapper function `proActiv` performs all steps to
+    estimate promoter activity and calculates promoter metadata. A
+    `condition` argument can be supplied for `proActiv` to summarize
+    promoter counts and activity across conditions. These results are
+    returned as a SummarizedExperiment object.
+
+  - BAM file usage: In addition to junction files, `proActiv` now allows
+    BAM files as input. However, users should note that this function is
+    not fully optimized and may have long run-time.
+
+  - Promoter annotation: Improved efficiency in generating promoter
+    annotations without the need for parallelization with the
+    `preparePromoterAnnotations` function. Promoter annotation objects
+    for human (hg19/hg38) and mouse (mm9/mm10) genomes are now
+    pre-calculated and available to the user. The promoter annotation
+    object is also trimmed to preserve essential information for running
+    `proActiv`, in order to comply with Bioconductor guidelines
+    concerning package size.
+
+  - Plotting promoter activity: The plotting function `plotPromoters`
+    visualizes promoter activity across conditions. It accepts the
+    SummarizedExperiment object returned by `proActiv` along with a gene
+    of interest and gene annotations as arguments. This allows users to
+    visualize promoter activity and identify instances of alternative
+    promoter usage.
+
+  - Vignette: proActiv now comes with a vignette, documenting a complete
+    step-by-step workflow in identifying active and alternative promoter
+    usage. This includes guidance on running `proActiv`, creating
+    promoter annotations and identifying alternative promoter usage.
+    Various visualizations of promoter activity are also offered.
 
 **Initial Release 0.1.0**
 
@@ -175,7 +227,7 @@ transcripts, promoters which overlap with internal exons).
 
 If you use proActiv, please cite:
 
-[Demircioğlu, Deniz, et al. “A Pan-cancer Transcriptome Analysis Reveals
+[Demircioğlu, Deniz, et al. “A Pan-cancer Transcriptome Analysis Reveals
 Pervasive Regulation through Alternative Promoters.” *Cell* 178.6
 (2019):
 1465-1477.](https://www.cell.com/cell/fulltext/S0092-8674\(19\)30906-7)
