@@ -9,6 +9,7 @@ plotPromoters(
   result,
   gene,
   txdb,
+  ranges,
   cex.title = 0.9,
   cex.axis = 0.9,
   cex.main = 1,
@@ -33,6 +34,10 @@ be plotted}
 \item{txdb}{A TxDb object. The txdb must correspond to the genome version 
 used in running proActiv. Here, it is recommended to use the same txdb in 
 generating promoter annotations}
+
+\item{ranges}{A list of GRanges. Each entry in the list should correspond to 
+a transcript that will be visualized, with Genomic Ranges giving the exons 
+corresponding to that transcript}
 
 \item{cex.title}{A numeric value. Size of axis labels. Defaults to 0.9}
 
@@ -76,15 +81,15 @@ counts and activity
 \examples{
  
  gene <- 'ENSG00000076864.19'
- ## TxDb generated from subsetted GENCODE v34 GTF
- txdb <- loadDb(system.file('extdata/vignette/annotations', 
-                               'gencode.v34.annotation.rap1gap.sqlite',
+ ## Genomic Ranges giving exons by transcripts of gene 
+ ranges <- readRDS(system.file('extdata/vignette/annotations', 
+                               'exonsBy.rap1gap.rds',
                                package = 'proActiv'))
  ## summarizedExperiment returned by proActiv (subsetted to gene RAP1GAP)
  result <- readRDS(system.file('extdata/vignette/annotations',
                                'result.rap1gap.rds',
                                package ='proActiv'))
- plotPromoters(result, gene, txdb)
+ plotPromoters(result = result, gene = gene, ranges = ranges)
   
                            
 }
