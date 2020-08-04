@@ -20,6 +20,10 @@ knitr::opts_chunk$set(
 ## proActiv: Estimation of Promoter Activity from RNA-Seq data
 
 <!-- badges: start -->
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/GoekeLab/proActiv)](https://github.com/GoekeLab/proActiv/releases/)
+[![Maintained?](https://img.shields.io/badge/Maintained%3F-Yes-brightgreen)](https://github.com/GoekeLab/proActiv/graphs/contributors)
+[![Install](https://img.shields.io/badge/Install-Github-brightgreen)](#installation)
+[![License: MIT License](https://img.shields.io/github/license/GoekeLab/proActiv)](https://choosealicense.com/licenses/mit/)
 <!-- badges: end -->
 
 proActiv is an R package that estimates promoter activity from RNA-Seq data. proActiv uses aligned reads and genome annotations as input, and provides absolute and relative promoter activity as output. The package can be used to identify active promoters and alternative promoters, the details of the method are described in [Demircioglu et al][Reference].
