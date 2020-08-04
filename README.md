@@ -174,7 +174,7 @@ result <- proActiv(files = files,
 
 **Release 0.99.0**
 
-Release date: 21st July 2020
+Release date: 4th August 2020
 
 Changes in version 0.99.0:
 
