@@ -5,29 +5,36 @@
 \title{Calculate the promoter read counts using junction read counts approach for
 all the input junction files}
 \usage{
-calculatePromoterReadCounts(promoterAnnotationData,
-  junctionFilePaths = NULL, junctionFileLabels = NULL,
-  junctionType = "tophat", numberOfCores = 1)
+calculatePromoterReadCounts(
+  promoterAnnotation,
+  files = NULL,
+  fileLabels = NULL,
+  fileType = NULL,
+  genome = NULL,
+  numberOfCores = 1
+)
 }
 \arguments{
-\item{promoterAnnotationData}{A PromoterAnnotation object containing the
+\item{promoterAnnotation}{A PromoterAnnotation object containing the
 reduced exon ranges, annotated intron ranges, promoter coordinates and the
 promoter id mapping}
 
-\item{junctionFilePaths}{A character vector. The list of junction files for
-which the junction read counts will be calculated}
+\item{files}{A character vector. The list of junction or BAM files 
+for which the junction read counts will be calculated}
 
-\item{junctionFileLabels}{A character vector. The labels of junction files
-for which the junction read counts will be calculated. These labels will be
-used as column names for the output data.frame object}
+\item{fileLabels}{A character vector. The labels of junction or BAM 
+files for which the junction read counts will be calculated. These labels 
+will be used as column names for the output data.frame object}
 
-\item{junctionType}{A character. Type of the junction bed file, either
-'tophat'(default) or 'star'}
+\item{fileType}{A character. Type of the junction bed or bam file, either
+'tophat', 'star' or 'bam}
+
+\item{genome}{A character. Genome version used. Must be specified if input is
+a BAM file. Defaults to NULL}
 
 \item{numberOfCores}{A numeric value. The number of cores to be used for
 counting junction reads. Defaults to 1 (no parallelization). This parameter
-will be used argument to mclapply function hence require 'parallel' package
-to be installed}
+will be used as an argument to BiocParallel::bplapply}
 }
 \value{
 A data.frame object. The number of junction reads per promoter (rows)
@@ -38,14 +45,16 @@ Calculate the promoter read counts using junction read counts approach for
 all the input junction files
 }
 \examples{
-\dontrun{
-junctionFilePaths <- c('./sample1-tophat.bed', './sample2-tophat.bed')
-junctionFileLabels <- c('sample1', 'sample2')
-promoterReadCounts <- calculatePromoterReadCounts(promoterAnnotationData,
-                                                   junctionFilePaths,
-                                                   junctionFileLabels,
-                                                   junctionType = 'tophat',
-                                                   numberOfCores = 1)
-}
 
+files <- list.files(system.file('extdata/testdata/tophat2', 
+                    package = 'proActiv'), 
+                    full.names = TRUE, pattern = 'sample')
+fileLabels <- c('sample1', 'sample2')
+promoterAnnotation <- promoterAnnotation.gencode.v19
+promoterReadCounts <- calculatePromoterReadCounts(promoterAnnotation,
+                                                   files,
+                                                   fileLabels,
+                                                   fileType = 'tophat',
+                                                   genome = NULL,
+                                                   numberOfCores = 1)
 }

@@ -5,16 +5,19 @@
 \title{Prepare the absolute promoter activity table including the promoter and gene
 ids}
 \usage{
-getAbsolutePromoterActivity(junctionReadCounts, promoterAnnotationData,
-  log2 = TRUE, pseudocount = 1)
+getAbsolutePromoterActivity(
+  junctionReadCounts,
+  promoterAnnotation,
+  log2 = TRUE,
+  pseudocount = 1
+)
 }
 \arguments{
 \item{junctionReadCounts}{Matrix of junction read counts (rows: promoters,
 cols: samples)}
 
-\item{promoterAnnotationData}{A PromoterAnnotation object containing the
-reduced exon ranges, annotated intron ranges, promoter coordinates and the
-promoter id mapping}
+\item{promoterAnnotation}{A PromoterAnnotation object containing the
+intron ranges, promoter coordinates and the promoter id mapping}
 
 \item{log2}{Logical indicating whether log2 read counts should be used
 (default: TRUE) or not}
@@ -29,16 +32,19 @@ Prepare the absolute promoter activity table including the promoter and gene
 ids
 }
 \examples{
-\dontrun{
+
+## junctionReadCounts is an object returned from normalizePromoterReadCounts
+junctionReadCounts <- readRDS(system.file('extdata/testdata/tophat2',
+                                            'normalizedPromoterCounts.rds', 
+                                             package = 'proActiv'))
 absolutePromoterActivity <- getAbsolutePromoterActivity(junctionReadCounts,
-                                                         promoterAnnotationData,
-                                                         log2 = TRUE,
-                                                         pseudocount = 1)
-}
+                                             promoterAnnotation.gencode.v19,
+                                             log2 = TRUE,
+                                             pseudocount = 1)
 
 }
 \seealso{
-\code{\link{preparePromoterIdMapping}} for preparing the mapping
+\code{\link{preparePromoterAnnotation}} for preparing the mapping
   between promoters and genes, \code{\link{calculatePromoterReadCounts}} and
   \code{\link{normalizePromoterReadCounts}} for obtaining junction read
   counts

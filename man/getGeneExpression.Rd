@@ -7,7 +7,8 @@
 getGeneExpression(absolutePromoterActivity)
 }
 \arguments{
-\item{absolutePromoterActivity}{data.frame of absolute promoter activity with promoter and gene ids}
+\item{absolutePromoterActivity}{data.frame of absolute promoter activity 
+with promoter and gene ids}
 }
 \value{
 data.frame of gene expression with gene ids
@@ -16,8 +17,13 @@ data.frame of gene expression with gene ids
 Prepare the gene expression table including the gene ids
 }
 \examples{
-\dontrun{
+
+## absolutePromoterActivity is an object returned 
+## from getAbsolutePromoterActivity
+absolutePromoterActivity <- readRDS(system.file('extdata/testdata/tophat2', 
+                                             'absolutePromoterActivity.rds', 
+                                              package = 'proActiv')) 
 geneExpression <- getGeneExpression(absolutePromoterActivity)
-}
+
 
 }
