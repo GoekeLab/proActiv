@@ -89,11 +89,12 @@ parseFile <- function(files, fileLabels, genome) {
         }
     } else if (ext == 'bed') {
         fileType <- 'tophat' 
-    } else if (ext == 'junctions') {
+    } else if (ext == 'junctions' | ext == 'tab') {
         fileType <- 'star'
     } else {
         stop('Invalid input files: Input must either be a BAM file (.bam), 
-            Tophat junctions file (.bed) or STAR junctions file (.junctions)')
+            Tophat junctions file (.bed) or 
+            STAR junctions file (.junctions / .tab)')
     }
     parsed <- list(fileLabels = fileLabels, fileType = fileType) 
     return(parsed)
@@ -140,8 +141,8 @@ buildSummarizedExperiment <- function(promoterAnnotation,
     ## Build row data
     rowData(result) <- data.frame(
                         absolutePromoterActivity[,c('promoterId', 'geneId')], 
-                        promoterCoordinates[,c("seqnames","start", 
-                                                "strand", "promoterPosition")])
+                        promoterCoordinates[,c("seqnames","start", "strand",
+                                    "internalPromoter", "promoterPosition")])
     transcriptByGene <- split(promoterIdMapping$transcriptName, 
                                 promoterIdMapping$geneId)
     rowData(result)$txId <- transcriptByGene[match(rowData(result)$geneId, 
@@ -189,6 +190,7 @@ categorizePromoters <- function(rdata, condition) {
         data[[class]] <- ifelse(data[[mean]] < 0.25, 'Inactive', 'Minor')
         data[[class]][max.rows$V1] <- 'Major'
         data[[class]][which(data[[mean]] < 0.25)] <- 'Inactive'
+        data[[class]][which(data$internalPromoter)] <- NA
     }
     data <- setorder(data, promoterId)
     return(data)

@@ -246,7 +246,7 @@ rdata <- rowData(result)
 pdata1 <- data.frame(cellLine = rep(c('A549', 'HepG2'), each = nrow(rdata)),
                        promoterClass = as.factor(c(rdata$A549.class, rdata$HepG2.class)))
 
-ggplot(pdata1) +
+ggplot(na.omit(pdata1)) +
   geom_bar(aes(x = cellLine, fill = promoterClass)) + 
   xlab('Cell Lines') + ylab('Count') +  labs(fill = 'Promoter Category') +
   ggtitle('Categorization of Promoters')
