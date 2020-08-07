@@ -13,8 +13,6 @@
 date)](https://img.shields.io/github/v/release/GoekeLab/proActiv)](https://github.com/GoekeLab/proActiv/releases/)
 [![Maintained?](https://img.shields.io/badge/Maintained%3F-Yes-brightgreen)](https://github.com/GoekeLab/proActiv/graphs/contributors)
 [![Install](https://img.shields.io/badge/Install-Github-brightgreen)](#installation)
-[![License: MIT
-License](https://img.shields.io/github/license/GoekeLab/proActiv)](https://choosealicense.com/licenses/mit/)
 <!-- badges: end -->
 
 proActiv is an R package that estimates promoter activity from RNA-Seq
