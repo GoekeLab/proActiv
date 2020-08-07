@@ -225,7 +225,7 @@ the promoter arrows in the annotation track. Defaults to 'grey'</p></td>
   conditions, along with a model of transcripts belonging to the gene</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
+    <pre class="examples">
  <span class='no'>gene</span> <span class='kw'>&lt;-</span> <span class='st'>'ENSG00000076864.19'</span>
  <span class='co'>## Genomic Ranges giving exons by transcripts of gene </span>
  <span class='no'>ranges</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/readRDS.html'>readRDS</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'extdata/vignette/annotations'</span>,
@@ -235,13 +235,7 @@ the promoter arrows in the annotation track. Defaults to 'grey'</p></td>
  <span class='no'>result</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/readRDS.html'>readRDS</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'extdata/vignette/annotations'</span>,
                                <span class='st'>'result.rap1gap.rds'</span>,
                                <span class='kw'>package</span> <span class='kw'>=</span><span class='st'>'proActiv'</span>))
- <span class='fu'>plotPromoters</span>(<span class='kw'>result</span> <span class='kw'>=</span> <span class='no'>result</span>, <span class='kw'>gene</span> <span class='kw'>=</span> <span class='no'>gene</span>, <span class='kw'>ranges</span> <span class='kw'>=</span> <span class='no'>ranges</span>)</div><div class='output co'>#&gt; [1] "Plotting ENSG00000076864.19"
-#&gt; [1] "Creating Gene Region Track..."
-#&gt; [1] "Creating Data Track..."
-#&gt; [1] "Creating Annotation Track..."
-#&gt; [1] "Creating Plot..."</div><div class='img'><img src='plotPromoters-1.png' alt='' width='700' height='433' /></div><div class='input'>  
-                           
-</div></pre>
+ <span class='fu'>plotPromoters</span>(<span class='kw'>result</span> <span class='kw'>=</span> <span class='no'>result</span>, <span class='kw'>gene</span> <span class='kw'>=</span> <span class='no'>gene</span>, <span class='kw'>ranges</span> <span class='kw'>=</span> <span class='no'>ranges</span>)</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
