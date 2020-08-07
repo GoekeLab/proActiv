@@ -1,0 +1,21 @@
+title: proActiv
+reference:
+    - title: Main functions
+      contents:
+        - proActiv
+        - preparePromoterAnnotation
+        - plotPromoters
+    - title: Helper functions
+      contents:
+        - calculateJunctionReadCounts
+        - calculatePromoterReadCounts
+        - normalizePromoterReadCounts
+        - getAbsolutePromoterActivity
+        - getGeneExpression
+        - getRelativePromoterActivity
+    - title: Data
+      contents:
+        - promoterAnnotation.gencode.v19
+        - promoterAnnotation.gencode.v34
+        - promoterAnnotation.gencode.vM1
+        - promoterAnnotation.gencode.vM25
