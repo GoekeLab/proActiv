@@ -38,12 +38,6 @@ counts and activity — proActiv • proActiv</title>
 <script src="../pkgdown.js"></script>
 
 
-<!-- docsearch -->
-<script src="../docsearch.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.3/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous" />
-<link href="../docsearch.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
-
 
 
 <meta property="og:title" content="Wrapper function returning Summarized Experiment object giving promoter 
@@ -89,23 +83,15 @@ counts and activity" />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
 <li>
-  <a href="../articles/proActiv.html">
-    <span class="fa fa-file-alt"></span>
-     
-    Getting Started
-  </a>
+  <a href="../articles/proActiv.html">Get started</a>
 </li>
 <li>
-  <a href="../reference/index.html">
-    <span class="fa fa-code"></span>
-     
-    Functions and Data
-  </a>
+  <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -116,12 +102,6 @@ counts and activity" />
   </a>
 </li>
       </ul>
-      
-      <form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
-        <div class="form-group">
-          <input type="search" class="form-control" name="search-input" id="search-input" placeholder="Search..." aria-label="Search for..." autocomplete="off">
-        </div>
-      </form>
       
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -136,7 +116,7 @@ counts and activity" />
     <div class="page-header">
     <h1>Wrapper function returning Summarized Experiment object giving promoter 
 counts and activity</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/GoekeLab/proActiv/blob/master/R/proActiv.R'><code>R/proActiv.R</code></a></small>
     <div class="hidden name"><code>proActiv.Rd</code></div>
     </div>
 
@@ -208,10 +188,10 @@ will be used as an argument to BiocParallel::bplapply</p></td>
 <span class='no'>result</span> <span class='kw'>&lt;-</span> <span class='fu'>proActiv</span>(<span class='kw'>files</span> <span class='kw'>=</span> <span class='no'>files</span>,
                        <span class='kw'>promoterAnnotation</span>  <span class='kw'>=</span> <span class='no'>promoterAnnotation.gencode.v34</span>,
                        <span class='kw'>fileLabels</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-                       <span class='kw'>ncores</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] "Processing: C:/Users/josep/AppData/Local/Temp/RtmpYboIaN/temp_libpath57386d0e6c27/proActiv/extdata/vignette/junctions/SGNEx_A549_Illumina_replicate5-run1.junctions.gz"
+                       <span class='kw'>ncores</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] "Processing: C:/Users/josep/AppData/Local/Temp/RtmpiwNx5S/temp_libpath5ad0105232b8/proActiv/extdata/vignette/junctions/SGNEx_A549_Illumina_replicate5-run1.junctions.gz"
 #&gt; [1] "File loaded into memory"
 #&gt; [1] "Calculating junction counts"
-#&gt; [1] "Processing: C:/Users/josep/AppData/Local/Temp/RtmpYboIaN/temp_libpath57386d0e6c27/proActiv/extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate5-run1.junctions.gz"
+#&gt; [1] "Processing: C:/Users/josep/AppData/Local/Temp/RtmpiwNx5S/temp_libpath5ad0105232b8/proActiv/extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate5-run1.junctions.gz"
 #&gt; [1] "File loaded into memory"
 #&gt; [1] "Calculating junction counts"
 #&gt; [1] "Calculating normalized read counts..."</div><div class='output co'>#&gt; <span class='message'>converting counts to integer mode</span></div><div class='output co'>#&gt; [1] "Calculating log2 absolute promoter activity..."
@@ -241,23 +221,6 @@ will be used as an argument to BiocParallel::bplapply</p></td>
    </div>
 
   
-<script src="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.js" integrity="sha256-GKvGqXDznoRYHCwKXGnuchvKSwmx9SRMrZOTh2g4Sb0=" crossorigin="anonymous"></script>
-<script>
-  docsearch({
-    
-    
-    apiKey: 'API_KEY',
-    indexName: 'INDEX_NAME',
-    inputSelector: 'input#search-input.form-control',
-    transformData: function(hits) {
-      return hits.map(function (hit) {
-        hit.url = updateHitURL(hit);
-        return hit;
-      });
-    }
-  });
-</script>
-
 
 
   </body>
