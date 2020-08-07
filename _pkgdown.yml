@@ -1,22 +1,42 @@
 title: proActiv
 url: https://goekelab.github.io/proActiv/
+template:
+  params:
+    bootswatch: united
+    docsearch:
+      api_key: API_KEY
+      index_name: INDEX_NAME
 reference:
-    - title: Main functions
-      contents:
-        - proActiv
-        - preparePromoterAnnotation
-        - plotPromoters
-    - title: Helper functions
-      contents:
-        - calculateJunctionReadCounts
-        - calculatePromoterReadCounts
-        - normalizePromoterReadCounts
-        - getAbsolutePromoterActivity
-        - getGeneExpression
-        - getRelativePromoterActivity
-    - title: Data
-      contents:
-        - promoterAnnotation.gencode.v19
-        - promoterAnnotation.gencode.v34
-        - promoterAnnotation.gencode.vM1
-        - promoterAnnotation.gencode.vM25
+  - title: Main functions
+    contents:
+      - proActiv
+      - preparePromoterAnnotation
+      - plotPromoters
+  - title: Helper functions
+    contents:
+      - calculateJunctionReadCounts
+      - calculatePromoterReadCounts
+      - normalizePromoterReadCounts
+      - getAbsolutePromoterActivity
+      - getGeneExpression
+      - getRelativePromoterActivity
+  - title: Data
+    contents:
+      - promoterAnnotation.gencode.v19
+      - promoterAnnotation.gencode.v34
+      - promoterAnnotation.gencode.vM1
+      - promoterAnnotation.gencode.vM25
+navbar:
+  left:
+    - icon: fa-home
+      href: index.html
+    - text: Getting Started
+      icon: fa-file-alt
+      href: articles/proActiv.html
+    - text: Functions and Data
+      icon: fa-code
+      href: reference/index.html
+repo:
+  url:
+    home: https://github.com/GoekeLab/proActiv/
+    issue: https://github.com/GoekeLab/proActiv/issues/
