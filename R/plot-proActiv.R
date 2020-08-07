@@ -1,5 +1,4 @@
-#' Wrapper function returning Summarized Experiment object giving promoter 
-#' counts and activity
+#' Visualize promoter activity and transcript model for a gene of interest
 #'
 #' @param result A SummarizedExperiment object with assays giving promoter 
 #'   counts and activity with gene expression stored as column data and 
