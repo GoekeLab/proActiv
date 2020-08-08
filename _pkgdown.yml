@@ -23,3 +23,14 @@ reference:
       - promoterAnnotation.gencode.v34
       - promoterAnnotation.gencode.vM1
       - promoterAnnotation.gencode.vM25
+navbar:
+  type: default
+  left:
+    - icon: fa-home
+      href: index.html
+    - text: Complete Analysis Workflow
+      icon: fa-file-alt
+      href: articles/proActiv.html
+    - text: Manual
+      icon: fa-code
+      href: reference/index.html
