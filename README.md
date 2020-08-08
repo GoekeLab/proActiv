@@ -18,12 +18,16 @@ date)](https://img.shields.io/github/v/release/GoekeLab/proActiv)](https://githu
 proActiv is an R package that estimates promoter activity from RNA-Seq
 data. proActiv uses aligned reads and genome annotations as input, and
 provides absolute and relative promoter activity as output. The package
-can be used to identify active promoters and alternative promoters, the
-details of the method are described in [Demircioglu et al](#reference).
+can be used to identify active promoters and alternative promoters.
+Details of the method are described in [Demircioglu et al](#reference).
+
+HTML documentation of proActiv, including a complete step-by-step
+workflow and a function manual, is available at
+<https://goekelab.github.io/proActiv/>.
 
 Additional data on differential promoters in tissues and cancers from
-TCGA, ICGC, GTEx, and PCAWG can be downloaded here:
-<https://jglab.org/data-and-software/>
+TCGA, ICGC, GTEx, and PCAWG is available at
+<https://jglab.org/data-and-software/>.
 
 ### Content
 
@@ -31,7 +35,8 @@ TCGA, ICGC, GTEx, and PCAWG can be downloaded here:
   - [Quick Start](#quick-start)
   - [Creating a Promoter Annotation
     object](#creating-a-promoter-annotation-object)
-  - [Estimating Promoter Activity](#estimating-promoter-activity)
+  - [Complete Analysis Workflow: Analyzing Alternative
+    Promoters](#complete-analysis-workflow-analyzing-alternative-promoters)
   - [Limitations](#limitations)
   - [Release History](#release-history)
   - [Reference](#reference)
@@ -53,9 +58,20 @@ activity is defined as the total amount of transcription initiated at
 each promoter. proActiv takes as input either BAM files or junction
 files (TopHat2 or STAR), and a promoter annotation object of the
 relevant genome. An optional argument `condition` can be supplied,
-describing the condition corresponding to each input file. Here we
-demonstrate proActiv with STAR junction files (Human genome GRCh38
-GENCODE v34) as input:
+describing the experimental condition corresponding to each input file.
+Here we demonstrate proActiv with STAR junction files (Human genome
+GRCh38 GENCODE v34) as input. These files are taken from the [SGNEx
+project](https://github.com/GoekeLab/sg-nex-data), and can be found at
+‘extdata/vignette’:
+
+  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate1-run1.junctions.gz
+  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate3-run1.junctions.gz
+  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate5-run1.junctions.gz
+  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate2-run1.junctions.gz
+  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate4-run1.junctions.gz
+  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate5-run1.junctions.gz
+
+<!-- end list -->
 
 ``` r
 library(proActiv)
@@ -81,6 +97,17 @@ follows:
   - `metadata(results)` returns gene expression data  
   - `rowData(results)` returns promoter metadata and summarized absolute
     promoter activity by conditions
+
+proActiv can also be run with BAM files as input, but an additional
+parameter `genome` must be supplied:
+
+``` r
+## From BAM files - genome parameter must be provided
+files <- list.files(system.file('extdata/testdata/bam', package = 'proActiv'), full.names = TRUE)
+result <- proActiv(files = files, 
+                   promoterAnnotation = promoterAnnotation.gencode.v34,
+                   genome = 'hg38')
+```
 
 ### Creating a Promoter Annotation object
 
@@ -132,47 +159,16 @@ The `PromoterAnnotation` object has 3 slots:
   - `promoterCoordinates` : Promoter coordinates (TSS) and internal
     promoter state, along with the 3’ coordinate of the first exon
 
-### Estimating Promoter Activity
+### Complete Analysis Workflow: Analyzing Alternative Promoters
 
-Once promoters in the genome are identified, proActiv estimates promoter
-activity at each annotated promoter from RNA-Seq data aligned with
-TopHat2 or STAR. Users have the option to either pass junction files
-(TopHat2 or STAR) or BAM files to `proActiv`. proActiv takes the paths
-of the input files, together with the relevant promoter annotation, and
-a vector describing experimental condition corresponding to each input
-file, and returns a summarizedExperiment object. The returned object
-summarizes promoter counts and activity, while gene expression is stored
-as metadata. Row data stores promoter metadata and mean absolute
-promoter activity summarized across conditions.
-
-Below, we demonstrate running `proActiv` with input STAR junction files
-and BAM files (truncated). This data is taken from the [SGNEx
-project](https://github.com/GoekeLab/sg-nex-data). The reference genome
-used for alignment is GENCODE v34 (GRCh38). These files can can be found
-at ‘extdata/vignette’:
-
-  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate1-run1.junctions.gz
-  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate3-run1.junctions.gz
-  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate5-run1.junctions.gz
-  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate2-run1.junctions.gz
-  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate4-run1.junctions.gz
-  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate5-run1.junctions.gz
-
-<!-- end list -->
-
-``` r
-## From BAM files - genome parameter must be provided
-files <- list.files(system.file('extdata/testdata/bam', package = 'proActiv'), full.names = TRUE)
-result <- proActiv(files = files, 
-                   promoterAnnotation = promoterAnnotation.gencode.v34,
-                   genome = 'hg38')
-
-## From STAR junction files
-files <- list.files(system.file('extdata/vignette', package = 'proActiv'), full.names = TRUE)
-result <- proActiv(files = files, 
-                   promoterAnnotation = promoterAnnotation.gencode.v34,
-                   condition = rep(c('A549','HepG2'), each = 3))
-```
+Most human genes have multiple promoters that control the expression of
+distinct isoforms. The use of these alternative promoters enables the
+regulation of isoform expression pre-transcriptionally. Importantly,
+alternative promoters have been found to be important in a wide number
+of cell types and diseases. proActiv includes a workflow to identify and
+visualize alternative promoter usage between conditions. This workflow
+is described in detail
+[here](https://goekelab.github.io/proActiv/articles/proActiv.html).
 
 ## Release History
 

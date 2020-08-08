@@ -89,8 +89,9 @@
 <a href="#proactiv-estimation-of-promoter-activity-from-rna-seq-data" class="anchor"></a>proActiv: Estimation of Promoter Activity from RNA-Seq data</h2>
 <!-- badges: start -->
 <p><a href="https://github.com/GoekeLab/proActiv/releases/"><img src="https://img.shields.io/github/v/release/GoekeLab/proActiv" alt="GitHub release (latest by date)"></a> <a href="https://github.com/GoekeLab/proActiv/graphs/contributors"><img src="https://img.shields.io/badge/Maintained%3F-Yes-brightgreen" alt="Maintained?"></a> <a href="#installation"><img src="https://img.shields.io/badge/Install-Github-brightgreen" alt="Install"></a> <!-- badges: end --></p>
-<p>proActiv is an R package that estimates promoter activity from RNA-Seq data. proActiv uses aligned reads and genome annotations as input, and provides absolute and relative promoter activity as output. The package can be used to identify active promoters and alternative promoters, the details of the method are described in <a href="#reference">Demircioglu et al</a>.</p>
-<p>Additional data on differential promoters in tissues and cancers from TCGA, ICGC, GTEx, and PCAWG can be downloaded here: <a href="https://jglab.org/data-and-software/" class="uri">https://jglab.org/data-and-software/</a></p>
+<p>proActiv is an R package that estimates promoter activity from RNA-Seq data. proActiv uses aligned reads and genome annotations as input, and provides absolute and relative promoter activity as output. The package can be used to identify active promoters and alternative promoters. Details of the method are described in <a href="#reference">Demircioglu et al</a>.</p>
+<p>HTML documentation of proActiv, including a complete step-by-step workflow and a function manual, is available at <a href="https://goekelab.github.io/proActiv/" class="uri">https://goekelab.github.io/proActiv/</a>.</p>
+<p>Additional data on differential promoters in tissues and cancers from TCGA, ICGC, GTEx, and PCAWG is available at <a href="https://jglab.org/data-and-software/" class="uri">https://jglab.org/data-and-software/</a>.</p>
 <div id="content" class="section level3">
 <h3 class="hasAnchor">
 <a href="#content" class="anchor"></a>Content</h3>
@@ -98,7 +99,7 @@
 <li><a href="#installation">Installation</a></li>
 <li><a href="#quick-start">Quick Start</a></li>
 <li><a href="#creating-a-promoter-annotation-object">Creating a Promoter Annotation object</a></li>
-<li><a href="#estimating-promoter-activity">Estimating Promoter Activity</a></li>
+<li><a href="#complete-analysis-workflow-analyzing-alternative-promoters">Complete Analysis Workflow: Analyzing Alternative Promoters</a></li>
 <li><a href="#limitations">Limitations</a></li>
 <li><a href="#release-history">Release History</a></li>
 <li><a href="#reference">Reference</a></li>
@@ -115,8 +116,16 @@
 <div id="quick-start" class="section level3">
 <h3 class="hasAnchor">
 <a href="#quick-start" class="anchor"></a>Quick Start</h3>
-<p>proActiv estimates promoter activity from RNA-Seq data. Promoter activity is defined as the total amount of transcription initiated at each promoter. proActiv takes as input either BAM files or junction files (TopHat2 or STAR), and a promoter annotation object of the relevant genome. An optional argument <code>condition</code> can be supplied, describing the condition corresponding to each input file. Here we demonstrate proActiv with STAR junction files (Human genome GRCh38 GENCODE v34) as input:</p>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">proActiv</span>)
+<p>proActiv estimates promoter activity from RNA-Seq data. Promoter activity is defined as the total amount of transcription initiated at each promoter. proActiv takes as input either BAM files or junction files (TopHat2 or STAR), and a promoter annotation object of the relevant genome. An optional argument <code>condition</code> can be supplied, describing the experimental condition corresponding to each input file. Here we demonstrate proActiv with STAR junction files (Human genome GRCh38 GENCODE v34) as input. These files are taken from the <a href="https://github.com/GoekeLab/sg-nex-data">SGNEx project</a>, and can be found at ‘extdata/vignette’:</p>
+<ul>
+<li>extdata/vignette/SGNEx_A549_Illumina_replicate1-run1.junctions.gz</li>
+<li>extdata/vignette/SGNEx_A549_Illumina_replicate3-run1.junctions.gz</li>
+<li>extdata/vignette/SGNEx_A549_Illumina_replicate5-run1.junctions.gz</li>
+<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate2-run1.junctions.gz</li>
+<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate4-run1.junctions.gz</li>
+<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate5-run1.junctions.gz</li>
+</ul>
+<!-- end list --><div class="sourceCode" id="cb2"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">proActiv</span>)
 
 <span class="co">## List of STAR junction files as input</span>
 <span class="no">files</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette/junctions'</span>,
@@ -140,6 +149,12 @@
 <li>
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData(results)</a></code> returns promoter metadata and summarized absolute promoter activity by conditions</li>
 </ul>
+<p>proActiv can also be run with BAM files as input, but an additional parameter <code>genome</code> must be supplied:</p>
+<div class="sourceCode" id="cb3"><pre class="r"><span class="co">## From BAM files - genome parameter must be provided</span>
+<span class="no">files</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/testdata/bam'</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">'proActiv'</span>), <span class="kw">full.names</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">result</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/proActiv.html">proActiv</a></span>(<span class="kw">files</span> <span class="kw">=</span> <span class="no">files</span>,
+                   <span class="kw">promoterAnnotation</span> <span class="kw">=</span> <span class="no">promoterAnnotation.gencode.v34</span>,
+                   <span class="kw">genome</span> <span class="kw">=</span> <span class="st">'hg38'</span>)</pre></div>
 </div>
 <div id="creating-a-promoter-annotation-object" class="section level3">
 <h3 class="hasAnchor">
@@ -157,7 +172,7 @@
 </ul>
 <p>GTF files can be downloaded from the <a href="https://www.gencodegenes.org">GENCODE</a> page.</p>
 <p>Here, we demonstrate creating the promoter annotation for the Human genome (GENCODE v34) with both GTF and TxDb. To keep the run-time small, we use a subset of the GTF/TxDb which includes only chromosome 22 annotations.</p>
-<div class="sourceCode" id="cb3"><pre class="r"><span class="co">## From GTF file path</span>
+<div class="sourceCode" id="cb4"><pre class="r"><span class="co">## From GTF file path</span>
 <span class="no">gtf.file</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette/annotation/gencode.v34.annotation.chr22.gtf.gz'</span>,
                         <span class="kw">package</span> <span class="kw">=</span> <span class="st">'proActiv'</span>)
 <span class="no">promoterAnnotation.gencode.v34.chr22</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/preparePromoterAnnotation.html">preparePromoterAnnotation</a></span>(<span class="kw">file</span> <span class="kw">=</span> <span class="no">gtf.file</span>,
@@ -179,30 +194,10 @@
 <code>promoterCoordinates</code> : Promoter coordinates (TSS) and internal promoter state, along with the 3’ coordinate of the first exon</li>
 </ul>
 </div>
-<div id="estimating-promoter-activity" class="section level3">
+<div id="complete-analysis-workflow-analyzing-alternative-promoters" class="section level3">
 <h3 class="hasAnchor">
-<a href="#estimating-promoter-activity" class="anchor"></a>Estimating Promoter Activity</h3>
-<p>Once promoters in the genome are identified, proActiv estimates promoter activity at each annotated promoter from RNA-Seq data aligned with TopHat2 or STAR. Users have the option to either pass junction files (TopHat2 or STAR) or BAM files to <code>proActiv</code>. proActiv takes the paths of the input files, together with the relevant promoter annotation, and a vector describing experimental condition corresponding to each input file, and returns a summarizedExperiment object. The returned object summarizes promoter counts and activity, while gene expression is stored as metadata. Row data stores promoter metadata and mean absolute promoter activity summarized across conditions.</p>
-<p>Below, we demonstrate running <code>proActiv</code> with input STAR junction files and BAM files (truncated). This data is taken from the <a href="https://github.com/GoekeLab/sg-nex-data">SGNEx project</a>. The reference genome used for alignment is GENCODE v34 (GRCh38). These files can can be found at ‘extdata/vignette’:</p>
-<ul>
-<li>extdata/vignette/SGNEx_A549_Illumina_replicate1-run1.junctions.gz</li>
-<li>extdata/vignette/SGNEx_A549_Illumina_replicate3-run1.junctions.gz</li>
-<li>extdata/vignette/SGNEx_A549_Illumina_replicate5-run1.junctions.gz</li>
-<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate2-run1.junctions.gz</li>
-<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate4-run1.junctions.gz</li>
-<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate5-run1.junctions.gz</li>
-</ul>
-<!-- end list --><div class="sourceCode" id="cb4"><pre class="r"><span class="co">## From BAM files - genome parameter must be provided</span>
-<span class="no">files</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/testdata/bam'</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">'proActiv'</span>), <span class="kw">full.names</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">result</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/proActiv.html">proActiv</a></span>(<span class="kw">files</span> <span class="kw">=</span> <span class="no">files</span>,
-                   <span class="kw">promoterAnnotation</span> <span class="kw">=</span> <span class="no">promoterAnnotation.gencode.v34</span>,
-                   <span class="kw">genome</span> <span class="kw">=</span> <span class="st">'hg38'</span>)
-
-<span class="co">## From STAR junction files</span>
-<span class="no">files</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette'</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">'proActiv'</span>), <span class="kw">full.names</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">result</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/proActiv.html">proActiv</a></span>(<span class="kw">files</span> <span class="kw">=</span> <span class="no">files</span>,
-                   <span class="kw">promoterAnnotation</span> <span class="kw">=</span> <span class="no">promoterAnnotation.gencode.v34</span>,
-                   <span class="kw">condition</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'A549'</span>,<span class="st">'HepG2'</span>), <span class="kw">each</span> <span class="kw">=</span> <span class="fl">3</span>))</pre></div>
+<a href="#complete-analysis-workflow-analyzing-alternative-promoters" class="anchor"></a>Complete Analysis Workflow: Analyzing Alternative Promoters</h3>
+<p>Most human genes have multiple promoters that control the expression of distinct isoforms. The use of these alternative promoters enables the regulation of isoform expression pre-transcriptionally. Importantly, alternative promoters have been found to be important in a wide number of cell types and diseases. proActiv includes a workflow to identify and visualize alternative promoter usage between conditions. This workflow is described in detail <a href="https://goekelab.github.io/proActiv/articles/proActiv.html">here</a>.</p>
 </div>
 </div>
 <div id="release-history" class="section level2">
