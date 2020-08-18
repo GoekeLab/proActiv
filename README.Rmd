@@ -54,14 +54,14 @@ devtools::install_github("GoekeLab/proActiv")
 
 ### Quick Start
 
-proActiv estimates promoter activity from RNA-Seq data. Promoter activity is defined as the total amount of transcription initiated at each promoter. proActiv takes as input either BAM files or junction files (TopHat2 or STAR), and a promoter annotation object of the relevant genome. An optional argument `condition` can be supplied, describing the experimental condition corresponding to each input file. Here we demonstrate proActiv with STAR junction files (Human genome GRCh38 GENCODE v34) as input. These files are taken from the [SGNEx project](https://github.com/GoekeLab/sg-nex-data), and can be found at ‘extdata/vignette’:
+proActiv estimates promoter activity from RNA-Seq data. Promoter activity is defined as the total amount of transcription initiated at each promoter. proActiv takes as input either BAM files or junction files (TopHat2 or STAR), and a promoter annotation object of the relevant genome. An optional argument `condition` can be supplied, describing the experimental condition corresponding to each input file. Here we demonstrate proActiv with STAR junction files (Human genome GRCh38 GENCODE v34) as input. These files are taken from the [SGNEx project](https://github.com/GoekeLab/sg-nex-data) but restricted to the chr1:10,000,000-30,000,000 region, and can be found at ‘extdata/vignette’:
 
-- extdata/vignette/SGNEx_A549_Illumina_replicate1-run1.junctions.gz
-- extdata/vignette/SGNEx_A549_Illumina_replicate3-run1.junctions.gz 
-- extdata/vignette/SGNEx_A549_Illumina_replicate5-run1.junctions.gz
-- extdata/vignette/SGNEx_HepG2_Illumina_replicate2-run1.junctions.gz 
-- extdata/vignette/SGNEx_HepG2_Illumina_replicate4-run1.junctions.gz 
-- extdata/vignette/SGNEx_HepG2_Illumina_replicate5-run1.junctions.gz
+- extdata/vignette/SGNEx_A549_Illumina_replicate1-run1.subset.SJ.out.tab.gz
+- extdata/vignette/SGNEx_A549_Illumina_replicate3-run1.subset.SJ.out.tab.gz 
+- extdata/vignette/SGNEx_A549_Illumina_replicate5-run1.subset.SJ.out.tab.gz
+- extdata/vignette/SGNEx_HepG2_Illumina_replicate2-run1.subset.SJ.out.tab.gz 
+- extdata/vignette/SGNEx_HepG2_Illumina_replicate4-run1.subset.SJ.out.tab.gz 
+- extdata/vignette/SGNEx_HepG2_Illumina_replicate5-run1.subset.SJ.out.tab.gz
 
 ```{r QuickStart, eval=FALSE}
 library(proActiv)
@@ -72,7 +72,7 @@ files <- list.files(system.file('extdata/vignette/junctions',
 ## Vector describing experimental condition
 condition <- rep(c('A549','HepG2'), each=3)
 ## Promoter annotation for human genome GENCODE v34
-promoterAnnotation <- promoterAnnotation.gencode.v34
+promoterAnnotation <- promoterAnnotation.gencode.v34.subset
 
 result <- proActiv(files = files, 
                    promoterAnnotation = promoterAnnotation,
@@ -91,35 +91,28 @@ proActiv can also be run with BAM files as input, but an additional parameter `g
 ## From BAM files - genome parameter must be provided
 files <- list.files(system.file('extdata/testdata/bam', package = 'proActiv'), full.names = TRUE)
 result <- proActiv(files = files, 
-                   promoterAnnotation = promoterAnnotation.gencode.v34,
+                   promoterAnnotation = promoterAnnotation.gencode.v34.subset,
                    genome = 'hg38')
 ```
 
 ### Creating a Promoter Annotation object
 
-In order to quantify promoter activity, proActiv uses a set of promoters based on genome annotations. proActiv allows the creation of a promoter annotation object for any genome from a TxDb object or from a GTF file with the `preparePromoterAnnotation` function. Users have the option to either pass the file path of the GTF/GFF or TxDb to be used, or use the TxDb object directly as input. proActiv includes pre-calculated promoter annotations for human and mouse genomes:
+In order to quantify promoter activity, proActiv uses a set of promoters based on genome annotations. proActiv allows the creation of a promoter annotation object for any genome from a TxDb object or from a GTF file with the `preparePromoterAnnotation` function. Users have the option to either pass the file path of the GTF/GFF or TxDb to be used, or use the TxDb object directly as input. proActiv includes pre-calculated promoter annotations for the human genome (GENCODE v34). However, due to size constraints, the annotation is restricted to the chr1:10,000,000-30,000,000 region. Users can build full annotations by downloading GTF files from [GENCODE](https://www.gencodegenes.org) page and following the steps below.
 
-- GENCODE Release 19 / GRCh37 / hg19 : `promoterAnnotation.gencode.v19` 
-- GENCODE Release 34 / GRCh38 / hg38 : `promoterAnnotation.gencode.v34`
-- GENCODE Release M1 / NCBIM37 / mm9 : `promoterAnnotation.gencode.vM1`
-- GENCODE Release M25 / GRCm38.p6 / mm10 : `promoterAnnotation.gencode.vM25`  
-
-GTF files can be downloaded from the [GENCODE](https://www.gencodegenes.org) page.
-
-Here, we demonstrate creating the promoter annotation for the Human genome (GENCODE v34) with both GTF and TxDb. To keep the run-time small, we use a subset of the GTF/TxDb which includes only chromosome 22 annotations.
+Here, we demonstrate creating the subsetted promoter annotation for the Human genome (GENCODE v34) with both GTF and TxDb:
 
 ```{r CreateAnnotation, eval=FALSE}
 ## From GTF file path
-gtf.file <- system.file('extdata/vignette/annotation/gencode.v34.annotation.chr22.gtf.gz', 
+gtf.file <- system.file('extdata/vignette/annotation/gencode.v34.annotation.subset.gtf.gz', 
                         package = 'proActiv')
-promoterAnnotation.gencode.v34.chr22 <- preparePromoterAnnotation(file = gtf.file,
-                                                                  species = 'Homo_sapiens')
+promoterAnnotation.gencode.v34.subset <- preparePromoterAnnotation(file = gtf.file,
+                                                                   species = 'Homo_sapiens')
 ## From TxDb object
-txdb.file <- system.file('extdata/vignette/annotation/gencode.v34.annotation.chr22.sqlite', 
+txdb.file <- system.file('extdata/vignette/annotation/gencode.v34.annotation.subset.sqlite', 
                          package = 'proActiv')
 txdb <- loadDb(txdb.file)
-promoterAnnotation.gencode.v34.chr22 <- preparePromoterAnnotation(txdb = txdb, 
-                                                                  species = 'Homo_sapiens')
+promoterAnnotation.gencode.v34.subset <- preparePromoterAnnotation(txdb = txdb, 
+                                                                   species = 'Homo_sapiens')
 ```
 
 The `PromoterAnnotation` object has 3 slots:
@@ -148,7 +141,7 @@ SummarizedExperiment object.
 - BAM file usage: In addition to junction files, `proActiv` now allows BAM files as input.
 However, users should note that this function is not fully optimized and may have long run-time.
 
-- Promoter annotation: Improved efficiency in generating promoter annotations without the need for parallelization with the `preparePromoterAnnotations` function. Promoter annotation objects for human (hg19/hg38) and mouse (mm9/mm10) genomes are now pre-calculated and available to the user. The promoter annotation object is also trimmed to preserve essential information for running `proActiv`, in order to comply with Bioconductor guidelines concerning package size. 
+- Promoter annotation: Improved efficiency in generating promoter annotations without the need for parallelization with the `preparePromoterAnnotations` function. The promoter annotation object is also trimmed to preserve essential information for running `proActiv`, in order to comply with Bioconductor guidelines concerning package size. 
 
 - Plotting promoter activity: The plotting function `plotPromoters` visualizes promoter activity across conditions. It accepts the SummarizedExperiment object returned by `proActiv` along with a gene of interest and gene annotations as arguments. This allows users to visualize promoter activity and identify instances of alternative promoter usage.  
 
@@ -175,4 +168,3 @@ If you use proActiv, please cite:
 proActiv is developed and maintained by [Deniz Demircioglu](https://github.com/dnzdmrcgl), [Joseph Lee](https://github.com/jleechung), and [Jonathan Göke](https://github.com/jonathangoeke).
 
 ![Stay proActiv!](man/figures/proActiv_logoName.png)
-

@@ -61,15 +61,16 @@ relevant genome. An optional argument `condition` can be supplied,
 describing the experimental condition corresponding to each input file.
 Here we demonstrate proActiv with STAR junction files (Human genome
 GRCh38 GENCODE v34) as input. These files are taken from the [SGNEx
-project](https://github.com/GoekeLab/sg-nex-data), and can be found at
+project](https://github.com/GoekeLab/sg-nex-data) but restricted to the
+chr1:10,000,000-30,000,000 region, and can be found at
 ‘extdata/vignette’:
 
-  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate1-run1.junctions.gz
-  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate3-run1.junctions.gz
-  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate5-run1.junctions.gz
-  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate2-run1.junctions.gz
-  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate4-run1.junctions.gz
-  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate5-run1.junctions.gz
+  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate1-run1.subset.SJ.out.tab.gz
+  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate3-run1.subset.SJ.out.tab.gz
+  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate5-run1.subset.SJ.out.tab.gz
+  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate2-run1.subset.SJ.out.tab.gz
+  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate4-run1.subset.SJ.out.tab.gz
+  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate5-run1.subset.SJ.out.tab.gz
 
 <!-- end list -->
 
@@ -82,7 +83,7 @@ files <- list.files(system.file('extdata/vignette/junctions',
 ## Vector describing experimental condition
 condition <- rep(c('A549','HepG2'), each=3)
 ## Promoter annotation for human genome GENCODE v34
-promoterAnnotation <- promoterAnnotation.gencode.v34
+promoterAnnotation <- promoterAnnotation.gencode.v34.subset
 
 result <- proActiv(files = files, 
                    promoterAnnotation = promoterAnnotation,
@@ -105,7 +106,7 @@ parameter `genome` must be supplied:
 ## From BAM files - genome parameter must be provided
 files <- list.files(system.file('extdata/testdata/bam', package = 'proActiv'), full.names = TRUE)
 result <- proActiv(files = files, 
-                   promoterAnnotation = promoterAnnotation.gencode.v34,
+                   promoterAnnotation = promoterAnnotation.gencode.v34.subset,
                    genome = 'hg38')
 ```
 
@@ -117,37 +118,27 @@ annotation object for any genome from a TxDb object or from a GTF file
 with the `preparePromoterAnnotation` function. Users have the option to
 either pass the file path of the GTF/GFF or TxDb to be used, or use the
 TxDb object directly as input. proActiv includes pre-calculated promoter
-annotations for human and mouse genomes:
+annotations for the human genome (GENCODE v34). However, due to size
+constraints, the annotation is restricted to the
+chr1:10,000,000-30,000,000 region. Users can build full annotations by
+downloading GTF files from [GENCODE](https://www.gencodegenes.org) page
+and following the steps below.
 
-  - GENCODE Release 19 / GRCh37 / hg19 :
-    `promoterAnnotation.gencode.v19`
-  - GENCODE Release 34 / GRCh38 / hg38 :
-    `promoterAnnotation.gencode.v34`
-  - GENCODE Release M1 / NCBIM37 / mm9 :
-    `promoterAnnotation.gencode.vM1`
-  - GENCODE Release M25 / GRCm38.p6 / mm10 :
-    `promoterAnnotation.gencode.vM25`
-
-GTF files can be downloaded from the
-[GENCODE](https://www.gencodegenes.org) page.
-
-Here, we demonstrate creating the promoter annotation for the Human
-genome (GENCODE v34) with both GTF and TxDb. To keep the run-time small,
-we use a subset of the GTF/TxDb which includes only chromosome 22
-annotations.
+Here, we demonstrate creating the subsetted promoter annotation for the
+Human genome (GENCODE v34) with both GTF and TxDb:
 
 ``` r
 ## From GTF file path
-gtf.file <- system.file('extdata/vignette/annotation/gencode.v34.annotation.chr22.gtf.gz', 
+gtf.file <- system.file('extdata/vignette/annotation/gencode.v34.annotation.subset.gtf.gz', 
                         package = 'proActiv')
-promoterAnnotation.gencode.v34.chr22 <- preparePromoterAnnotation(file = gtf.file,
-                                                                  species = 'Homo_sapiens')
+promoterAnnotation.gencode.v34.subset <- preparePromoterAnnotation(file = gtf.file,
+                                                                   species = 'Homo_sapiens')
 ## From TxDb object
-txdb.file <- system.file('extdata/vignette/annotation/gencode.v34.annotation.chr22.sqlite', 
+txdb.file <- system.file('extdata/vignette/annotation/gencode.v34.annotation.subset.sqlite', 
                          package = 'proActiv')
 txdb <- loadDb(txdb.file)
-promoterAnnotation.gencode.v34.chr22 <- preparePromoterAnnotation(txdb = txdb, 
-                                                                  species = 'Homo_sapiens')
+promoterAnnotation.gencode.v34.subset <- preparePromoterAnnotation(txdb = txdb, 
+                                                                   species = 'Homo_sapiens')
 ```
 
 The `PromoterAnnotation` object has 3 slots:
@@ -190,9 +181,7 @@ Changes in version 0.99.0:
 
   - Promoter annotation: Improved efficiency in generating promoter
     annotations without the need for parallelization with the
-    `preparePromoterAnnotations` function. Promoter annotation objects
-    for human (hg19/hg38) and mouse (mm9/mm10) genomes are now
-    pre-calculated and available to the user. The promoter annotation
+    `preparePromoterAnnotations` function. The promoter annotation
     object is also trimmed to preserve essential information for running
     `proActiv`, in order to comply with Bioconductor guidelines
     concerning package size.
