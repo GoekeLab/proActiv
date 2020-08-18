@@ -116,14 +116,14 @@
 <div id="quick-start" class="section level3">
 <h3 class="hasAnchor">
 <a href="#quick-start" class="anchor"></a>Quick Start</h3>
-<p>proActiv estimates promoter activity from RNA-Seq data. Promoter activity is defined as the total amount of transcription initiated at each promoter. proActiv takes as input either BAM files or junction files (TopHat2 or STAR), and a promoter annotation object of the relevant genome. An optional argument <code>condition</code> can be supplied, describing the experimental condition corresponding to each input file. Here we demonstrate proActiv with STAR junction files (Human genome GRCh38 GENCODE v34) as input. These files are taken from the <a href="https://github.com/GoekeLab/sg-nex-data">SGNEx project</a>, and can be found at ‘extdata/vignette’:</p>
+<p>proActiv estimates promoter activity from RNA-Seq data. Promoter activity is defined as the total amount of transcription initiated at each promoter. proActiv takes as input either BAM files or junction files (TopHat2 or STAR), and a promoter annotation object of the relevant genome. An optional argument <code>condition</code> can be supplied, describing the experimental condition corresponding to each input file. Here we demonstrate proActiv with STAR junction files (Human genome GRCh38 GENCODE v34) as input. These files are taken from the <a href="https://github.com/GoekeLab/sg-nex-data">SGNEx project</a> but restricted to the chr1:10,000,000-30,000,000 region, and can be found at ‘extdata/vignette’:</p>
 <ul>
-<li>extdata/vignette/SGNEx_A549_Illumina_replicate1-run1.junctions.gz</li>
-<li>extdata/vignette/SGNEx_A549_Illumina_replicate3-run1.junctions.gz</li>
-<li>extdata/vignette/SGNEx_A549_Illumina_replicate5-run1.junctions.gz</li>
-<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate2-run1.junctions.gz</li>
-<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate4-run1.junctions.gz</li>
-<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate5-run1.junctions.gz</li>
+<li>extdata/vignette/SGNEx_A549_Illumina_replicate1-run1.subset.SJ.out.tab.gz</li>
+<li>extdata/vignette/SGNEx_A549_Illumina_replicate3-run1.subset.SJ.out.tab.gz</li>
+<li>extdata/vignette/SGNEx_A549_Illumina_replicate5-run1.subset.SJ.out.tab.gz</li>
+<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate2-run1.subset.SJ.out.tab.gz</li>
+<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate4-run1.subset.SJ.out.tab.gz</li>
+<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate5-run1.subset.SJ.out.tab.gz</li>
 </ul>
 <!-- end list --><div class="sourceCode" id="cb2"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">proActiv</span>)
 
@@ -133,7 +133,7 @@
 <span class="co">## Vector describing experimental condition</span>
 <span class="no">condition</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'A549'</span>,<span class="st">'HepG2'</span>), <span class="kw">each</span><span class="kw">=</span><span class="fl">3</span>)
 <span class="co">## Promoter annotation for human genome GENCODE v34</span>
-<span class="no">promoterAnnotation</span> <span class="kw">&lt;-</span> <span class="no">promoterAnnotation.gencode.v34</span>
+<span class="no">promoterAnnotation</span> <span class="kw">&lt;-</span> <span class="no">promoterAnnotation.gencode.v34.subset</span>
 
 <span class="no">result</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/proActiv.html">proActiv</a></span>(<span class="kw">files</span> <span class="kw">=</span> <span class="no">files</span>,
                    <span class="kw">promoterAnnotation</span> <span class="kw">=</span> <span class="no">promoterAnnotation</span>,
@@ -153,36 +153,25 @@
 <div class="sourceCode" id="cb3"><pre class="r"><span class="co">## From BAM files - genome parameter must be provided</span>
 <span class="no">files</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/testdata/bam'</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">'proActiv'</span>), <span class="kw">full.names</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 <span class="no">result</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/proActiv.html">proActiv</a></span>(<span class="kw">files</span> <span class="kw">=</span> <span class="no">files</span>,
-                   <span class="kw">promoterAnnotation</span> <span class="kw">=</span> <span class="no">promoterAnnotation.gencode.v34</span>,
+                   <span class="kw">promoterAnnotation</span> <span class="kw">=</span> <span class="no">promoterAnnotation.gencode.v34.subset</span>,
                    <span class="kw">genome</span> <span class="kw">=</span> <span class="st">'hg38'</span>)</pre></div>
 </div>
 <div id="creating-a-promoter-annotation-object" class="section level3">
 <h3 class="hasAnchor">
 <a href="#creating-a-promoter-annotation-object" class="anchor"></a>Creating a Promoter Annotation object</h3>
-<p>In order to quantify promoter activity, proActiv uses a set of promoters based on genome annotations. proActiv allows the creation of a promoter annotation object for any genome from a TxDb object or from a GTF file with the <code>preparePromoterAnnotation</code> function. Users have the option to either pass the file path of the GTF/GFF or TxDb to be used, or use the TxDb object directly as input. proActiv includes pre-calculated promoter annotations for human and mouse genomes:</p>
-<ul>
-<li>GENCODE Release 19 / GRCh37 / hg19 : <code>promoterAnnotation.gencode.v19</code>
-</li>
-<li>GENCODE Release 34 / GRCh38 / hg38 : <code>promoterAnnotation.gencode.v34</code>
-</li>
-<li>GENCODE Release M1 / NCBIM37 / mm9 : <code>promoterAnnotation.gencode.vM1</code>
-</li>
-<li>GENCODE Release M25 / GRCm38.p6 / mm10 : <code>promoterAnnotation.gencode.vM25</code>
-</li>
-</ul>
-<p>GTF files can be downloaded from the <a href="https://www.gencodegenes.org">GENCODE</a> page.</p>
-<p>Here, we demonstrate creating the promoter annotation for the Human genome (GENCODE v34) with both GTF and TxDb. To keep the run-time small, we use a subset of the GTF/TxDb which includes only chromosome 22 annotations.</p>
+<p>In order to quantify promoter activity, proActiv uses a set of promoters based on genome annotations. proActiv allows the creation of a promoter annotation object for any genome from a TxDb object or from a GTF file with the <code>preparePromoterAnnotation</code> function. Users have the option to either pass the file path of the GTF/GFF or TxDb to be used, or use the TxDb object directly as input. proActiv includes pre-calculated promoter annotations for the human genome (GENCODE v34). However, due to size constraints, the annotation is restricted to the chr1:10,000,000-30,000,000 region. Users can build full annotations by downloading GTF files from <a href="https://www.gencodegenes.org">GENCODE</a> page and following the steps below.</p>
+<p>Here, we demonstrate creating the subsetted promoter annotation for the Human genome (GENCODE v34) with both GTF and TxDb:</p>
 <div class="sourceCode" id="cb4"><pre class="r"><span class="co">## From GTF file path</span>
-<span class="no">gtf.file</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette/annotation/gencode.v34.annotation.chr22.gtf.gz'</span>,
+<span class="no">gtf.file</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette/annotation/gencode.v34.annotation.subset.gtf.gz'</span>,
                         <span class="kw">package</span> <span class="kw">=</span> <span class="st">'proActiv'</span>)
-<span class="no">promoterAnnotation.gencode.v34.chr22</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/preparePromoterAnnotation.html">preparePromoterAnnotation</a></span>(<span class="kw">file</span> <span class="kw">=</span> <span class="no">gtf.file</span>,
-                                                                  <span class="kw">species</span> <span class="kw">=</span> <span class="st">'Homo_sapiens'</span>)
+<span class="no">promoterAnnotation.gencode.v34.subset</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/preparePromoterAnnotation.html">preparePromoterAnnotation</a></span>(<span class="kw">file</span> <span class="kw">=</span> <span class="no">gtf.file</span>,
+                                                                   <span class="kw">species</span> <span class="kw">=</span> <span class="st">'Homo_sapiens'</span>)
 <span class="co">## From TxDb object</span>
-<span class="no">txdb.file</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette/annotation/gencode.v34.annotation.chr22.sqlite'</span>,
+<span class="no">txdb.file</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette/annotation/gencode.v34.annotation.subset.sqlite'</span>,
                          <span class="kw">package</span> <span class="kw">=</span> <span class="st">'proActiv'</span>)
 <span class="no">txdb</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html">loadDb</a></span>(<span class="no">txdb.file</span>)
-<span class="no">promoterAnnotation.gencode.v34.chr22</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/preparePromoterAnnotation.html">preparePromoterAnnotation</a></span>(<span class="kw">txdb</span> <span class="kw">=</span> <span class="no">txdb</span>,
-                                                                  <span class="kw">species</span> <span class="kw">=</span> <span class="st">'Homo_sapiens'</span>)</pre></div>
+<span class="no">promoterAnnotation.gencode.v34.subset</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/preparePromoterAnnotation.html">preparePromoterAnnotation</a></span>(<span class="kw">txdb</span> <span class="kw">=</span> <span class="no">txdb</span>,
+                                                                   <span class="kw">species</span> <span class="kw">=</span> <span class="st">'Homo_sapiens'</span>)</pre></div>
 <p>The <code>PromoterAnnotation</code> object has 3 slots:</p>
 <ul>
 <li>
@@ -209,7 +198,7 @@
 <ul>
 <li><p>Workflow: The wrapper function <code>proActiv</code> performs all steps to estimate promoter activity and calculates promoter metadata. A <code>condition</code> argument can be supplied for <code>proActiv</code> to summarize promoter counts and activity across conditions. These results are returned as a SummarizedExperiment object.</p></li>
 <li><p>BAM file usage: In addition to junction files, <code>proActiv</code> now allows BAM files as input. However, users should note that this function is not fully optimized and may have long run-time.</p></li>
-<li><p>Promoter annotation: Improved efficiency in generating promoter annotations without the need for parallelization with the <code>preparePromoterAnnotations</code> function. Promoter annotation objects for human (hg19/hg38) and mouse (mm9/mm10) genomes are now pre-calculated and available to the user. The promoter annotation object is also trimmed to preserve essential information for running <code>proActiv</code>, in order to comply with Bioconductor guidelines concerning package size.</p></li>
+<li><p>Promoter annotation: Improved efficiency in generating promoter annotations without the need for parallelization with the <code>preparePromoterAnnotations</code> function. The promoter annotation object is also trimmed to preserve essential information for running <code>proActiv</code>, in order to comply with Bioconductor guidelines concerning package size.</p></li>
 <li><p>Plotting promoter activity: The plotting function <code>plotPromoters</code> visualizes promoter activity across conditions. It accepts the SummarizedExperiment object returned by <code>proActiv</code> along with a gene of interest and gene annotations as arguments. This allows users to visualize promoter activity and identify instances of alternative promoter usage.</p></li>
 <li><p>Vignette: proActiv now comes with a vignette, documenting a complete step-by-step workflow in identifying active and alternative promoter usage. This includes guidance on running <code>proActiv</code>, creating promoter annotations and identifying alternative promoter usage. Various visualizations of promoter activity are also offered.</p></li>
 </ul>

@@ -130,7 +130,7 @@
 <div id="quick-start-quantifying-promoter-activity-with-proactiv" class="section level2">
 <h2 class="hasAnchor">
 <a href="#quick-start-quantifying-promoter-activity-with-proactiv" class="anchor"></a>Quick Start: Quantifying promoter activity with proActiv</h2>
-<p>proActiv estimates promoter activity from RNA-Seq data. Promoter activity is defined as the total amount of transcription initiated at each promoter. proActiv takes as input either BAM files or junction files (TopHat2 or STAR), and a promoter annotation object of the relevant genome. An optional argument <code>condition</code> can be supplied, describing the condition corresponding to each input file. Here we demonstrate proActiv with STAR junction files (Human genome GRCh38 Gencode v34) as input:</p>
+<p>proActiv estimates promoter activity from RNA-Seq data. Promoter activity is defined as the total amount of transcription initiated at each promoter. proActiv takes as input either BAM files or junction files (TopHat2 or STAR), and a promoter annotation object of the relevant genome. An optional argument <code>condition</code> can be supplied, describing the condition corresponding to each input file. Here we demonstrate proActiv with STAR junction files (Human genome GRCh38 Gencode v34) as input. Due to size constraints, analysis is restricted to a subset of chr1 (10,000,000-30,000,000).</p>
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">proActiv</span>)
 
 <span class="co">## List of STAR junction files as input</span>
@@ -138,8 +138,8 @@
                                 <span class="kw">package</span> <span class="kw">=</span> <span class="st">'proActiv'</span>), <span class="kw">full.names</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 <span class="co">## Vector describing experimental condition</span>
 <span class="no">condition</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'A549'</span>,<span class="st">'HepG2'</span>), <span class="kw">each</span><span class="kw">=</span><span class="fl">3</span>)
-<span class="co">## Promoter annotation for human genome GENCODE v34</span>
-<span class="no">promoterAnnotation</span> <span class="kw">&lt;-</span> <span class="no">promoterAnnotation.gencode.v34</span>
+<span class="co">## Promoter annotation for human genome GENCODE v34 restricted to a subset of chr1</span>
+<span class="no">promoterAnnotation</span> <span class="kw">&lt;-</span> <span class="no">promoterAnnotation.gencode.v34.subset</span>
 
 <span class="no">result</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/proActiv.html">proActiv</a></span>(<span class="kw">files</span> <span class="kw">=</span> <span class="no">files</span>,
                    <span class="kw">promoterAnnotation</span> <span class="kw">=</span> <span class="no">promoterAnnotation</span>,
@@ -159,19 +159,19 @@
 <div id="a-complete-workflow-to-identify-alternative-promoter-usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#a-complete-workflow-to-identify-alternative-promoter-usage" class="anchor"></a>A complete workflow to identify alternative promoter usage</h2>
-<p>Here we present a complete step-by-step workflow for analysing promoter activity with proActiv and for identifying alternative promoter usage across samples from different conditions. We will compare samples from 2 different cell lines (A549 and HepG2) to identify alternative promoters.</p>
+<p>Here we present a complete step-by-step workflow for analyzing promoter activity with proActiv and for identifying alternative promoter usage across samples from different conditions. We will compare samples from 2 different cell lines (A549 and HepG2) to identify alternative promoters.</p>
 <div id="preparing-input-data" class="section level3">
 <h3 class="hasAnchor">
 <a href="#preparing-input-data" class="anchor"></a>Preparing input data</h3>
 <p>proActiv uses RNA-Seq data to quantify promoter activity. Users have the option of using as input either BAM files, or tab-delimited junction files that are generated when TopHat2 or STAR is used for read alignment.</p>
-<p>Below, we demonstrate running <code>proActiv</code> with input STAR junction files. This data is taken from the <a href="https://github.com/GoekeLab/sg-nex-data">SGNEx project</a>. The reference genome used for alignment is Gencode v34 (GRCh38). These files can be found in ‘extdata/vignette/junctions’:</p>
+<p>Below, we demonstrate running <code>proActiv</code> with input STAR junction files. This data is taken from the <a href="https://github.com/GoekeLab/sg-nex-data">SGNEx project</a>, and restricted to the chr1:10,000,000-30,000,000 region. The reference genome used for alignment is Gencode v34 (GRCh38). These files can be found in ‘extdata/vignette/junctions’:</p>
 <ul>
-<li>extdata/vignette/junctions/SGNEx_A549_Illumina_replicate1-run1.junctions.gz</li>
-<li>extdata/vignette/junctions/SGNEx_A549_Illumina_replicate3-run1.junctions.gz</li>
-<li>extdata/vignette/junctions/SGNEx_A549_Illumina_replicate5-run1.junctions.gz</li>
-<li>extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate2-run1.junctions.gz</li>
-<li>extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate4-run1.junctions.gz</li>
-<li>extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate5-run1.junctions.gz</li>
+<li>extdata/vignette/SGNEx_A549_Illumina_replicate1-run1.subset.SJ.out.tab.gz</li>
+<li>extdata/vignette/SGNEx_A549_Illumina_replicate3-run1.subset.SJ.out.tab.gz</li>
+<li>extdata/vignette/SGNEx_A549_Illumina_replicate5-run1.subset.SJ.out.tab.gz</li>
+<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate2-run1.subset.SJ.out.tab.gz</li>
+<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate4-run1.subset.SJ.out.tab.gz</li>
+<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate5-run1.subset.SJ.out.tab.gz</li>
 </ul>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">files</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette/junctions'</span>,
                                 <span class="kw">package</span> <span class="kw">=</span> <span class="st">'proActiv'</span>), <span class="kw">full.names</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
@@ -179,30 +179,19 @@
 <div id="preparing-promoter-annotations" class="section level3">
 <h3 class="hasAnchor">
 <a href="#preparing-promoter-annotations" class="anchor"></a>Preparing promoter annotations</h3>
-<p>In order to quantify promoter activity, proActiv uses a set of promoters based on genome annotations. proActiv allows the creation of a promoter annotation object for any genome from a TxDb object or from a GTF file with the <code>preparePromoterAnnotation</code> function. Users have the option to either pass the file path of the GTF/GFF or TxDb to be used, or use the TxDb object directly as input. proActiv includes pre-calculated promoter annotations for human and mouse genomes:</p>
-<ul>
-<li>GENCODE Release 19 / GRCh37 / hg19 : <code>promoterAnnotation.gencode.v19</code>
-</li>
-<li>GENCODE Release 34 / GRCh38 / hg38 : <code>promoterAnnotation.gencode.v34</code>
-</li>
-<li>GENCODE Release M1 / NCBIM37 / mm9 : <code>promoterAnnotation.gencode.vM1</code>
-</li>
-<li>GENCODE Release M25 / GRCm38.p6 / mm10 : <code>promoterAnnotation.gencode.vM25</code>
-</li>
-</ul>
-<p>GTF files can be downloaded from the <a href="https://www.gencodegenes.org">GENCODE</a> page.</p>
-<p>Here, we demonstrate creating the promoter annotation for the Human genome (GENCODE v34) with both GTF and TxDb. To keep the run-time of this vignette small, we use a subset of the GTF/TxDb which includes only chromosome 22 annotations.</p>
+<p>In order to quantify promoter activity, proActiv uses a set of promoters based on genome annotations. proActiv allows the creation of a promoter annotation object for any genome from a TxDb object or from a GTF file with the <code>preparePromoterAnnotation</code> function. Users have the option to either pass the file path of the GTF/GFF or TxDb to be used, or use the TxDb object directly as input. proActiv includes pre-calculated promoter annotations for the human genome (GENCODE v34). However, due to size constraints, the annotation is restricted to the chr1:10,000,000-30,000,000 region. Users can build full annotations by downloading GTF files from <a href="https://www.gencodegenes.org">GENCODE</a> page and following the steps below.</p>
+<p>We demonstrate creating the restricted promoter annotation for the Human genome (GENCODE v34) with both GTF and TxDb:</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co">## From GTF file path</span>
-<span class="no">gtf.file</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette/annotation/gencode.v34.annotation.chr22.gtf.gz'</span>,
+<span class="no">gtf.file</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette/annotation/gencode.v34.annotation.subset.gtf.gz'</span>,
                         <span class="kw">package</span> <span class="kw">=</span> <span class="st">'proActiv'</span>)
-<span class="no">promoterAnnotation.gencode.v34.chr22</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/preparePromoterAnnotation.html">preparePromoterAnnotation</a></span>(<span class="kw">file</span> <span class="kw">=</span> <span class="no">gtf.file</span>,
-                                                                  <span class="kw">species</span> <span class="kw">=</span> <span class="st">'Homo_sapiens'</span>)
+<span class="no">promoterAnnotation.gencode.v34.subset</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/preparePromoterAnnotation.html">preparePromoterAnnotation</a></span>(<span class="kw">file</span> <span class="kw">=</span> <span class="no">gtf.file</span>,
+                                                                   <span class="kw">species</span> <span class="kw">=</span> <span class="st">'Homo_sapiens'</span>)
 <span class="co">## From TxDb object</span>
-<span class="no">txdb.file</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette/annotation/gencode.v34.annotation.chr22.sqlite'</span>,
+<span class="no">txdb.file</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette/annotation/gencode.v34.annotation.subset.sqlite'</span>,
                          <span class="kw">package</span> <span class="kw">=</span> <span class="st">'proActiv'</span>)
 <span class="no">txdb</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html">loadDb</a></span>(<span class="no">txdb.file</span>)
-<span class="no">promoterAnnotation.gencode.v34.chr22</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/preparePromoterAnnotation.html">preparePromoterAnnotation</a></span>(<span class="kw">txdb</span> <span class="kw">=</span> <span class="no">txdb</span>,
-                                                                  <span class="kw">species</span> <span class="kw">=</span> <span class="st">'Homo_sapiens'</span>)</pre></body></html></div>
+<span class="no">promoterAnnotation.gencode.v34.subset</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/preparePromoterAnnotation.html">preparePromoterAnnotation</a></span>(<span class="kw">txdb</span> <span class="kw">=</span> <span class="no">txdb</span>,
+                                                                   <span class="kw">species</span> <span class="kw">=</span> <span class="st">'Homo_sapiens'</span>)</pre></body></html></div>
 <p>The <code>PromoterAnnotation</code> object has 3 slots:</p>
 <ul>
 <li>
@@ -218,7 +207,7 @@
 <h3 class="hasAnchor">
 <a href="#running-proactiv" class="anchor"></a>Running proActiv</h3>
 <p>Once promoters in the genome are identified, proActiv estimates promoter activity at each annotated promoter. Here, we load pre-calculated promoter annotation for GENCODE Release 34. We also supply the experimental condition to <code>proActiv</code>. This information allows <code>proActiv</code> to summarize results across conditions.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">promoterAnnotation</span> <span class="kw">&lt;-</span> <span class="no">promoterAnnotation.gencode.v34</span>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">promoterAnnotation</span> <span class="kw">&lt;-</span> <span class="no">promoterAnnotation.gencode.v34.subset</span>
 
 <span class="no">condition</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'A549'</span>, <span class="st">'HepG2'</span>), <span class="kw">each</span><span class="kw">=</span><span class="fl">3</span>)
 
@@ -228,22 +217,22 @@
 <p><code>result</code> is a <code>SummarizedExperiment</code> object with assays as raw/normalized promoter counts, and absolute/relative promoter activity:</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu">show</span>(<span class="no">result</span>)
 <span class="co">#&gt; class: SummarizedExperiment </span>
-<span class="co">#&gt; dim: 122635 6 </span>
+<span class="co">#&gt; dim: 1380 6 </span>
 <span class="co">#&gt; metadata(1): geneExpression</span>
 <span class="co">#&gt; assays(4): promoterCounts normalizedPromoterCounts</span>
 <span class="co">#&gt;   absolutePromoterActivity relativePromoterActivity</span>
-<span class="co">#&gt; rownames(122635): 1 2 ... 122634 122635</span>
+<span class="co">#&gt; rownames(1380): 1 2 ... 1379 1380</span>
 <span class="co">#&gt; rowData names(12): promoterId geneId ... A549.class HepG2.class</span>
-<span class="co">#&gt; colnames(6): SGNEx_A549_Illumina_replicate1.run1</span>
-<span class="co">#&gt;   SGNEx_A549_Illumina_replicate3.run1 ...</span>
-<span class="co">#&gt;   SGNEx_HepG2_Illumina_replicate4.run1</span>
-<span class="co">#&gt;   SGNEx_HepG2_Illumina_replicate5.run1</span>
+<span class="co">#&gt; colnames(6): SGNEx_A549_Illumina_replicate1.run1.subset.SJ.out</span>
+<span class="co">#&gt;   SGNEx_A549_Illumina_replicate3.run1.subset.SJ.out ...</span>
+<span class="co">#&gt;   SGNEx_HepG2_Illumina_replicate4.run1.subset.SJ.out</span>
+<span class="co">#&gt;   SGNEx_HepG2_Illumina_replicate5.run1.subset.SJ.out</span>
 <span class="co">#&gt; colData names(2): sampleName condition</span></pre></body></html></div>
 <p>The <code>rowData</code> slot stores a promoter-gene ID mapping and promoter position (5’ to 3’) for each promoter by gene. Mean absolute promoter activity for each condition is also summarized here. Promoters are also categorized into three classes. Promoters with activity &lt; 0.25 are classified as inactive, while the most active promoters of each gene are classified as major promoters. Promoters active at lower levels are classified as minor promoters.</p>
 <table class="table">
 <colgroup>
 <col width="7%">
-<col width="12%">
+<col width="13%">
 <col width="6%">
 <col width="6%">
 <col width="4%">
@@ -272,26 +261,26 @@
 <tbody>
 <tr class="odd">
 <td align="right">1</td>
-<td align="left">ENSG00000000003.15</td>
-<td align="left">chrX</td>
-<td align="right">100637104</td>
+<td align="left">ENSG00000000938.13</td>
+<td align="left">chr1</td>
+<td align="right">27624062</td>
 <td align="left">-</td>
 <td align="left">TRUE</td>
-<td align="right">2</td>
+<td align="right">4</td>
 <td align="left">ENST0000….</td>
-<td align="right">7.232193</td>
-<td align="right">8.374666</td>
+<td align="right">0.000000</td>
+<td align="right">0.000000</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
-<td align="left">ENSG00000000003.15</td>
-<td align="left">chrX</td>
-<td align="right">100639991</td>
+<td align="left">ENSG00000000938.13</td>
+<td align="left">chr1</td>
+<td align="right">27626240</td>
 <td align="left">-</td>
 <td align="left">FALSE</td>
-<td align="right">1</td>
+<td align="right">3</td>
 <td align="left">ENST0000….</td>
 <td align="right">0.000000</td>
 <td align="right">0.000000</td>
@@ -300,12 +289,12 @@
 </tr>
 <tr class="odd">
 <td align="right">3</td>
-<td align="left">ENSG00000000005.6</td>
-<td align="left">chrX</td>
-<td align="right">100584936</td>
-<td align="left">+</td>
+<td align="left">ENSG00000000938.13</td>
+<td align="left">chr1</td>
+<td align="right">27626569</td>
+<td align="left">-</td>
 <td align="left">FALSE</td>
-<td align="right">1</td>
+<td align="right">2</td>
 <td align="left">ENST0000….</td>
 <td align="right">0.000000</td>
 <td align="right">0.000000</td>
@@ -314,45 +303,45 @@
 </tr>
 <tr class="even">
 <td align="right">4</td>
-<td align="left">ENSG00000000005.6</td>
-<td align="left">chrX</td>
-<td align="right">100593624</td>
-<td align="left">+</td>
-<td align="left">TRUE</td>
-<td align="right">2</td>
+<td align="left">ENSG00000000938.13</td>
+<td align="left">chr1</td>
+<td align="right">27635185</td>
+<td align="left">-</td>
+<td align="left">FALSE</td>
+<td align="right">1</td>
 <td align="left">ENST0000….</td>
 <td align="right">0.000000</td>
 <td align="right">0.000000</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
+<td align="left">Inactive</td>
+<td align="left">Inactive</td>
 </tr>
 <tr class="odd">
 <td align="right">5</td>
-<td align="left">ENSG00000000419.12</td>
-<td align="left">chr20</td>
-<td align="right">50945861</td>
+<td align="left">ENSG00000001460.18</td>
+<td align="left">chr1</td>
+<td align="right">24379823</td>
 <td align="left">-</td>
 <td align="left">TRUE</td>
-<td align="right">2</td>
+<td align="right">7</td>
 <td align="left">ENST0000….</td>
-<td align="right">8.760939</td>
-<td align="right">10.023193</td>
+<td align="right">4.721803</td>
+<td align="right">4.319706</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="right">6</td>
-<td align="left">ENSG00000000419.12</td>
-<td align="left">chr20</td>
-<td align="right">50958555</td>
+<td align="left">ENSG00000001460.18</td>
+<td align="left">chr1</td>
+<td align="right">24391679</td>
 <td align="left">-</td>
-<td align="left">FALSE</td>
-<td align="right">1</td>
+<td align="left">TRUE</td>
+<td align="right">6</td>
 <td align="left">ENST0000….</td>
-<td align="right">8.426331</td>
-<td align="right">9.642849</td>
-<td align="left">Minor</td>
-<td align="left">Minor</td>
+<td align="right">4.207194</td>
+<td align="right">3.999170</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
 </tr>
 </tbody>
 </table>
@@ -364,16 +353,15 @@
 <div id="alternative-promoter-usage" class="section level3">
 <h3 class="hasAnchor">
 <a href="#alternative-promoter-usage" class="anchor"></a>Alternative promoter usage</h3>
-<p>We identify genes with similar expression levels across cell lines with alternate promoter usage using <a href="https://bioconductor.org/packages/release/bioc/html/DEXSeq.html">DEXSeq</a> (Anders, Reyes, Huber 2012). While DEXSeq is originally intended for inferring differential exon usage in RNA-Seq data, DEXSeq can be similarly used with raw promoter counts as input to assess the statistical significance of alternative promoter usage across conditions. We follow the standard <a href="https://bioconductor.org/packages/devel/bioc/vignettes/DEXSeq/inst/doc/DEXSeq.html#3_counting_reads">DEXSeq workflow</a>. To keep the run-time of this vignette short, we focus only on annotated promoters from chromosome 1.</p>
+<p>We identify genes with similar expression levels across cell lines with alternate promoter usage using <a href="https://bioconductor.org/packages/release/bioc/html/DEXSeq.html">DEXSeq</a> (Anders, Reyes, Huber 2012). While DEXSeq is originally intended for inferring differential exon usage in RNA-Seq data, DEXSeq can be similarly used with raw promoter counts as input to assess the statistical significance of alternative promoter usage across conditions. We follow the standard <a href="https://bioconductor.org/packages/devel/bioc/vignettes/DEXSeq/inst/doc/DEXSeq.html#3_counting_reads">DEXSeq workflow</a>.</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">DEXSeq</span>)
 
 <span class="co">## Subset to chromosome 1</span>
-<span class="no">result.chr</span> <span class="kw">&lt;-</span> <span class="no">result</span>[<span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span>(<span class="no">result</span>)$<span class="no">seqnames</span> <span class="kw">==</span> <span class="st">'chr1'</span>, ]
-<span class="no">countData</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">assays</a></span>(<span class="no">result.chr</span>)$<span class="no">promoterCounts</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span>(<span class="no">result.chr</span>))
+<span class="no">countData</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">assays</a></span>(<span class="no">result</span>)$<span class="no">promoterCounts</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span>(<span class="no">result</span>))
 
 <span class="co">## Call DEXSeq - promoter as feature, gene as group</span>
 <span class="no">dxd</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DEXSeq/man/DEXSeqDataSet.html">DEXSeqDataSet</a></span>(<span class="kw">countData</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span>(<span class="no">countData</span>[,<span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">condition</span>))]),
-                     <span class="kw">sampleData</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">colData</a></span>(<span class="no">result.chr</span>)),
+                     <span class="kw">sampleData</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">colData</a></span>(<span class="no">result</span>)),
                      <span class="kw">design</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/formula.html">formula</a></span>(~ <span class="no">sample</span> + <span class="no">exon</span> + <span class="no">condition</span>:<span class="no">exon</span>),
                      <span class="kw">featureID</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="no">countData</span>$<span class="no">promoterId</span>),
                      <span class="kw">groupID</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="no">countData</span>$<span class="no">geneId</span>))
@@ -407,7 +395,7 @@
 <col width="9%">
 <col width="7%">
 <col width="7%">
-<col width="7%">
+<col width="8%">
 <col width="8%">
 <col width="15%">
 <col width="3%">
@@ -427,81 +415,81 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">ENSG00000188643.11</td>
-<td align="left">64678</td>
-<td align="right">3.979751</td>
-<td align="right">0.1640159</td>
-<td align="right">6.8819194</td>
-<td align="right">0.0087072</td>
-<td align="right">0.1336423</td>
-<td align="right">1.896934</td>
-<td align="right">5.0650368</td>
-<td align="right">2.8348227</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">ENSG00000188643.11</td>
-<td align="left">64679</td>
-<td align="right">192.189827</td>
-<td align="right">0.0205679</td>
-<td align="right">124.5279493</td>
-<td align="right">0.0000000</td>
-<td align="right">0.0000000</td>
-<td align="right">16.797190</td>
-<td align="right">29.5673494</td>
-<td align="right">1.6587650</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="left">ENSG00000188643.11</td>
-<td align="left">64680</td>
-<td align="right">421.024030</td>
-<td align="right">0.0155623</td>
-<td align="right">162.1108438</td>
-<td align="right">0.0000000</td>
-<td align="right">0.0000000</td>
-<td align="right">33.458017</td>
-<td align="right">21.1079539</td>
-<td align="right">-1.3600430</td>
+<td align="left">ENSG00000076864.19</td>
+<td align="left">136</td>
+<td align="right">82.2979298</td>
+<td align="right">0.0182020</td>
+<td align="right">0.3525764</td>
+<td align="right">0.5526583</td>
+<td align="right">0.9591782</td>
+<td align="right">14.0805235</td>
+<td align="right">14.8219471</td>
+<td align="right">0.1491657</td>
 <td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">ENSG00000076864.19</td>
-<td align="left">7051</td>
-<td align="right">81.989063</td>
-<td align="right">0.0182362</td>
-<td align="right">0.3523538</td>
-<td align="right">0.5527837</td>
-<td align="right">0.9572135</td>
-<td align="right">14.241615</td>
-<td align="right">14.9892335</td>
-<td align="right">0.1486338</td>
+<td align="left">137</td>
+<td align="right">19.0571424</td>
+<td align="right">0.0359076</td>
+<td align="right">82.8439826</td>
+<td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">9.1482464</td>
+<td align="right">0.9717349</td>
+<td align="right">-6.4739649</td>
 <td align="right">0</td>
 </tr>
 <tr class="odd">
 <td align="left">ENSG00000076864.19</td>
-<td align="left">7052</td>
-<td align="right">18.072324</td>
-<td align="right">0.0358733</td>
-<td align="right">82.8734191</td>
+<td align="left">138</td>
+<td align="right">6.4056344</td>
+<td align="right">0.0246006</td>
+<td align="right">32.1268838</td>
 <td align="right">0.0000000</td>
-<td align="right">0.0000000</td>
-<td align="right">9.256747</td>
-<td align="right">0.9819602</td>
-<td align="right">-6.4774424</td>
+<td align="right">0.0000015</td>
+<td align="right">5.2346450</td>
+<td align="right">0.9718889</td>
+<td align="right">-4.8598138</td>
 <td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">ENSG00000076864.19</td>
-<td align="left">7053</td>
-<td align="right">6.096055</td>
-<td align="right">0.0237063</td>
-<td align="right">32.3210817</td>
+<td align="left">139</td>
+<td align="right">0.7281028</td>
+<td align="right">0.1703656</td>
+<td align="right">3.1924443</td>
+<td align="right">0.0739793</td>
+<td align="right">0.4008247</td>
+<td align="right">1.7528098</td>
+<td align="right">0.0338418</td>
+<td align="right">-11.3895996</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">ENSG00000076864.19</td>
+<td align="left">140</td>
+<td align="right">1.4595099</td>
+<td align="right">0.5778816</td>
+<td align="right">4.4308498</td>
+<td align="right">0.0352949</td>
+<td align="right">0.2628434</td>
+<td align="right">0.0290838</td>
+<td align="right">2.9995717</td>
+<td align="right">13.3772586</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">ENSG00000076864.19</td>
+<td align="left">141</td>
+<td align="right">17.3815949</td>
+<td align="right">0.0072068</td>
+<td align="right">153.1300077</td>
 <td align="right">0.0000000</td>
-<td align="right">0.0000017</td>
-<td align="right">5.299266</td>
-<td align="right">0.9821421</td>
-<td align="right">-4.8648275</td>
+<td align="right">0.0000000</td>
+<td align="right">0.8716588</td>
+<td align="right">10.2057501</td>
+<td align="right">7.1042522</td>
 <td align="right">0</td>
 </tr>
 </tbody>
@@ -515,7 +503,7 @@
 <div id="alternative-promoter-usage-1" class="section level3">
 <h3 class="hasAnchor">
 <a href="#alternative-promoter-usage-1" class="anchor"></a>Alternative Promoter Usage</h3>
-<p>To visualize genes with alternative promoter usage across conditions, we call <code>plotPromoters</code> on the summarizedExperiment object <code>result</code> returned by proActiv. Here, we demonstrate <code>plotPromoters</code> by visualizing promoters of RAP1GAP (ENSG00000076864.19). RAP1GAP is the second most significant gene identified in <code>dxr1</code> as a candidate for alternative promoter usage across cell lines A549 and HepG2. <code>plotPromoters</code> takes in <code>result</code> and <code>gene</code>, a gene of interest.</p>
+<p>To visualize genes with alternative promoter usage across conditions, we call <code>plotPromoters</code> on the summarizedExperiment object <code>result</code> returned by proActiv. Here, we demonstrate <code>plotPromoters</code> by visualizing promoters of RAP1GAP (ENSG00000076864.19). RAP1GAP is the most significant gene identified in <code>dxr1</code> as a candidate for alternative promoter usage across cell lines A549 and HepG2. <code>plotPromoters</code> takes in <code>result</code> and <code>gene</code>, a gene of interest.</p>
 <p>In order to build and plot a transcript model for the gene of interest, users may supply either a transcript database (<code>txdb</code>) or a list of Genomic Ranges giving the ranges of exons by transcripts to be plotted (<code>ranges</code>). If users choose to use a TxDb as input, we recommend that the TxDb used should be the same as the one used to prepare promoter annotations, as annotations from different sources may differ slightly. To keep the run-time of this vignette short, we use a TxDb generated from GENCODE v34 GTF subsetted to RAP1GAP.</p>
 <div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co">## RAP1GAP</span>
 <span class="no">gene</span> <span class="kw">&lt;-</span> <span class="st">'ENSG00000076864.19'</span>
@@ -557,17 +545,17 @@
 <div id="majorminor-promoters-by-position" class="section level3">
 <h3 class="hasAnchor">
 <a href="#majorminor-promoters-by-position" class="anchor"></a>Major/minor promoters by position</h3>
-<p>Analysis of major:minor promoter proportions against promoter position. The analysis is restricted to multi-promoter genes with at least one active promoter. Below, we generate the plot for cell line A549. In general, the major:minor promoter proportion decreases with increasing promoter position.</p>
+<p>Analysis of major:minor promoter proportions against promoter position. The analysis is restricted to multi-promoter genes with at least one active promoter. Below, we generate the plot for cell line HepG2. In general, the major:minor promoter proportion decreases with increasing promoter position.</p>
 <div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co">## Because many genes have many annotated promoters, we collapse promoters </span>
 <span class="co">## from the 5th position and onward into one group for simplicity</span>
 <span class="no">pdata2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html">as_tibble</a></span>(<span class="no">rdata</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">promoterPosition</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">promoterPosition</span> <span class="kw">&gt;</span> <span class="fl">5</span>, <span class="fl">5</span>, <span class="no">promoterPosition</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">A549.class</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'Major'</span>, <span class="st">'Minor'</span>))
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">HepG2.class</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'Major'</span>, <span class="st">'Minor'</span>))
 
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">pdata2</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">promoterPosition</span>, <span class="kw">fill</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="no">A549.class</span>)), <span class="kw">position</span> <span class="kw">=</span> <span class="st">'fill'</span>) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">promoterPosition</span>, <span class="kw">fill</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="no">HepG2.class</span>)), <span class="kw">position</span> <span class="kw">=</span> <span class="st">'fill'</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="no">Promoter</span> ~ <span class="no">Position</span> ~ <span class="st">"5'"</span> <span class="kw">%-&gt;%</span> <span class="st">"3'"</span>)) + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">'Percentage'</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">fill</span> <span class="kw">=</span> <span class="st">'Promoter Category'</span>) + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span>(<span class="st">'Major/Minor Promoter Proportion in A549'</span>) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">fill</span> <span class="kw">=</span> <span class="st">'Promoter Category'</span>) + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span>(<span class="st">'Major/Minor Promoter Proportion in HepG2'</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span>(<span class="kw">breaks</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0</span>,<span class="fl">1</span>, <span class="fl">0.25</span>), <span class="kw">labels</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0</span>,<span class="fl">100</span>,<span class="fl">25</span>),<span class="st">'%'</span>)) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span>(<span class="kw">breaks</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">1</span>,<span class="fl">5</span>), <span class="kw">labels</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'1'</span>,<span class="st">'2'</span>,<span class="st">'3'</span>,<span class="st">'4'</span>,<span class="st">'&gt;=5'</span>))</pre></body></html></div>
 <p><img src="proActiv_files/figure-html/VizMajorMinorPosition-1.png" width="480" style="display: block; margin: auto;"></p>
@@ -575,27 +563,27 @@
 <div id="major-promoter-activity-and-gene-expression" class="section level3">
 <h3 class="hasAnchor">
 <a href="#major-promoter-activity-and-gene-expression" class="anchor"></a>Major promoter activity and gene expression</h3>
-<p>Comparison of major promoter activity and gene expression, calculated by summing over all promoters. Single promoter genes lie on the diagonal. Multi-promoter genes lie to the right of the diagonal. Below, we generate the plot for cell line A549. This plot suggests that a single major promoter does not often fully explain gene expression, with minor promoters also contributing to gene expression.</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co">## Get active major promoters of A549</span>
+<p>Comparison of major promoter activity and gene expression, calculated by summing over all promoters. Single promoter genes lie on the diagonal. Multi-promoter genes lie to the right of the diagonal. Below, we generate the plot for cell line HepG2. This plot suggests that a single major promoter does not often fully explain gene expression, with minor promoters also contributing to gene expression.</p>
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co">## Get active major promoters of HepG2</span>
 <span class="no">majorPromoter</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html">as_tibble</a></span>(<span class="no">rdata</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">geneId</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">promoterCount</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">A549.class</span> <span class="kw">==</span> <span class="st">'Major'</span>)
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">promoterCount</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">HepG2.class</span> <span class="kw">==</span> <span class="st">'Major'</span>)
 <span class="co">## Get gene expression corresponding to the genes identified above</span>
 <span class="no">geneExpression</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html">metadata</a></span>(<span class="no">result</span>)$<span class="no">geneExpression</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html">rownames_to_column</a></span>(<span class="kw">var</span> <span class="kw">=</span> <span class="st">'geneId'</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">geneId</span> <span class="kw">%in%</span> <span class="no">majorPromoter</span>$<span class="no">geneId</span>)
 
-<span class="no">pdata3</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">proActiv</span> <span class="kw">=</span> <span class="no">majorPromoter</span>$<span class="no">A549.mean</span>,
-                     <span class="kw">geneExp</span> <span class="kw">=</span> <span class="no">geneExpression</span>$<span class="no">A549.mean</span>[<span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span>(<span class="no">majorPromoter</span>$<span class="no">geneId</span>,
+<span class="no">pdata3</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">proActiv</span> <span class="kw">=</span> <span class="no">majorPromoter</span>$<span class="no">HepG2.mean</span>,
+                     <span class="kw">geneExp</span> <span class="kw">=</span> <span class="no">geneExpression</span>$<span class="no">HepG2.mean</span>[<span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span>(<span class="no">majorPromoter</span>$<span class="no">geneId</span>,
                                                               <span class="no">geneExpression</span>$<span class="no">geneId</span>)],
                      <span class="kw">promoterCount</span> <span class="kw">=</span> <span class="no">majorPromoter</span>$<span class="no">promoterCount</span>)
 
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">pdata3</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">geneExp</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">proActiv</span>)) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">colour</span> <span class="kw">=</span> <span class="no">promoterCount</span>), <span class="kw">shape</span> <span class="kw">=</span> <span class="fl">1</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span>(<span class="st">'Major Promoter Activity vs. Gene Expression in A549'</span>) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">colour</span> <span class="kw">=</span> <span class="no">promoterCount</span>), <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">0.5</span>) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span>(<span class="st">'Major Promoter Activity vs. Gene Expression in HepG2'</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">'Average Gene Expression'</span>) + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">'Average Major Promoter Activity'</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">colour</span> <span class="kw">=</span> <span class="st">'Number of \n Annotated Promoters'</span>) +
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_abline</a></span>(<span class="kw">slope</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">intercept</span> <span class="kw">=</span> <span class="fl">0</span>, <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'red'</span>, <span class="kw">linetype</span> <span class="kw">=</span> <span class="st">'dashed'</span>)</pre></body></html></div>
-<p><img src="proActiv_files/figure-html/VizMajorGeneExp-1.png" width="576" style="display: block; margin: auto;"></p>
+<p><img src="proActiv_files/figure-html/VizMajorGeneExp-1.png" width="624" style="display: block; margin: auto;"></p>
 </div>
 <div id="t-sne" class="section level3">
 <h3 class="hasAnchor">
@@ -608,14 +596,14 @@
 <span class="no">data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="no">data</span>))
 <span class="no">data</span>$<span class="no">Sample</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="no">condition</span>)
 
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">42</span>) <span class="co"># for reproducibility</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">40</span>) <span class="co"># for reproducibility</span>
 
 <span class="no">tsne.out</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Rtsne/man/Rtsne.html">Rtsne</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span>(<span class="no">data</span>, <span class="kw">select</span> <span class="kw">=</span> -<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">Sample</span>))), <span class="kw">perplexity</span> <span class="kw">=</span> <span class="fl">1</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">tsne.out</span>$<span class="no">Y</span>[,<span class="fl">1</span>], <span class="kw">y</span> <span class="kw">=</span> <span class="no">tsne.out</span>$<span class="no">Y</span>[,<span class="fl">2</span>], <span class="kw">bg</span> <span class="kw">=</span> <span class="no">data</span>$<span class="no">Sample</span>, <span class="kw">asp</span> <span class="kw">=</span> <span class="fl">1</span>,
      <span class="kw">col</span> <span class="kw">=</span> <span class="st">'black'</span>, <span class="kw">pch</span> <span class="kw">=</span> <span class="fl">24</span>, <span class="kw">cex</span> <span class="kw">=</span> <span class="fl">4</span>,
      <span class="kw">main</span> <span class="kw">=</span> <span class="st">'t-SNE plot with promoters \n active in at least one sample'</span>,
      <span class="kw">xlab</span> <span class="kw">=</span> <span class="st">'T-SNE1'</span>, <span class="kw">ylab</span> <span class="kw">=</span> <span class="st">'T-SNE2'</span>,
-     <span class="kw">xlim</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(-<span class="fl">180</span>,<span class="fl">180</span>), <span class="kw">ylim</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(-<span class="fl">180</span>,<span class="fl">180</span>))
+     <span class="kw">xlim</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(-<span class="fl">300</span>,<span class="fl">300</span>), <span class="kw">ylim</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(-<span class="fl">300</span>,<span class="fl">300</span>))
 <span class="fu"><a href="https://rdrr.io/r/graphics/legend.html">legend</a></span>(<span class="st">'topright'</span>, <span class="kw">inset</span> <span class="kw">=</span> <span class="fl">.02</span>, <span class="kw">title</span> <span class="kw">=</span> <span class="st">'Cell Lines'</span>,
        <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">condition</span>), <span class="kw">pch</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">24</span>,<span class="fl">24</span>), <span class="kw">pt.bg</span> <span class="kw">=</span> <span class="fl">1</span>:<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">condition</span>)) , <span class="kw">cex</span> <span class="kw">=</span> <span class="fl">1.5</span>, <span class="kw">bty</span> <span class="kw">=</span> <span class="st">'n'</span>)</pre></body></html></div>
 <p><img src="proActiv_files/figure-html/VizTsne-1.png" width="499.2" style="display: block; margin: auto;"></p>

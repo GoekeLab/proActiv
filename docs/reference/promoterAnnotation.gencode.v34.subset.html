@@ -6,7 +6,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Prepare the gene expression table including the gene ids — getGeneExpression • proActiv</title>
+<title>Promoter annotation data for Gencode.v34 subsetted to 
+chr1:10,000,000-30,000,000 including all the annotation objects
+required for promoter activity estimation — promoterAnnotation.gencode.v34.subset • proActiv</title>
 
 
 <!-- jquery -->
@@ -39,8 +41,12 @@
 
 
 
-<meta property="og:title" content="Prepare the gene expression table including the gene ids — getGeneExpression" />
-<meta property="og:description" content="Prepare the gene expression table including the gene ids" />
+<meta property="og:title" content="Promoter annotation data for Gencode.v34 subsetted to 
+chr1:10,000,000-30,000,000 including all the annotation objects
+required for promoter activity estimation — promoterAnnotation.gencode.v34.subset" />
+<meta property="og:description" content="Promoter annotation data for Gencode.v34 subsetted to 
+chr1:10,000,000-30,000,000 including all the annotation objects
+required for promoter activity estimation" />
 
 
 
@@ -119,30 +125,37 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Prepare the gene expression table including the gene ids</h1>
-    <small class="dont-index">Source: <a href='https://github.com/GoekeLab/proActiv/blob/master/R/estimate-promoter-activity.R'><code>R/estimate-promoter-activity.R</code></a></small>
-    <div class="hidden name"><code>getGeneExpression.Rd</code></div>
+    <h1>Promoter annotation data for Gencode.v34 subsetted to 
+chr1:10,000,000-30,000,000 including all the annotation objects
+required for promoter activity estimation</h1>
+    <small class="dont-index">Source: <a href='https://github.com/GoekeLab/proActiv/blob/master/R/data.R'><code>R/data.R</code></a></small>
+    <div class="hidden name"><code>promoterAnnotation.gencode.v34.subset.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Prepare the gene expression table including the gene ids</p>
+    <p>Promoter annotation data for Gencode.v34 subsetted to 
+chr1:10,000,000-30,000,000 including all the annotation objects
+required for promoter activity estimation</p>
     </div>
 
-    <pre class="usage"><span class='fu'>getGeneExpression</span>(<span class='no'>absolutePromoterActivity</span>)</pre>
+    <pre class="usage"><span class='no'>promoterAnnotation.gencode.v34.subset</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>absolutePromoterActivity</th>
-      <td><p>data.frame of absolute promoter activity 
-with promoter and gene ids</p></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>data.frame of gene expression with gene ids#'</p>
+    <p>A PromoterAnnotation (S4 Class) object containing all the promoter
+  annotation objects for Gencode.v34 chr1:10,000,000-30,000,000. 
+  The object has 3 slots:</p><dl'>
+  <dt>intronRanges</dt><dd><p>A GRanges object of 4,523 ranges corresponding
+  to introns, annotated with the associated transcript.</p></dd> 
+  <dt>promoterIdMapping</dt><dd><p>The id mapping between transcript names, 
+  promoter ids and gene ids for Gencode v34.</p></dd> 
+  <dt>promoterCoordinates</dt><dd><p>A GRanges object of 1,380 ranges
+  showing the tss coordinate for each promoter of Gencode v34 
+  chr1:10,000,000-30,000,000, annotated with the associated gene id, 
+  coordinate of the 3' end of the first reduced exon, and intron id.</p></dd> 
+</dl>
+
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -19,10 +19,7 @@ reference:
       - getRelativePromoterActivity
   - title: Data
     contents:
-      - promoterAnnotation.gencode.v19
-      - promoterAnnotation.gencode.v34
-      - promoterAnnotation.gencode.vM1
-      - promoterAnnotation.gencode.vM25
+      - promoterAnnotation.gencode.v34.subset
 navbar:
   type: default
   left:

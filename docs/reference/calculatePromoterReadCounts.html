@@ -185,19 +185,6 @@ will be used as an argument to BiocParallel::bplapply</p></td>
     <p>A data.frame object. The number of junction reads per promoter (rows)
   for each sample (cols)</p>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples">
-<span class='no'>files</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'extdata/testdata/tophat2'</span>,
-                    <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'proActiv'</span>),
-                    <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>pattern</span> <span class='kw'>=</span> <span class='st'>'sample'</span>)
-<span class='no'>fileLabels</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'sample1'</span>, <span class='st'>'sample2'</span>)
-<span class='no'>promoterAnnotation</span> <span class='kw'>&lt;-</span> <span class='no'>promoterAnnotation.gencode.v19</span>
-<span class='no'>promoterReadCounts</span> <span class='kw'>&lt;-</span> <span class='fu'>calculatePromoterReadCounts</span>(<span class='no'>promoterAnnotation</span>,
-                                                   <span class='no'>files</span>,
-                                                   <span class='no'>fileLabels</span>,
-                                                   <span class='kw'>fileType</span> <span class='kw'>=</span> <span class='st'>'tophat'</span>,
-                                                   <span class='kw'>genome</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-                                                   <span class='kw'>numberOfCores</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

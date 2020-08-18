@@ -167,23 +167,7 @@ intron ranges, promoter coordinates and the promoter id mapping</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>data.frame of absolute promoter activity with promoter and gene ids</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='preparePromoterAnnotation.html'>preparePromoterAnnotation</a></code> for preparing the mapping
-  between promoters and genes, <code><a href='calculatePromoterReadCounts.html'>calculatePromoterReadCounts</a></code> and
-  <code><a href='normalizePromoterReadCounts.html'>normalizePromoterReadCounts</a></code> for obtaining junction read
-  counts</p></div>
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples">
-<span class='co'>## junctionReadCounts is an object returned from normalizePromoterReadCounts</span>
-<span class='no'>junctionReadCounts</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/readRDS.html'>readRDS</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'extdata/testdata/tophat2'</span>,
-                                            <span class='st'>'normalizedPromoterCounts.rds'</span>,
-                                             <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'proActiv'</span>))
-<span class='no'>absolutePromoterActivity</span> <span class='kw'>&lt;-</span> <span class='fu'>getAbsolutePromoterActivity</span>(<span class='no'>junctionReadCounts</span>,
-                                             <span class='no'>promoterAnnotation.gencode.v19</span>,
-                                             <span class='kw'>log2</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                                             <span class='kw'>pseudocount</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

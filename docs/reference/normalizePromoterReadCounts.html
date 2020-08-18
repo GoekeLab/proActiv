@@ -146,14 +146,6 @@ per promoter (rows) for each sample (cols)</p></td>
   promoter (rows) for each sample (cols) using DESeq2 counts function.
   Requires 'DESeq2' package to be installed</p>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples">
-<span class='co'>## promoterReadCounts is an object returned from calculatePromoterReadCounts</span>
-<span class='no'>promoterReadCounts</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/readRDS.html'>readRDS</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'extdata/testdata/tophat2'</span>,
-                                          <span class='st'>'promoterCounts.rds'</span>,
-                                           <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'proActiv'</span>))
-<span class='no'>normalizedPromoterReadCounts</span> <span class='kw'>&lt;-</span> <span class='fu'>normalizePromoterReadCounts</span>(
-                                           <span class='no'>promoterReadCounts</span>)</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

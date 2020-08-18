@@ -174,17 +174,6 @@ ranges. These ranges will be used for counting the reads</p></td>
     <p>The total number of junction reads overlapping with each promoter for
   the input annotated intron ranges</p>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples">
-<span class='no'>file</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'extdata/testdata/tophat2'</span>,
-                   <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'proActiv'</span>),
-                   <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>pattern</span> <span class='kw'>=</span> <span class='st'>'sample1'</span>)
-<span class='no'>promoterCoordinates</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='PromoterAnnotation-class.html'>promoterCoordinates</a></span>(<span class='no'>promoterAnnotation.gencode.v19</span>)
-<span class='no'>intronRanges</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='PromoterAnnotation-class.html'>intronRanges</a></span>(<span class='no'>promoterAnnotation.gencode.v19</span>)
-<span class='no'>junctionCounts</span> <span class='kw'>&lt;-</span> <span class='fu'>calculateJunctionReadCounts</span>(<span class='no'>promoterCoordinates</span>,
-                                               <span class='no'>intronRanges</span>,
-                                               <span class='no'>file</span>,
-                                               <span class='kw'>fileType</span> <span class='kw'>=</span> <span class='st'>'tophat'</span>)</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
