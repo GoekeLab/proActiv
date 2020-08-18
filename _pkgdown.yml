@@ -4,19 +4,11 @@ template:
   params:
     bootswatch: united
 reference:
-  - title: Main functions
+  - title: Functions
     contents:
       - proActiv
       - preparePromoterAnnotation
       - plotPromoters
-  - title: Helper functions
-    contents:
-      - calculateJunctionReadCounts
-      - calculatePromoterReadCounts
-      - normalizePromoterReadCounts
-      - getAbsolutePromoterActivity
-      - getGeneExpression
-      - getRelativePromoterActivity
   - title: Data
     contents:
       - promoterAnnotation.gencode.v34.subset
