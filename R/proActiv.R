@@ -30,8 +30,9 @@
 #' files <- list.files(system.file('extdata/vignette/junctions', 
 #'                        package = 'proActiv'), 
 #'                        full.names = TRUE, pattern = 'replicate5')
+#' promoterAnnotation <- promoterAnnotation.gencode.v34.subset
 #' result <- proActiv(files = files,
-#'                        promoterAnnotation  = promoterAnnotation.gencode.v34,
+#'                        promoterAnnotation  = promoterAnnotation,
 #'                        fileLabels = NULL,
 #'                        ncores = 1)
 #'                            

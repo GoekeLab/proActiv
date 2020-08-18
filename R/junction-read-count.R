@@ -10,21 +10,8 @@
 #'   'star' or 'bam'
 #' @param genome character genome version
 #'
-#' @export
 #' @return The total number of junction reads overlapping with each promoter for
 #'   the input annotated intron ranges
-#'
-#' @examples
-#' 
-#' file <- list.files(system.file('extdata/testdata/tophat2', 
-#'                    package = 'proActiv'), 
-#'                    full.names = TRUE, pattern = 'sample1')
-#' promoterCoordinates <- promoterCoordinates(promoterAnnotation.gencode.v19)
-#' intronRanges <- intronRanges(promoterAnnotation.gencode.v19)
-#' junctionCounts <- calculateJunctionReadCounts(promoterCoordinates,
-#'                                                intronRanges,
-#'                                                file,
-#'                                                fileType = 'tophat')
 #' 
 #' @importFrom GenomeInfoDb seqlevelsStyle
 #' @importFrom S4Vectors queryHits
@@ -100,22 +87,8 @@ calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges,
 #'
 #' @return A data.frame object. The number of junction reads per promoter (rows)
 #'   for each sample (cols)
-#' @export
-#'
-#' @examples
-#' 
-#' files <- list.files(system.file('extdata/testdata/tophat2', 
-#'                     package = 'proActiv'), 
-#'                     full.names = TRUE, pattern = 'sample')
-#' fileLabels <- c('sample1', 'sample2')
-#' promoterAnnotation <- promoterAnnotation.gencode.v19
-#' promoterReadCounts <- calculatePromoterReadCounts(promoterAnnotation,
-#'                                                    files,
-#'                                                    fileLabels,
-#'                                                    fileType = 'tophat',
-#'                                                    genome = NULL,
-#'                                                    numberOfCores = 1)
 #' @importFrom BiocParallel bpparam bplapply
+#' 
 calculatePromoterReadCounts <- function(promoterAnnotation, files = NULL, 
                                         fileLabels = NULL, fileType = NULL , 
                                         genome = NULL, numberOfCores = 1) {
@@ -160,16 +133,6 @@ calculatePromoterReadCounts <- function(promoterAnnotation, files = NULL,
 #' @return A data.frame object. The normalized number of junction reads per
 #'   promoter (rows) for each sample (cols) using DESeq2 counts function.
 #'   Requires 'DESeq2' package to be installed
-#' @export
-#'
-#' @examples
-#' 
-#' ## promoterReadCounts is an object returned from calculatePromoterReadCounts
-#' promoterReadCounts <- readRDS(system.file('extdata/testdata/tophat2',
-#'                                           'promoterCounts.rds', 
-#'                                            package = 'proActiv'))
-#' normalizedPromoterReadCounts <- normalizePromoterReadCounts(
-#'                                            promoterReadCounts)
 #' 
 #' @importFrom DESeq2 DESeqDataSetFromMatrix estimateSizeFactors counts
 normalizePromoterReadCounts <- function(promoterReadCounts) {

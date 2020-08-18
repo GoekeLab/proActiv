@@ -38,17 +38,23 @@
 #'   
 #' @examples 
 #'  
-#'  gene <- 'ENSG00000076864.19'
-#'  ## Genomic Ranges giving exons by transcripts of gene 
-#'  ranges <- readRDS(system.file('extdata/vignette/annotations', 
-#'                                'exonsBy.rap1gap.rds',
-#'                                package = 'proActiv'))
-#'  ## summarizedExperiment returned by proActiv (subsetted to gene RAP1GAP)
-#'  result <- readRDS(system.file('extdata/vignette/annotations',
-#'                                'result.rap1gap.rds',
-#'                                package ='proActiv'))
-#'  plotPromoters(result = result, gene = gene, ranges = ranges)
-#'   
+#' ## First, run proActiv to generate a summarizedExperiment result
+#' files <- list.files(system.file('extdata/vignette/junctions', 
+#'                        package = 'proActiv'), 
+#'                        full.names = TRUE)
+#' promoterAnnotation <- promoterAnnotation.gencode.v34.subset
+#' result <- proActiv(files = files,
+#'                        promoterAnnotation  = promoterAnnotation,
+#'                        fileLabels = NULL,
+#'                        ncores = 1)
+#' ## Read in pre-computed ranges
+#' txdb <- AnnotationDbi::loadDb(system.file('extdata/vignette/annotations',
+#'                                    'gencode.v34.annotation.rap1gap.sqlite',
+#'                                    package = 'proActiv'))
+#' ## Declare a gene of interest
+#' gene <- 'ENSG00000076864.19'
+#' ## Call plot 
+#' plotPromoters(result = result, gene = gene, txdb = txdb)
 #'                            
 #' @importFrom Gviz plotTracks GenomeAxisTrack
 #' @importFrom SummarizedExperiment rowData colData
