@@ -31,21 +31,3 @@ data.frame of absolute promoter activity with promoter and gene ids
 Prepare the absolute promoter activity table including the promoter and gene
 ids
 }
-\examples{
-
-## junctionReadCounts is an object returned from normalizePromoterReadCounts
-junctionReadCounts <- readRDS(system.file('extdata/testdata/tophat2',
-                                            'normalizedPromoterCounts.rds', 
-                                             package = 'proActiv'))
-absolutePromoterActivity <- getAbsolutePromoterActivity(junctionReadCounts,
-                                             promoterAnnotation.gencode.v19,
-                                             log2 = TRUE,
-                                             pseudocount = 1)
-
-}
-\seealso{
-\code{\link{preparePromoterAnnotation}} for preparing the mapping
-  between promoters and genes, \code{\link{calculatePromoterReadCounts}} and
-  \code{\link{normalizePromoterReadCounts}} for obtaining junction read
-  counts
-}

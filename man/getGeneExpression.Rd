@@ -11,19 +11,8 @@ getGeneExpression(absolutePromoterActivity)
 with promoter and gene ids}
 }
 \value{
-data.frame of gene expression with gene ids
+data.frame of gene expression with gene ids#'
 }
 \description{
 Prepare the gene expression table including the gene ids
-}
-\examples{
-
-## absolutePromoterActivity is an object returned 
-## from getAbsolutePromoterActivity
-absolutePromoterActivity <- readRDS(system.file('extdata/testdata/tophat2', 
-                                             'absolutePromoterActivity.rds', 
-                                              package = 'proActiv')) 
-geneExpression <- getGeneExpression(absolutePromoterActivity)
-
-
 }
