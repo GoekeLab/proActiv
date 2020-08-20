@@ -53,8 +53,8 @@ Suggests:
     DEXSeq,
     Rtsne,
     ggplot2,
-    TxDb.Hsapiens.UCSC.hg38.knownGene,
-    tidyr
+    tidyr,
+    vdiffr
 URL: https://github.com/GoekeLab/proActiv
 biocViews:
     RNASeq,
