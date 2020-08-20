@@ -3,7 +3,7 @@
 \docType{data}
 \name{promoterAnnotation.gencode.v34.subset}
 \alias{promoterAnnotation.gencode.v34.subset}
-\title{Promoter annotation data for Gencode.v34 (chr1:10,000,000 - 30,000,000)}
+\title{Promoter annotation for Gencode.v34 (subset)}
 \format{
 A PromoterAnnotation (S4 Class) object containing all promoter
   annotation objects for Gencode.v34 chr1:10,000,000-30,000,000. 
@@ -21,6 +21,7 @@ A PromoterAnnotation (S4 Class) object containing all promoter
 promoterAnnotation.gencode.v34.subset
 }
 \description{
-Promoter annotation data for Gencode.v34 (chr1:10,000,000 - 30,000,000)
+Promoter annotation for Gencode.v34 
+  (chr1:10,000,000 - 30,000,000)
 }
 \keyword{datasets}

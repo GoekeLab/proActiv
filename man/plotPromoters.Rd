@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot-proActiv.R
 \name{plotPromoters}
 \alias{plotPromoters}
-\title{Visualize promoter activity and transcript model for a gene of interest}
+\title{Visualizes promoter activity and transcript model for a gene of interest}
 \usage{
 plotPromoters(
   result,
@@ -74,7 +74,7 @@ Outputs a plot of the promoters of the gene of interest across
   conditions, along with a model of transcripts belonging to the gene
 }
 \description{
-Visualize promoter activity and transcript model for a gene of interest
+Visualizes promoter activity and transcript model for a gene of interest
 }
 \examples{
  

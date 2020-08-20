@@ -1,5 +1,6 @@
-#' Promoter annotation data for Gencode.v34 (chr1:10,000,000 - 30,000,000)
-#'
+#' @title Promoter annotation for Gencode.v34 (subset) 
+#' @description Promoter annotation for Gencode.v34 
+#'   (chr1:10,000,000 - 30,000,000) 
 #' @format A PromoterAnnotation (S4 Class) object containing all promoter
 #'   annotation objects for Gencode.v34 chr1:10,000,000-30,000,000. 
 #'   The object has 3 slots: \describe{
