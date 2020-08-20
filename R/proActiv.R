@@ -1,5 +1,4 @@
-#' Wrapper function returning Summarized Experiment object giving promoter 
-#' counts and activity
+#' Estimates promoter counts and activity in a single command
 #'
 #' @param files A character vector. The list of input files for 
 #'   which the junction read counts will be calculated
@@ -33,6 +32,7 @@
 #' promoterAnnotation <- promoterAnnotation.gencode.v34.subset
 #' result <- proActiv(files = files,
 #'                        promoterAnnotation  = promoterAnnotation,
+#'                        condition = rep(c('A549', 'HepG2'), each=1),
 #'                        fileLabels = NULL,
 #'                        ncores = 1)
 #'                            

@@ -1,4 +1,4 @@
-#' Prepare promoter annotation data for the user specified txdb object
+#' Prepares promoter annotation from a gtf or txdb 
 #'
 #' @param txdb A txdb object. The txdb of the annotation version for which
 #'   promoters will be identified. Either `txdb` or `file` argument must be 

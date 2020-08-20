@@ -2,7 +2,7 @@
 % Please edit documentation in R/annotation-data.R
 \name{preparePromoterAnnotation}
 \alias{preparePromoterAnnotation}
-\title{Prepare promoter annotation data for the user specified txdb object}
+\title{Prepares promoter annotation from a gtf or txdb}
 \usage{
 preparePromoterAnnotation(txdb, file, species)
 }
@@ -25,7 +25,7 @@ A PromoterAnnotation object. The annotated
   attributes of the promoter annotation data.
 }
 \description{
-Prepare promoter annotation data for the user specified txdb object
+Prepares promoter annotation from a gtf or txdb
 }
 \examples{
 

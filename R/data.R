@@ -1,8 +1,6 @@
-#' Promoter annotation data for Gencode.v34 subsetted to 
-#' chr1:10,000,000-30,000,000 including all the annotation objects
-#' required for promoter activity estimation
+#' Promoter annotation data for Gencode.v34 (chr1:10,000,000 - 30,000,000)
 #'
-#' @format A PromoterAnnotation (S4 Class) object containing all the promoter
+#' @format A PromoterAnnotation (S4 Class) object containing all promoter
 #'   annotation objects for Gencode.v34 chr1:10,000,000-30,000,000. 
 #'   The object has 3 slots: \describe{
 #'   \item{intronRanges}{A GRanges object of 4,523 ranges corresponding

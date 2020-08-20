@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Wrapper function returning Summarized Experiment object giving promoter 
-counts and activity — proActiv • proActiv</title>
+<title>Estimates promoter counts and activity in a single command — proActiv • proActiv</title>
 
 
 <!-- jquery -->
@@ -40,10 +39,8 @@ counts and activity — proActiv • proActiv</title>
 
 
 
-<meta property="og:title" content="Wrapper function returning Summarized Experiment object giving promoter 
-counts and activity — proActiv" />
-<meta property="og:description" content="Wrapper function returning Summarized Experiment object giving promoter 
-counts and activity" />
+<meta property="og:title" content="Estimates promoter counts and activity in a single command — proActiv" />
+<meta property="og:description" content="Estimates promoter counts and activity in a single command" />
 
 
 
@@ -122,15 +119,13 @@ counts and activity" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Wrapper function returning Summarized Experiment object giving promoter 
-counts and activity</h1>
+    <h1>Estimates promoter counts and activity in a single command</h1>
     <small class="dont-index">Source: <a href='https://github.com/GoekeLab/proActiv/blob/master/R/proActiv.R'><code>R/proActiv.R</code></a></small>
     <div class="hidden name"><code>proActiv.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Wrapper function returning Summarized Experiment object giving promoter 
-counts and activity</p>
+    <p>Estimates promoter counts and activity in a single command</p>
     </div>
 
     <pre class="usage"><span class='fu'>proActiv</span>(
@@ -189,25 +184,16 @@ will be used as an argument to BiocParallel::bplapply</p></td>
   conditions (if condition is provided)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
+    <pre class="examples">
 <span class='no'>files</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'extdata/vignette/junctions'</span>,
                        <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'proActiv'</span>),
                        <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>pattern</span> <span class='kw'>=</span> <span class='st'>'replicate5'</span>)
 <span class='no'>promoterAnnotation</span> <span class='kw'>&lt;-</span> <span class='no'>promoterAnnotation.gencode.v34.subset</span>
 <span class='no'>result</span> <span class='kw'>&lt;-</span> <span class='fu'>proActiv</span>(<span class='kw'>files</span> <span class='kw'>=</span> <span class='no'>files</span>,
                        <span class='kw'>promoterAnnotation</span>  <span class='kw'>=</span> <span class='no'>promoterAnnotation</span>,
+                       <span class='kw'>condition</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'A549'</span>, <span class='st'>'HepG2'</span>), <span class='kw'>each</span><span class='kw'>=</span><span class='fl'>1</span>),
                        <span class='kw'>fileLabels</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-                       <span class='kw'>ncores</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] "Processing: C:/Users/josep/OneDrive/Documents/R/win-library/4.0/proActiv/extdata/vignette/junctions/SGNEx_A549_Illumina_replicate5-run1.subset.SJ.out.tab.gz"
-#&gt; [1] "File loaded into memory"
-#&gt; [1] "Calculating junction counts"
-#&gt; [1] "Processing: C:/Users/josep/OneDrive/Documents/R/win-library/4.0/proActiv/extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate5-run1.subset.SJ.out.tab.gz"
-#&gt; [1] "File loaded into memory"
-#&gt; [1] "Calculating junction counts"
-#&gt; [1] "Calculating normalized read counts..."</div><div class='output co'>#&gt; <span class='message'>converting counts to integer mode</span></div><div class='output co'>#&gt; [1] "Calculating log2 absolute promoter activity..."
-#&gt; [1] "Calculating gene expression..."
-#&gt; [1] "Calculating relative promoter activity..."
-#&gt; [1] "Calculating positions of promoters..."</div><div class='input'>                           
-</div></pre>
+                       <span class='kw'>ncores</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

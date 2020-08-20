@@ -85,7 +85,7 @@ files <- list.files(system.file('extdata/vignette/junctions',
 promoterAnnotation <- promoterAnnotation.gencode.v34.subset
 result <- proActiv(files = files,
                        promoterAnnotation  = promoterAnnotation,
-                       fileLabels = NULL,
+                       condition = rep(c('A549','HepG2'), each=3),
                        ncores = 1)
 ## Read in pre-computed ranges
 txdb <- AnnotationDbi::loadDb(system.file('extdata/vignette/annotations',

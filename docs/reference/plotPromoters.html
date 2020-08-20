@@ -233,7 +233,7 @@ the promoter arrows in the annotation track. Defaults to 'grey'</p></td>
   conditions, along with a model of transcripts belonging to the gene</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
+    <pre class="examples">
 <span class='co'>## First, run proActiv to generate a summarizedExperiment result</span>
 <span class='no'>files</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'extdata/vignette/junctions'</span>,
                        <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'proActiv'</span>),
@@ -241,63 +241,16 @@ the promoter arrows in the annotation track. Defaults to 'grey'</p></td>
 <span class='no'>promoterAnnotation</span> <span class='kw'>&lt;-</span> <span class='no'>promoterAnnotation.gencode.v34.subset</span>
 <span class='no'>result</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='proActiv.html'>proActiv</a></span>(<span class='kw'>files</span> <span class='kw'>=</span> <span class='no'>files</span>,
                        <span class='kw'>promoterAnnotation</span>  <span class='kw'>=</span> <span class='no'>promoterAnnotation</span>,
-                       <span class='kw'>fileLabels</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-                       <span class='kw'>ncores</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] "Processing: C:/Users/josep/OneDrive/Documents/R/win-library/4.0/proActiv/extdata/vignette/junctions/SGNEx_A549_Illumina_replicate1-run1.subset.SJ.out.tab.gz"
-#&gt; [1] "File loaded into memory"
-#&gt; [1] "Calculating junction counts"
-#&gt; [1] "Processing: C:/Users/josep/OneDrive/Documents/R/win-library/4.0/proActiv/extdata/vignette/junctions/SGNEx_A549_Illumina_replicate3-run1.subset.SJ.out.tab.gz"
-#&gt; [1] "File loaded into memory"
-#&gt; [1] "Calculating junction counts"
-#&gt; [1] "Processing: C:/Users/josep/OneDrive/Documents/R/win-library/4.0/proActiv/extdata/vignette/junctions/SGNEx_A549_Illumina_replicate5-run1.subset.SJ.out.tab.gz"
-#&gt; [1] "File loaded into memory"
-#&gt; [1] "Calculating junction counts"
-#&gt; [1] "Processing: C:/Users/josep/OneDrive/Documents/R/win-library/4.0/proActiv/extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate2-run1.subset.SJ.out.tab.gz"
-#&gt; [1] "File loaded into memory"
-#&gt; [1] "Calculating junction counts"
-#&gt; [1] "Processing: C:/Users/josep/OneDrive/Documents/R/win-library/4.0/proActiv/extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate4-run1.subset.SJ.out.tab.gz"
-#&gt; [1] "File loaded into memory"
-#&gt; [1] "Calculating junction counts"
-#&gt; [1] "Processing: C:/Users/josep/OneDrive/Documents/R/win-library/4.0/proActiv/extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate5-run1.subset.SJ.out.tab.gz"
-#&gt; [1] "File loaded into memory"
-#&gt; [1] "Calculating junction counts"
-#&gt; [1] "Calculating normalized read counts..."</div><div class='output co'>#&gt; <span class='message'>converting counts to integer mode</span></div><div class='output co'>#&gt; [1] "Calculating log2 absolute promoter activity..."
-#&gt; [1] "Calculating gene expression..."
-#&gt; [1] "Calculating relative promoter activity..."
-#&gt; [1] "Calculating positions of promoters..."</div><div class='input'><span class='co'>## Read in pre-computed ranges</span>
+                       <span class='kw'>condition</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'A549'</span>,<span class='st'>'HepG2'</span>), <span class='kw'>each</span><span class='kw'>=</span><span class='fl'>3</span>),
+                       <span class='kw'>ncores</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+<span class='co'>## Read in pre-computed ranges</span>
 <span class='no'>txdb</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>AnnotationDbi</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html'>loadDb</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'extdata/vignette/annotations'</span>,
                                    <span class='st'>'gencode.v34.annotation.rap1gap.sqlite'</span>,
-                                   <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'proActiv'</span>))</div><div class='output co'>#&gt; <span class='message'>Loading required package: GenomicFeatures</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: BiocGenerics</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: parallel</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: 'BiocGenerics'</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:parallel':</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,</span>
-#&gt; <span class='message'>    clusterExport, clusterMap, parApply, parCapply, parLapply,</span>
-#&gt; <span class='message'>    parLapplyLB, parRapply, parSapply, parSapplyLB</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:stats':</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    IQR, mad, sd, var, xtabs</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:base':</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    anyDuplicated, append, as.data.frame, basename, cbind, colnames,</span>
-#&gt; <span class='message'>    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,</span>
-#&gt; <span class='message'>    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,</span>
-#&gt; <span class='message'>    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,</span>
-#&gt; <span class='message'>    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,</span>
-#&gt; <span class='message'>    union, unique, unsplit, which, which.max, which.min</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: S4Vectors</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: stats4</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: 'S4Vectors'</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from 'package:base':</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    expand.grid</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: IRanges</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: 'IRanges'</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from 'package:grDevices':</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    windows</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: GenomeInfoDb</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: GenomicRanges</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: AnnotationDbi</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: Biobase</span></div><div class='output co'>#&gt; <span class='message'>Welcome to Bioconductor</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    Vignettes contain introductory material; view with</span>
-#&gt; <span class='message'>    'browseVignettes()'. To cite Bioconductor, see</span>
-#&gt; <span class='message'>    'citation("Biobase")', and for packages 'citation("pkgname")'.</span></div><div class='input'><span class='co'>## Declare a gene of interest</span>
+                                   <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'proActiv'</span>))
+<span class='co'>## Declare a gene of interest</span>
 <span class='no'>gene</span> <span class='kw'>&lt;-</span> <span class='st'>'ENSG00000076864.19'</span>
 <span class='co'>## Call plot </span>
-<span class='fu'>plotPromoters</span>(<span class='kw'>result</span> <span class='kw'>=</span> <span class='no'>result</span>, <span class='kw'>gene</span> <span class='kw'>=</span> <span class='no'>gene</span>, <span class='kw'>txdb</span> <span class='kw'>=</span> <span class='no'>txdb</span>)</div><div class='output co'>#&gt; [1] "Plotting ENSG00000076864.19"
-#&gt; [1] "Creating Gene Region Track..."
-#&gt; [1] "Creating Data Track..."</div><div class='output co'>#&gt; <span class='warning'>Warning: no non-missing arguments to max; returning -Inf</span></div><div class='output co'>#&gt; [1] "Creating Annotation Track..."
-#&gt; [1] "Creating Plot..."</div><div class='img'><img src='plotPromoters-1.png' alt='' width='700' height='433' /></div><div class='input'>                           
-</div></pre>
+<span class='fu'>plotPromoters</span>(<span class='kw'>result</span> <span class='kw'>=</span> <span class='no'>result</span>, <span class='kw'>gene</span> <span class='kw'>=</span> <span class='no'>gene</span>, <span class='kw'>txdb</span> <span class='kw'>=</span> <span class='no'>txdb</span>)</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

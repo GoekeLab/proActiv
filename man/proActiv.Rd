@@ -2,8 +2,7 @@
 % Please edit documentation in R/proActiv.R
 \name{proActiv}
 \alias{proActiv}
-\title{Wrapper function returning Summarized Experiment object giving promoter 
-counts and activity}
+\title{Estimates promoter counts and activity in a single command}
 \usage{
 proActiv(
   files,
@@ -44,8 +43,7 @@ A SummarizedExperiment object with assays giving promoter counts
   conditions (if condition is provided)
 }
 \description{
-Wrapper function returning Summarized Experiment object giving promoter 
-counts and activity
+Estimates promoter counts and activity in a single command
 }
 \examples{
 
@@ -55,6 +53,7 @@ files <- list.files(system.file('extdata/vignette/junctions',
 promoterAnnotation <- promoterAnnotation.gencode.v34.subset
 result <- proActiv(files = files,
                        promoterAnnotation  = promoterAnnotation,
+                       condition = rep(c('A549', 'HepG2'), each=1),
                        fileLabels = NULL,
                        ncores = 1)
                            

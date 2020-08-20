@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Prepare promoter annotation data for the user specified txdb object — preparePromoterAnnotation • proActiv</title>
+<title>Prepares promoter annotation from a gtf or txdb — preparePromoterAnnotation • proActiv</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Prepare promoter annotation data for the user specified txdb object — preparePromoterAnnotation" />
-<meta property="og:description" content="Prepare promoter annotation data for the user specified txdb object" />
+<meta property="og:title" content="Prepares promoter annotation from a gtf or txdb — preparePromoterAnnotation" />
+<meta property="og:description" content="Prepares promoter annotation from a gtf or txdb" />
 
 
 
@@ -119,13 +119,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Prepare promoter annotation data for the user specified txdb object</h1>
+    <h1>Prepares promoter annotation from a gtf or txdb</h1>
     <small class="dont-index">Source: <a href='https://github.com/GoekeLab/proActiv/blob/master/R/annotation-data.R'><code>R/annotation-data.R</code></a></small>
     <div class="hidden name"><code>preparePromoterAnnotation.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Prepare promoter annotation data for the user specified txdb object</p>
+    <p>Prepares promoter annotation from a gtf or txdb</p>
     </div>
 
     <pre class="usage"><span class='fu'>preparePromoterAnnotation</span>(<span class='no'>txdb</span>, <span class='no'>file</span>, <span class='no'>species</span>)</pre>
@@ -160,19 +160,13 @@ names(genomeStyles()).</p></td>
   attributes of the promoter annotation data.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
+    <pre class="examples">
 <span class='no'>txdbPath</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'extdata/vignette/annotations/'</span>,
                             <span class='st'>'gencode.v34.annotation.subset.sqlite'</span>,
                              <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'proActiv'</span>)
 <span class='no'>txdb</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>AnnotationDbi</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html'>loadDb</a></span>(<span class='no'>txdbPath</span>)
 <span class='no'>promoterAnnotation</span> <span class='kw'>&lt;-</span> <span class='fu'>preparePromoterAnnotation</span>(<span class='kw'>txdb</span> <span class='kw'>=</span> <span class='no'>txdb</span>,
-                                                <span class='kw'>species</span> <span class='kw'>=</span> <span class='st'>'Homo_sapiens'</span>)</div><div class='output co'>#&gt; [1] "Extract exons by transcripts..."
-#&gt; [1] "Identify overlapping first exons for each gene..."
-#&gt; [1] "Prepare mapping between transcripts, tss, promoters and genes..."
-#&gt; [1] "Prepare annotated intron ranges..."
-#&gt; [1] "Annotating reduced exon ranges..."
-#&gt; [1] "Prepare promoter coordinates and first exon ranges..."</div><div class='input'>
-</div></pre>
+                                                <span class='kw'>species</span> <span class='kw'>=</span> <span class='st'>'Homo_sapiens'</span>)</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
