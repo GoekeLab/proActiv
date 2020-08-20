@@ -66,16 +66,16 @@ plotPromoters <- function(result, gene, txdb, ranges,
                             label.col = 'black', label.size = 0.7,
                             arrow.width = NULL, arrow.fill = 'transparent', 
                             arrow.border = 'grey') {
-    print(paste0('Plotting ', gene))
     result.gene <- result[rowData(result)$geneId == gene, ]
     rdata <- rowData(result.gene)[complete.cases(rowData(result.gene)),]
     groups <- unique(colData(result.gene)$condition)
 
     if (nrow(rdata) == 0) {
-        stop('Gene selected has only one transcript which is a single-exon
-            transcript. proActiv does not estimate promoter activity in 
-            such cases.')
+        stop('Gene ID selected is either not present or has only one transcript 
+            which is a single-exon transcript. proActiv does not estimate 
+            promoter activity in such cases.')
     }
+    print(paste0('Plotting ', gene))
     
     grtrack <- getGeneRegionTrack(rdata, gene, txdb, ranges)
     dtracklist <- getDataTrack(rdata, groups, blk.width = blk.width,
