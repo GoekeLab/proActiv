@@ -48,7 +48,7 @@ If you use proActiv in your research, please cite:
 
 ## Quick Start: Quantifying promoter activity with proActiv
 
-proActiv estimates promoter activity from RNA-Seq data. Promoter activity is defined as the total amount of transcription initiated at each promoter. proActiv takes as input either BAM files or junction files (TopHat2 or STAR), and a promoter annotation object of the relevant genome. An optional argument `condition` can be supplied, describing the condition corresponding to each input file. Here we demonstrate proActiv with STAR junction files (Human genome GRCh38 Gencode v34) as input:
+proActiv estimates promoter activity from RNA-Seq data. Promoter activity is defined as the total amount of transcription initiated at each promoter. proActiv takes as input either BAM files or junction files (TopHat2 or STAR), and a promoter annotation object of the relevant genome. An optional argument `condition` can be supplied, describing the condition corresponding to each input file. Here we demonstrate proActiv with STAR junction files (Human genome GRCh38 Gencode v34) as input. Due to size constraints, analysis is restricted to a subset of chr1 (10,000,000-30,000,000).
 
 ```{r QuickStart, eval=TRUE, message=FALSE, results='hide'}
 library(proActiv)
@@ -58,8 +58,8 @@ files <- list.files(system.file('extdata/vignette/junctions',
                                 package = 'proActiv'), full.names = TRUE)
 ## Vector describing experimental condition
 condition <- rep(c('A549','HepG2'), each=3)
-## Promoter annotation for human genome GENCODE v34
-promoterAnnotation <- promoterAnnotation.gencode.v34
+## Promoter annotation for human genome GENCODE v34 restricted to a subset of chr1
+promoterAnnotation <- promoterAnnotation.gencode.v34.subset
 
 result <- proActiv(files = files, 
                    promoterAnnotation = promoterAnnotation,
@@ -74,20 +74,20 @@ result <- proActiv(files = files,
 
 ## A complete workflow to identify alternative promoter usage
 
-Here we present a complete step-by-step workflow for analysing promoter activity with proActiv and for identifying alternative promoter usage across samples from different conditions. We will compare samples from 2 different cell lines (A549 and HepG2) to identify alternative promoters.
+Here we present a complete step-by-step workflow for analyzing promoter activity with proActiv and for identifying alternative promoter usage across samples from different conditions. We will compare samples from 2 different cell lines (A549 and HepG2) to identify alternative promoters.
 
 ### Preparing input data
 
 proActiv uses RNA-Seq data to quantify promoter activity. Users have the option of using as input either BAM files, or tab-delimited junction files that are generated when TopHat2 or STAR is used for read alignment.
 
-Below, we demonstrate running `proActiv` with input STAR junction files. This data is taken from the [SGNEx project](https://github.com/GoekeLab/sg-nex-data). The reference genome used for alignment is Gencode v34 (GRCh38). These files can be found in ‘extdata/vignette/junctions’:
+Below, we demonstrate running `proActiv` with input STAR junction files. This data is taken from the [SGNEx project](https://github.com/GoekeLab/sg-nex-data), and restricted to the chr1:10,000,000-30,000,000 region. The reference genome used for alignment is Gencode v34 (GRCh38). These files can be found in ‘extdata/vignette/junctions’:
 
-- extdata/vignette/junctions/SGNEx_A549_Illumina_replicate1-run1.junctions.gz
-- extdata/vignette/junctions/SGNEx_A549_Illumina_replicate3-run1.junctions.gz 
-- extdata/vignette/junctions/SGNEx_A549_Illumina_replicate5-run1.junctions.gz
-- extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate2-run1.junctions.gz 
-- extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate4-run1.junctions.gz 
-- extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate5-run1.junctions.gz
+- extdata/vignette/SGNEx_A549_Illumina_replicate1-run1.subset.SJ.out.tab.gz
+- extdata/vignette/SGNEx_A549_Illumina_replicate3-run1.subset.SJ.out.tab.gz 
+- extdata/vignette/SGNEx_A549_Illumina_replicate5-run1.subset.SJ.out.tab.gz
+- extdata/vignette/SGNEx_HepG2_Illumina_replicate2-run1.subset.SJ.out.tab.gz 
+- extdata/vignette/SGNEx_HepG2_Illumina_replicate4-run1.subset.SJ.out.tab.gz 
+- extdata/vignette/SGNEx_HepG2_Illumina_replicate5-run1.subset.SJ.out.tab.gz
 
 ```{r ListFiles, eval=FALSE}
 files <- list.files(system.file('extdata/vignette/junctions', 
@@ -96,29 +96,22 @@ files <- list.files(system.file('extdata/vignette/junctions',
 
 ### Preparing promoter annotations
 
-In order to quantify promoter activity, proActiv uses a set of promoters based on genome annotations. proActiv allows the creation of a promoter annotation object for any genome from a TxDb object or from a GTF file with the `preparePromoterAnnotation` function. Users have the option to either pass the file path of the GTF/GFF or TxDb to be used, or use the TxDb object directly as input. proActiv includes pre-calculated promoter annotations for human and mouse genomes:
+In order to quantify promoter activity, proActiv uses a set of promoters based on genome annotations. proActiv allows the creation of a promoter annotation object for any genome from a TxDb object or from a GTF file with the `preparePromoterAnnotation` function. Users have the option to either pass the file path of the GTF/GFF or TxDb to be used, or use the TxDb object directly as input. proActiv includes pre-calculated promoter annotations for the human genome (GENCODE v34). However, due to size constraints, the annotation is restricted to the chr1:10,000,000-30,000,000 region. Users can build full annotations by downloading GTF files from [GENCODE](https://www.gencodegenes.org) page and following the steps below.
 
-- GENCODE Release 19 / GRCh37 / hg19 : `promoterAnnotation.gencode.v19` 
-- GENCODE Release 34 / GRCh38 / hg38 : `promoterAnnotation.gencode.v34`
-- GENCODE Release M1 / NCBIM37 / mm9 : `promoterAnnotation.gencode.vM1`
-- GENCODE Release M25 / GRCm38.p6 / mm10 : `promoterAnnotation.gencode.vM25`  
-
-GTF files can be downloaded from the [GENCODE](https://www.gencodegenes.org) page.
-
-Here, we demonstrate creating the promoter annotation for the Human genome (GENCODE v34) with both GTF and TxDb. To keep the run-time of this vignette small, we use a subset of the GTF/TxDb which includes only chromosome 22 annotations.
+We demonstrate creating the restricted promoter annotation for the Human genome (GENCODE v34) with both GTF and TxDb:
 
 ```{r CreateAnnotation, eval=FALSE}
 ## From GTF file path
-gtf.file <- system.file('extdata/vignette/annotation/gencode.v34.annotation.chr22.gtf.gz', 
+gtf.file <- system.file('extdata/vignette/annotation/gencode.v34.annotation.subset.gtf.gz', 
                         package = 'proActiv')
-promoterAnnotation.gencode.v34.chr22 <- preparePromoterAnnotation(file = gtf.file,
-                                                                  species = 'Homo_sapiens')
+promoterAnnotation.gencode.v34.subset <- preparePromoterAnnotation(file = gtf.file,
+                                                                   species = 'Homo_sapiens')
 ## From TxDb object
-txdb.file <- system.file('extdata/vignette/annotation/gencode.v34.annotation.chr22.sqlite', 
+txdb.file <- system.file('extdata/vignette/annotation/gencode.v34.annotation.subset.sqlite', 
                          package = 'proActiv')
 txdb <- loadDb(txdb.file)
-promoterAnnotation.gencode.v34.chr22 <- preparePromoterAnnotation(txdb = txdb, 
-                                                                  species = 'Homo_sapiens')
+promoterAnnotation.gencode.v34.subset <- preparePromoterAnnotation(txdb = txdb, 
+                                                                   species = 'Homo_sapiens')
 ```
 
 The `PromoterAnnotation` object has 3 slots:
@@ -132,7 +125,7 @@ The `PromoterAnnotation` object has 3 slots:
 Once promoters in the genome are identified, proActiv estimates promoter activity at each annotated promoter. Here, we load pre-calculated promoter annotation for GENCODE Release 34. We also supply the experimental condition to `proActiv`. This information allows `proActiv` to summarize results across conditions.
 
 ```{r proActiv, eval=FALSE, message=FALSE, results='hide'}
-promoterAnnotation <- promoterAnnotation.gencode.v34
+promoterAnnotation <- promoterAnnotation.gencode.v34.subset
 
 condition <- rep(c('A549', 'HepG2'), each=3)
 
@@ -164,18 +157,16 @@ result <- result[complete.cases(assays(result)$promoterCounts),]
 
 ### Alternative promoter usage
 
-We identify genes with similar expression levels across cell lines with alternate promoter usage using [DEXSeq](https://bioconductor.org/packages/release/bioc/html/DEXSeq.html) (Anders, Reyes, Huber 2012). While DEXSeq is originally intended for inferring differential exon usage in RNA-Seq data, DEXSeq can be similarly used with raw promoter counts as input to assess the statistical significance of alternative promoter usage across conditions. We follow the standard [DEXSeq workflow](https://bioconductor.org/packages/devel/bioc/vignettes/DEXSeq/inst/doc/DEXSeq.html#3_counting_reads). To keep the run-time of this vignette short, we focus only on annotated promoters from chromosome 1.      
+We identify genes with similar expression levels across cell lines with alternate promoter usage using [DEXSeq](https://bioconductor.org/packages/release/bioc/html/DEXSeq.html) (Anders, Reyes, Huber 2012). While DEXSeq is originally intended for inferring differential exon usage in RNA-Seq data, DEXSeq can be similarly used with raw promoter counts as input to assess the statistical significance of alternative promoter usage across conditions. We follow the standard [DEXSeq workflow](https://bioconductor.org/packages/devel/bioc/vignettes/DEXSeq/inst/doc/DEXSeq.html#3_counting_reads). 
 
 ```{r DEXSeq, eval=TRUE, message=FALSE, warning=FALSE}
 library(DEXSeq)
 
-## Subset to chromosome 1
-result.chr <- result[rowData(result)$seqnames == 'chr1', ]
-countData <- data.frame(assays(result.chr)$promoterCounts, rowData(result.chr))
+countData <- data.frame(assays(result)$promoterCounts, rowData(result))
 
 ## Call DEXSeq - promoter as feature, gene as group
 dxd <- DEXSeqDataSet(countData = as.matrix(countData[,seq_len(length(condition))]),
-                     sampleData = data.frame(colData(result.chr)),
+                     sampleData = data.frame(colData(result)),
                      design = formula(~ sample + exon + condition:exon),
                      featureID = as.factor(countData$promoterId),
                      groupID = as.factor(countData$geneId))
@@ -208,7 +199,7 @@ Here we offer several visualizations of the data returned by the workflow above.
 
 ### Alternative Promoter Usage
 
-To visualize genes with alternative promoter usage across conditions, we call `plotPromoters` on the summarizedExperiment object `result` returned by proActiv. Here, we demonstrate `plotPromoters` by visualizing promoters of RAP1GAP (ENSG00000076864.19). RAP1GAP is the second most significant gene identified in `dxr1` as a candidate for alternative promoter usage across cell lines A549 and HepG2. `plotPromoters` takes in `result` and `gene`, a gene of interest. 
+To visualize genes with alternative promoter usage across conditions, we call `plotPromoters` on the summarizedExperiment object `result` returned by proActiv. Here, we demonstrate `plotPromoters` by visualizing promoters of RAP1GAP (ENSG00000076864.19). RAP1GAP is the most significant gene identified in `dxr1` as a candidate for alternative promoter usage across cell lines A549 and HepG2. `plotPromoters` takes in `result` and `gene`, a gene of interest. 
 
 In order to build and plot a transcript model for the gene of interest, users may supply either a transcript database (`txdb`) or a list of Genomic Ranges giving the ranges of exons by transcripts to be plotted (`ranges`). If users choose to use a TxDb as input, we recommend that the TxDb used should be the same as the one used to prepare promoter annotations, as annotations from different sources may differ slightly. To keep the run-time of this vignette short, we use a TxDb generated from GENCODE v34 GTF subsetted to RAP1GAP. 
 
@@ -254,44 +245,44 @@ ggplot(na.omit(pdata1)) +
 
 ### Major/minor promoters by position
 
-Analysis of major:minor promoter proportions against promoter position. The analysis is restricted to multi-promoter genes with at least one active promoter. Below, we generate the plot for cell line A549. In general, the major:minor promoter proportion decreases with increasing promoter position.
+Analysis of major:minor promoter proportions against promoter position. The analysis is restricted to multi-promoter genes with at least one active promoter. Below, we generate the plot for cell line HepG2. In general, the major:minor promoter proportion decreases with increasing promoter position.
 
 ```{r VizMajorMinorPosition, eval=TRUE, fig.align='center', fig.height=5, fig.width=5, message=FALSE, warning=FALSE}
 ## Because many genes have many annotated promoters, we collapse promoters 
 ## from the 5th position and onward into one group for simplicity
 pdata2 <- as_tibble(rdata) %>%
   mutate(promoterPosition = ifelse(promoterPosition > 5, 5, promoterPosition)) %>%
-  filter(A549.class %in% c('Major', 'Minor'))
+  filter(HepG2.class %in% c('Major', 'Minor'))
 
 ggplot(pdata2) +
-  geom_bar(aes(x = promoterPosition, fill = as.factor(A549.class)), position = 'fill') +
+  geom_bar(aes(x = promoterPosition, fill = as.factor(HepG2.class)), position = 'fill') +
   xlab(expression(Promoter ~ Position ~ "5'" %->% "3'")) + ylab('Percentage') + 
-  labs(fill = 'Promoter Category') + ggtitle('Major/Minor Promoter Proportion in A549') + 
+  labs(fill = 'Promoter Category') + ggtitle('Major/Minor Promoter Proportion in HepG2') + 
   scale_y_continuous(breaks = seq(0,1, 0.25), labels = paste0(seq(0,100,25),'%')) +
   scale_x_continuous(breaks = seq(1,5), labels = c('1','2','3','4','>=5'))
 ```
 
 ### Major promoter activity and gene expression
 
-Comparison of major promoter activity and gene expression, calculated by summing over all promoters. Single promoter genes lie on the diagonal. Multi-promoter genes lie to the right of the diagonal. Below, we generate the plot for cell line A549. This plot suggests that a single major promoter does not often fully explain gene expression, with minor promoters also contributing to gene expression.
+Comparison of major promoter activity and gene expression, calculated by summing over all promoters. Single promoter genes lie on the diagonal. Multi-promoter genes lie to the right of the diagonal. Below, we generate the plot for cell line HepG2. This plot suggests that a single major promoter does not often fully explain gene expression, with minor promoters also contributing to gene expression.
 
-```{r VizMajorGeneExp, eval=TRUE, fig.align='center', fig.height=5, fig.width=6, message=FALSE, warning=FALSE}
-## Get active major promoters of A549
+```{r VizMajorGeneExp, eval=TRUE, fig.align='center', fig.height=5, fig.width=6.5, message=FALSE, warning=FALSE}
+## Get active major promoters of HepG2
 majorPromoter <- as_tibble(rdata) %>% group_by(geneId) %>% 
-  mutate(promoterCount = n()) %>% filter(A549.class == 'Major') 
+  mutate(promoterCount = n()) %>% filter(HepG2.class == 'Major') 
 ## Get gene expression corresponding to the genes identified above
 geneExpression <- metadata(result)$geneExpression %>% 
   rownames_to_column(var = 'geneId') %>% 
   filter(geneId %in% majorPromoter$geneId)
 
-pdata3 <- data.frame(proActiv = majorPromoter$A549.mean,
-                     geneExp = geneExpression$A549.mean[match(majorPromoter$geneId, 
+pdata3 <- data.frame(proActiv = majorPromoter$HepG2.mean,
+                     geneExp = geneExpression$HepG2.mean[match(majorPromoter$geneId, 
                                                               geneExpression$geneId)],
                      promoterCount = majorPromoter$promoterCount)
 
 ggplot(pdata3, aes(x = geneExp, y = proActiv)) + 
-  geom_point(aes(colour = promoterCount), shape = 1) +
-  ggtitle('Major Promoter Activity vs. Gene Expression in A549') + 
+  geom_point(aes(colour = promoterCount), alpha = 0.5) +
+  ggtitle('Major Promoter Activity vs. Gene Expression in HepG2') + 
   xlab('Average Gene Expression') + ylab('Average Major Promoter Activity') +
   labs(colour = 'Number of \n Annotated Promoters') +
   geom_abline(slope = 1, intercept = 0, colour = 'red', linetype = 'dashed')
@@ -309,14 +300,14 @@ data <- assays(result)$absolutePromoterActivity %>% filter(rowSums(.) > 0)
 data <- data.frame(t(data))
 data$Sample <- as.factor(condition)
 
-set.seed(42) # for reproducibility
+set.seed(40) # for reproducibility
 
 tsne.out <- Rtsne(as.matrix(subset(data, select = -c(Sample))), perplexity = 1)
 plot(x = tsne.out$Y[,1], y = tsne.out$Y[,2], bg = data$Sample, asp = 1,
      col = 'black', pch = 24, cex = 4,
      main = 't-SNE plot with promoters \n active in at least one sample',
      xlab = 'T-SNE1', ylab = 'T-SNE2',
-     xlim = c(-180,180), ylim = c(-180,180))
+     xlim = c(-300,300), ylim = c(-300,300))
 legend('topright', inset = .02, title = 'Cell Lines',
        unique(condition), pch = c(24,24), pt.bg = 1:length(unique(condition)) , cex = 1.5, bty = 'n')
 ```

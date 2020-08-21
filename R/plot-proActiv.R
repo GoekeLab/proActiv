@@ -1,5 +1,4 @@
-#' Wrapper function returning Summarized Experiment object giving promoter 
-#' counts and activity
+#' Visualizes promoter activity and transcript model for a gene of interest
 #'
 #' @param result A SummarizedExperiment object with assays giving promoter 
 #'   counts and activity with gene expression stored as column data and 
@@ -39,17 +38,23 @@
 #'   
 #' @examples 
 #'  
-#'  gene <- 'ENSG00000076864.19'
-#'  ## Genomic Ranges giving exons by transcripts of gene 
-#'  ranges <- readRDS(system.file('extdata/vignette/annotations', 
-#'                                'exonsBy.rap1gap.rds',
-#'                                package = 'proActiv'))
-#'  ## summarizedExperiment returned by proActiv (subsetted to gene RAP1GAP)
-#'  result <- readRDS(system.file('extdata/vignette/annotations',
-#'                                'result.rap1gap.rds',
-#'                                package ='proActiv'))
-#'  plotPromoters(result = result, gene = gene, ranges = ranges)
-#'   
+#' ## First, run proActiv to generate a summarizedExperiment result
+#' files <- list.files(system.file('extdata/vignette/junctions', 
+#'                        package = 'proActiv'), 
+#'                        full.names = TRUE)
+#' promoterAnnotation <- promoterAnnotation.gencode.v34.subset
+#' result <- proActiv(files = files,
+#'                        promoterAnnotation  = promoterAnnotation,
+#'                        condition = rep(c('A549','HepG2'), each=3),
+#'                        ncores = 1)
+#' ## Read in pre-computed ranges
+#' txdb <- AnnotationDbi::loadDb(system.file('extdata/vignette/annotations',
+#'                                    'gencode.v34.annotation.rap1gap.sqlite',
+#'                                    package = 'proActiv'))
+#' ## Declare a gene of interest
+#' gene <- 'ENSG00000076864.19'
+#' ## Call plot 
+#' plotPromoters(result = result, gene = gene, txdb = txdb)
 #'                            
 #' @importFrom Gviz plotTracks GenomeAxisTrack
 #' @importFrom SummarizedExperiment rowData colData
@@ -61,16 +66,16 @@ plotPromoters <- function(result, gene, txdb, ranges,
                             label.col = 'black', label.size = 0.7,
                             arrow.width = NULL, arrow.fill = 'transparent', 
                             arrow.border = 'grey') {
-    print(paste0('Plotting ', gene))
     result.gene <- result[rowData(result)$geneId == gene, ]
     rdata <- rowData(result.gene)[complete.cases(rowData(result.gene)),]
     groups <- unique(colData(result.gene)$condition)
 
     if (nrow(rdata) == 0) {
-        stop('Gene selected has only one transcript which is a single-exon
-            transcript. proActiv does not estimate promoter activity in 
-            such cases.')
+        stop('Gene ID selected is either not present or has only one transcript 
+            which is a single-exon transcript. proActiv does not estimate 
+            promoter activity in such cases.')
     }
+    print(paste0('Plotting ', gene))
     
     grtrack <- getGeneRegionTrack(rdata, gene, txdb, ranges)
     dtracklist <- getDataTrack(rdata, groups, blk.width = blk.width,

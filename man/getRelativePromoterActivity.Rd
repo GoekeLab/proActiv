@@ -20,19 +20,3 @@ data.frame of relative promoter activity with promoter and gene ids
 Prepare the relative promoter activity table including the promoter and gene
 ids
 }
-\examples{
-
-## absolutePromoterActivity is an object returned 
-## from getAbsolutePromoterActivity
-## geneExpression is an object returned from getGeneExpression
-absolutePromoterActivity <- readRDS(system.file('extdata/testdata/tophat2', 
-                                            'absolutePromoterActivity.rds', 
-                                            package = 'proActiv'))
-geneExpression <- readRDS(system.file('extdata/testdata/tophat2', 
-                                        'geneExpression.rds', 
-                                         package = 'proActiv'))
-relativePromoterActivity <- getRelativePromoterActivity(
-                                         absolutePromoterActivity,
-                                         geneExpression)
-
-}

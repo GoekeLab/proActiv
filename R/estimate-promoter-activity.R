@@ -10,23 +10,6 @@
 #' @param pseudocount Number to be used for log2 as pseudocount if log2 is TRUE
 #'
 #' @return data.frame of absolute promoter activity with promoter and gene ids
-#' @export
-#'
-#' @examples
-#' 
-#' ## junctionReadCounts is an object returned from normalizePromoterReadCounts
-#' junctionReadCounts <- readRDS(system.file('extdata/testdata/tophat2',
-#'                                             'normalizedPromoterCounts.rds', 
-#'                                              package = 'proActiv'))
-#' absolutePromoterActivity <- getAbsolutePromoterActivity(junctionReadCounts,
-#'                                              promoterAnnotation.gencode.v19,
-#'                                              log2 = TRUE,
-#'                                              pseudocount = 1)
-#'
-#' @seealso \code{\link{preparePromoterAnnotation}} for preparing the mapping
-#'   between promoters and genes, \code{\link{calculatePromoterReadCounts}} and
-#'   \code{\link{normalizePromoterReadCounts}} for obtaining junction read
-#'   counts
 #'
 getAbsolutePromoterActivity <- function(junctionReadCounts, promoterAnnotation,
                                         log2 = TRUE, pseudocount = 1) {
@@ -50,18 +33,7 @@ getAbsolutePromoterActivity <- function(junctionReadCounts, promoterAnnotation,
 #' @param absolutePromoterActivity data.frame of absolute promoter activity 
 #'   with promoter and gene ids
 #'
-#' @return data.frame of gene expression with gene ids
-#' @export
-#'
-#' @examples
-#' 
-#' ## absolutePromoterActivity is an object returned 
-#' ## from getAbsolutePromoterActivity
-#' absolutePromoterActivity <- readRDS(system.file('extdata/testdata/tophat2', 
-#'                                              'absolutePromoterActivity.rds', 
-#'                                               package = 'proActiv')) 
-#' geneExpression <- getGeneExpression(absolutePromoterActivity)
-#' 
+#' @return data.frame of gene expression with gene ids#'
 #'
 getGeneExpression <- function(absolutePromoterActivity) {
     print('Calculating gene expression...')
@@ -88,22 +60,6 @@ getGeneExpression <- function(absolutePromoterActivity) {
 #' @param geneExpression data.frame of gene expression with gene ids
 #'
 #' @return data.frame of relative promoter activity with promoter and gene ids
-#' @export
-#'
-#' @examples
-#' 
-#' ## absolutePromoterActivity is an object returned 
-#' ## from getAbsolutePromoterActivity
-#' ## geneExpression is an object returned from getGeneExpression
-#' absolutePromoterActivity <- readRDS(system.file('extdata/testdata/tophat2', 
-#'                                             'absolutePromoterActivity.rds', 
-#'                                             package = 'proActiv'))
-#' geneExpression <- readRDS(system.file('extdata/testdata/tophat2', 
-#'                                         'geneExpression.rds', 
-#'                                          package = 'proActiv'))
-#' relativePromoterActivity <- getRelativePromoterActivity(
-#'                                          absolutePromoterActivity,
-#'                                          geneExpression)
 #'
 getRelativePromoterActivity <- function(absolutePromoterActivity, 
                                         geneExpression) {

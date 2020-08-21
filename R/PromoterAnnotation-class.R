@@ -49,11 +49,11 @@ setClass(
 #' 
 #' promoterAnnotation <- PromoterAnnotation()
 #' intronRanges(promoterAnnotation) <- intronRanges(
-#'                                             promoterAnnotation.gencode.v19)
+#'                                     promoterAnnotation.gencode.v34.subset)
 #' promoterIdMapping(promoterAnnotation) <- promoterIdMapping(
-#'                                             promoterAnnotation.gencode.v19)
+#'                                     promoterAnnotation.gencode.v34.subset)
 #' promoterCoordinates(promoterAnnotation) <- promoterCoordinates(
-#'                                             promoterAnnotation.gencode.v19)
+#'                                     promoterAnnotation.gencode.v34.subset)
 #' 
 
 PromoterAnnotation <-

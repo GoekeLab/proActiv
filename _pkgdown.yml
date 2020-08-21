@@ -1,0 +1,25 @@
+title: proActiv
+url: https://goekelab.github.io/proActiv/
+template:
+  params:
+    bootswatch: united
+reference:
+  - title: Functions
+    contents:
+      - proActiv
+      - preparePromoterAnnotation
+      - plotPromoters
+  - title: Data
+    contents:
+      - promoterAnnotation.gencode.v34.subset
+navbar:
+  type: default
+  left:
+    - icon: fa-home
+      href: index.html
+    - text: Complete Analysis Workflow
+      icon: fa-file-alt
+      href: articles/proActiv.html
+    - text: Manual
+      icon: fa-code
+      href: reference/index.html
