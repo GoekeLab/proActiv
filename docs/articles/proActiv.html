@@ -356,7 +356,6 @@
 <p>We identify genes with similar expression levels across cell lines with alternate promoter usage using <a href="https://bioconductor.org/packages/release/bioc/html/DEXSeq.html">DEXSeq</a> (Anders, Reyes, Huber 2012). While DEXSeq is originally intended for inferring differential exon usage in RNA-Seq data, DEXSeq can be similarly used with raw promoter counts as input to assess the statistical significance of alternative promoter usage across conditions. We follow the standard <a href="https://bioconductor.org/packages/devel/bioc/vignettes/DEXSeq/inst/doc/DEXSeq.html#3_counting_reads">DEXSeq workflow</a>.</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">DEXSeq</span>)
 
-<span class="co">## Subset to chromosome 1</span>
 <span class="no">countData</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">assays</a></span>(<span class="no">result</span>)$<span class="no">promoterCounts</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span>(<span class="no">result</span>))
 
 <span class="co">## Call DEXSeq - promoter as feature, gene as group</span>

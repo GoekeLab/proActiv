@@ -162,7 +162,6 @@ We identify genes with similar expression levels across cell lines with alternat
 ```{r DEXSeq, eval=TRUE, message=FALSE, warning=FALSE}
 library(DEXSeq)
 
-## Subset to chromosome 1
 countData <- data.frame(assays(result)$promoterCounts, rowData(result))
 
 ## Call DEXSeq - promoter as feature, gene as group
