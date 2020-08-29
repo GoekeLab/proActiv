@@ -172,27 +172,23 @@ summarizeAcrossCondition <- function(result, condition) {
 }
 
 # Helper function to categorize promoters
-#' @importFrom data.table as.data.table .I setorder
+#' @importFrom rlang .data
+#' @importFrom dplyr as_tibble '%>%' slice_max
 categorizePromoters <- function(rdata, condition) {
-    ## Avoid undefined global vars
-    promoterId <- NULL
-    promoterPosition <- NULL
-    geneId <- NULL
-    data <- as.data.table(rdata)
-    data <- setorder(data, promoterPosition)
-    data <- setorder(data, geneId)
-    
+    rdata <- as_tibble(rdata)
     for (group in unique(condition)) {
         print(paste0('Categorizing ', group, ' promoters...'))
         mean <- paste0(group, '.mean')
         class <- paste0(group, '.class')
         
-        max.rows <- data[, .I[which.max(get(mean))], by=geneId]
-        data[[class]] <- ifelse(data[[mean]] < 0.25, 'Inactive', 'Minor')
-        data[[class]][max.rows$V1] <- 'Major'
-        data[[class]][which(data[[mean]] < 0.25)] <- 'Inactive'
-        data[[class]][which(data$internalPromoter)] <- NA
+        max_rows <- rdata %>%
+            group_by(.data$geneId) %>%
+            slice_max(!!as.name(mean), with_ties = FALSE)
+        rdata[[class]] <- ifelse(rdata[[mean]] < 0.25, 'Inactive', 'Minor')
+        rdata[[class]][max_rows$promoterId] <- "Major"
+        rdata[[class]][which(rdata[[mean]] < 0.25)] <- "Inactive"
+        rdata[[class]][which(rdata$internalPromoter)] <- NA
+        rdata[[class]][which(is.na(rdata$internalPromoter))] <- NA
     }
-    data <- setorder(data, promoterId)
-    return(data)
+    return(rdata)
 }
