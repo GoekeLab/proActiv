@@ -75,7 +75,7 @@ plotPromoters <- function(result, gene, txdb, ranges,
             which is a single-exon transcript. proActiv does not estimate 
             promoter activity in such cases.')
     }
-    print(paste0('Plotting ', gene))
+    message(paste0('Plotting ', gene))
     
     grtrack <- getGeneRegionTrack(rdata, gene, txdb, ranges)
     dtracklist <- getDataTrack(rdata, groups, blk.width = blk.width,
@@ -87,7 +87,7 @@ plotPromoters <- function(result, gene, txdb, ranges,
                                 fill = arrow.fill, col = arrow.border)
     gtrack <- GenomeAxisTrack()
     
-    print('Creating Plot...')
+    message('Creating Plot...')
     plotTracks(c(grtrack, dtracklist, atrack, gtrack), type='histo', 
                 main = gene, col.axis = 'black', col.title = 'black', 
                 background.title = 'transparent', cex.title = cex.title, 
@@ -99,7 +99,7 @@ plotPromoters <- function(result, gene, txdb, ranges,
 #' @importFrom Gviz DataTrack
 getDataTrack <- function(rdata, groups, blk.width,
                             fill.histogram, col.histogram) {
-    print('Creating Data Track...')
+    message('Creating Data Track...')
     ## Set dummy width for visualization
     if (is.null(blk.width)) {
         blk.width <- blk.width
@@ -133,7 +133,7 @@ getDataTrack <- function(rdata, groups, blk.width,
 #' @importFrom Gviz GeneRegionTrack
 #' @importFrom GenomicRanges GRangesList
 getGeneRegionTrack <- function(rdata, gene, txdb, ranges) {
-    print('Creating Gene Region Track...')
+    message('Creating Gene Region Track...')
     txs.gene <- rdata$txId[[1]]
     if ( missing(txdb) & missing(ranges)) {
         stop('Either txdb or ranges must be provided')
@@ -163,7 +163,7 @@ getGeneRegionTrack <- function(rdata, gene, txdb, ranges) {
 getAnnotationTrack <- function(rdata, grtrack, arrow.width,
                                 fontcolor.feature, cex.feature, 
                                 fill, col) {
-    print('Creating Annotation Track...')
+    message('Creating Annotation Track...')
     ## Adjust arrow start depending on stand - Gviz quirks
     if (is.null(arrow.width)) {
         min.coord <- min(c(start(grtrack), end(grtrack)))

@@ -20,18 +20,18 @@
 calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges, 
                                         file = '', fileType = '', genome = '') {
     if(fileType == 'tophat') {
-        print(paste0('Processing: ', file))
+        message(paste0('Processing: ', file))
         junctionTable <- readTopHatJunctions(file)
         seqlevelsStyle(junctionTable) <- 'UCSC'
-        print('File loaded into memory')
+        message('File loaded into memory')
     } else if(fileType == 'star') {
-        print(paste0('Processing: ', file))
+        message(paste0('Processing: ', file))
         junctionTable <- readSTARJunctions(file)
         seqlevelsStyle(junctionTable) <- 'UCSC'
         junctionTable$score <- junctionTable$um_reads  
-        print('File loaded into memory')
+        message('File loaded into memory')
     } else if (fileType == 'bam') {
-        print(paste0('Processing: ', file))
+        message(paste0('Processing: ', file))
         rawBam <- readGAlignments(file)
         bam <- keepStandardChromosomes(rawBam, pruning.mode = 'coarse')
         seqlevelsStyle(bam) <- 'UCSC'
@@ -44,9 +44,9 @@ calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges,
                                                     pruning.mode = 'coarse')
         strand(junctionTable) <- junctionTable$intron_strand
         junctionTable <- junctionTable[,c('score')]
-        print('Junctions extracted from BAM file')
+        message('Junctions extracted from BAM file')
     }
-    print('Calculating junction counts')
+    message('Calculating junction counts')
     intronRanges.overlap <- findOverlaps(intronRanges, junctionTable, 
                                             type = 'equal')
     intronRanges$junctionCounts <- rep(0, length(intronRanges))
@@ -106,7 +106,7 @@ calculatePromoterReadCounts <- function(promoterAnnotation, files = NULL,
                                     BPPARAM = bpParameters)
     } else {
         if (requireNamespace('BiocParallel', quietly = TRUE) == FALSE) {
-            print('Warning: "BiocParallel" package is not available! 
+            message('Warning: "BiocParallel" package is not available! 
                     Using sequential version instead...')
         }
         promoterReadCounts <- lapply(files, calculateJunctionReadCounts, 
@@ -144,7 +144,7 @@ normalizePromoterReadCounts <- function(promoterReadCounts) {
     colData <- data.frame(sampleLabels = colnames(promoterReadCounts))
     rownames(colData) <- colnames(promoterReadCounts)
 
-    print('Calculating normalized read counts...')
+    message('Calculating normalized read counts...')
     if (requireNamespace('DESeq2', quietly = TRUE) == FALSE) {
         stop('DESeq2 is not installed! 
                 For normalization DESeq2 is needed, please install it.')

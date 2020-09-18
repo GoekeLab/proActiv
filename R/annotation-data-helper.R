@@ -299,7 +299,7 @@ parseTxdb <- function(txdb, file, species) {
         if (!(ext %in% c('gtf', 'sqlite', 'gff3'))) {
             stop('File path must link to a GTF/GFF or TxDb object')
         }
-        print('Parsing input file...')
+        message('Parsing input file...')
         if (ext == 'sqlite') {
             txdb <- AnnotationDbi::loadDb(file)
         } else if (ext %in% c('gtf', 'gff3')) {

@@ -13,7 +13,7 @@
 #'
 getAbsolutePromoterActivity <- function(junctionReadCounts, promoterAnnotation,
                                         log2 = TRUE, pseudocount = 1) {
-    print(paste0('Calculating ', ifelse(log2 == TRUE, 'log2 ', ''), 
+    message(paste0('Calculating ', ifelse(log2 == TRUE, 'log2 ', ''), 
                     'absolute promoter activity...'))
     promoterIdMapping <- promoterIdMapping(promoterAnnotation)
     conversionHelper <- unique(promoterIdMapping[, c('promoterId', 'geneId')])
@@ -36,7 +36,7 @@ getAbsolutePromoterActivity <- function(junctionReadCounts, promoterAnnotation,
 #' @return data.frame of gene expression with gene ids#'
 #'
 getGeneExpression <- function(absolutePromoterActivity) {
-    print('Calculating gene expression...')
+    message('Calculating gene expression...')
     conversionHelper <- absolutePromoterActivity[, c('promoterId', 'geneId')]
     if (ncol(absolutePromoterActivity) == 3) {
         geneExpression <- data.frame(counts = tapply(
@@ -63,7 +63,7 @@ getGeneExpression <- function(absolutePromoterActivity) {
 #'
 getRelativePromoterActivity <- function(absolutePromoterActivity, 
                                         geneExpression) {
-    print(paste0('Calculating relative promoter activity...'))
+    message(paste0('Calculating relative promoter activity...'))
     conversionHelper <- absolutePromoterActivity[, c('promoterId', 'geneId')]
     if (is.null(geneExpression) == TRUE) {
         geneExpression <- getGeneExpression(absolutePromoterActivity)

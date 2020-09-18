@@ -129,7 +129,7 @@ buildSummarizedExperiment <- function(promoterAnnotation,
                                                     fileLabels, drop = FALSE]))
     metadata(result) <- list(geneExpression = 
                                     geneExpression[, fileLabels, drop = FALSE])
-    print('Calculating positions of promoters...')
+    message('Calculating positions of promoters...')
     promoterCoordinates <- promoterCoordinates(promoterAnnotation)
     promoterIdMapping <- promoterIdMapping(promoterAnnotation)
     promoterCoordinates$geneId <- promoterIdMapping$geneId[match(
@@ -159,7 +159,7 @@ summarizeAcrossCondition <- function(result, condition) {
         colData(result) <- DataFrame(sampleName = colnames(result), 
                                     condition=condition)
         colnames(result) <- colData(result)$sampleName
-        print('Summarising expression and activity across conditions...')
+        message('Summarising expression and activity across conditions...')
         for (group in unique(condition)) {
             rowData(result)[,paste0(group, '.mean')] <- 
                 rowMeans(assays(result[,colData(result)$condition==group])$abs) 
@@ -177,7 +177,7 @@ summarizeAcrossCondition <- function(result, condition) {
 categorizePromoters <- function(rdata, condition) {
     rdata <- as_tibble(rdata)
     for (group in unique(condition)) {
-        print(paste0('Categorizing ', group, ' promoters...'))
+        message(paste0('Categorizing ', group, ' promoters...'))
         mean <- paste0(group, '.mean')
         class <- paste0(group, '.class')
         
