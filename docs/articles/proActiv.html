@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proActiv</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
       </span>
     </div>
 
@@ -202,12 +202,20 @@
 <li>
 <code>promoterCoordinates</code> : Promoter coordinates (TSS) and internal promoter state, along with the 3’ coordinate of the first exon</li>
 </ul>
+<p>When creating promoter annotations for other species, one can call <code>genomeStyles</code> to identify the <code>species</code> argument to be used:</p>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw pkg">GenomeInfoDb</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqlevelsStyle.html">genomeStyles</a></span>())
+<span class="co">#&gt;  [1] "Arabidopsis_thaliana"     "Caenorhabditis_elegans"  </span>
+<span class="co">#&gt;  [3] "Canis_familiaris"         "Cyanidioschyzon_merolae" </span>
+<span class="co">#&gt;  [5] "Drosophila_melanogaster"  "Homo_sapiens"            </span>
+<span class="co">#&gt;  [7] "Mus_musculus"             "Oryza_sativa"            </span>
+<span class="co">#&gt;  [9] "Populus_trichocarpa"      "Rattus_norvegicus"       </span>
+<span class="co">#&gt; [11] "Saccharomyces_cerevisiae" "Zea_mays"</span></pre></body></html></div>
 </div>
 <div id="running-proactiv" class="section level3">
 <h3 class="hasAnchor">
 <a href="#running-proactiv" class="anchor"></a>Running proActiv</h3>
 <p>Once promoters in the genome are identified, proActiv estimates promoter activity at each annotated promoter. Here, we load pre-calculated promoter annotation for GENCODE Release 34. We also supply the experimental condition to <code>proActiv</code>. This information allows <code>proActiv</code> to summarize results across conditions.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">promoterAnnotation</span> <span class="kw">&lt;-</span> <span class="no">promoterAnnotation.gencode.v34.subset</span>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">promoterAnnotation</span> <span class="kw">&lt;-</span> <span class="no">promoterAnnotation.gencode.v34.subset</span>
 
 <span class="no">condition</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'A549'</span>, <span class="st">'HepG2'</span>), <span class="kw">each</span><span class="kw">=</span><span class="fl">3</span>)
 
@@ -215,7 +223,7 @@
                    <span class="kw">promoterAnnotation</span> <span class="kw">=</span> <span class="no">promoterAnnotation</span>,
                    <span class="kw">condition</span> <span class="kw">=</span> <span class="no">condition</span>)</pre></body></html></div>
 <p><code>result</code> is a <code>SummarizedExperiment</code> object with assays as raw/normalized promoter counts, and absolute/relative promoter activity:</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu">show</span>(<span class="no">result</span>)
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu">show</span>(<span class="no">result</span>)
 <span class="co">#&gt; class: SummarizedExperiment </span>
 <span class="co">#&gt; dim: 1380 6 </span>
 <span class="co">#&gt; metadata(1): geneExpression</span>
@@ -347,14 +355,14 @@
 </table>
 <p>The <code>metadata</code> slot provides gene expression data for each replicate per condition, and also summarizes mean expression across conditions.</p>
 <p>For cleaner downstream analysis, one can remove single-exon transcripts for which promoter activity is not quantified. <code>result</code> can be filtered as such:</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co">## Removes single-exon transcripts / promoters by eliminating promoter counts that are NA </span>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co">## Removes single-exon transcripts / promoters by eliminating promoter counts that are NA </span>
 <span class="no">result</span> <span class="kw">&lt;-</span> <span class="no">result</span>[<span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html">complete.cases</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">assays</a></span>(<span class="no">result</span>)$<span class="no">promoterCounts</span>),]</pre></body></html></div>
 </div>
 <div id="alternative-promoter-usage" class="section level3">
 <h3 class="hasAnchor">
 <a href="#alternative-promoter-usage" class="anchor"></a>Alternative promoter usage</h3>
 <p>We identify genes with similar expression levels across cell lines with alternate promoter usage using <a href="https://bioconductor.org/packages/release/bioc/html/DEXSeq.html">DEXSeq</a> (Anders, Reyes, Huber 2012). While DEXSeq is originally intended for inferring differential exon usage in RNA-Seq data, DEXSeq can be similarly used with raw promoter counts as input to assess the statistical significance of alternative promoter usage across conditions. We follow the standard <a href="https://bioconductor.org/packages/devel/bioc/vignettes/DEXSeq/inst/doc/DEXSeq.html#3_counting_reads">DEXSeq workflow</a>.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">DEXSeq</span>)
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">DEXSeq</span>)
 
 <span class="no">countData</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">assays</a></span>(<span class="no">result</span>)$<span class="no">promoterCounts</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span>(<span class="no">result</span>))
 
@@ -366,7 +374,7 @@
                      <span class="kw">groupID</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="no">countData</span>$<span class="no">geneId</span>))
 <span class="no">dxr1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DEXSeq/man/DEXSeq.html">DEXSeq</a></span>(<span class="no">dxd</span>)</pre></body></html></div>
 <p><code>DEXSeq</code> returns <code>dxr1</code>, which provides the significance that a promoter is differentially used across conditions. The description of each column of <code>dxr1</code> can be found in the metadata columns.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu">mcols</span>(<span class="no">dxr1</span>)$<span class="no">description</span>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu">mcols</span>(<span class="no">dxr1</span>)$<span class="no">description</span>
 <span class="co">#&gt;  [1] "group/gene identifier"                                       </span>
 <span class="co">#&gt;  [2] "feature/exon identifier"                                     </span>
 <span class="co">#&gt;  [3] "mean of the counts across samples in each feature/exon"      </span>
@@ -380,7 +388,7 @@
 <span class="co">#&gt; [11] "GRanges object of the coordinates of the exon/feature"       </span>
 <span class="co">#&gt; [12] "matrix of integer counts, of each column containing a sample"</span></pre></body></html></div>
 <p>Users can sort this result by the minimum adjusted p-value for all promoters belonging to a particular gene. This helps to better identify candidate genes where alternative promoter usage is present.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co">## Arrange by minimum padj for each gene</span>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co">## Arrange by minimum padj for each gene</span>
 <span class="no">dxr1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="no">dxr1</span>[,<span class="fl">1</span>:<span class="fl">10</span>]) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">groupID</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">minp</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(<span class="no">padj</span>)) <span class="kw">%&gt;%</span>
@@ -504,7 +512,7 @@
 <a href="#alternative-promoter-usage-1" class="anchor"></a>Alternative Promoter Usage</h3>
 <p>To visualize genes with alternative promoter usage across conditions, we call <code>plotPromoters</code> on the summarizedExperiment object <code>result</code> returned by proActiv. Here, we demonstrate <code>plotPromoters</code> by visualizing promoters of RAP1GAP (ENSG00000076864.19). RAP1GAP is the most significant gene identified in <code>dxr1</code> as a candidate for alternative promoter usage across cell lines A549 and HepG2. <code>plotPromoters</code> takes in <code>result</code> and <code>gene</code>, a gene of interest.</p>
 <p>In order to build and plot a transcript model for the gene of interest, users may supply either a transcript database (<code>txdb</code>) or a list of Genomic Ranges giving the ranges of exons by transcripts to be plotted (<code>ranges</code>). If users choose to use a TxDb as input, we recommend that the TxDb used should be the same as the one used to prepare promoter annotations, as annotations from different sources may differ slightly. To keep the run-time of this vignette short, we use a TxDb generated from GENCODE v34 GTF subsetted to RAP1GAP.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co">## RAP1GAP</span>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co">## RAP1GAP</span>
 <span class="no">gene</span> <span class="kw">&lt;-</span> <span class="st">'ENSG00000076864.19'</span>
 <span class="no">txdb</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html">loadDb</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette/annotations'</span>,
                            <span class="st">'gencode.v34.annotation.rap1gap.sqlite'</span>,
@@ -517,7 +525,7 @@
 <span class="co">#&gt; [1] "Creating Plot..."</span></pre></body></html></div>
 <p><img src="proActiv_files/figure-html/VizAlternativePromoters%20txdb-1.png" width="672" style="display: block; margin: auto;"></p>
 <p>The same plot can be generated with a list of Genomic Ranges giving the exons by transcripts of RAP1GAP:</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">ranges</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette/annotations'</span>,
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">ranges</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette/annotations'</span>,
                               <span class="st">'exonsBy.rap1gap.rds'</span>,
                               <span class="kw">package</span> <span class="kw">=</span> <span class="st">'proActiv'</span>))
 <span class="fu"><a href="../reference/plotPromoters.html">plotPromoters</a></span>(<span class="kw">result</span> <span class="kw">=</span> <span class="no">result</span>, <span class="kw">gene</span> <span class="kw">=</span> <span class="no">gene</span>, <span class="kw">ranges</span> <span class="kw">=</span> <span class="no">ranges</span>)</pre></body></html></div>
@@ -528,42 +536,42 @@
 <h3 class="hasAnchor">
 <a href="#promoter-category-proportion" class="anchor"></a>Promoter category proportion</h3>
 <p>Here, we visualize the categorization of annotated promoters in the two cell lines. The proportions between the categories are similar across the two cell lines, with majority of the promoters being inactive.</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
 
 <span class="no">rdata</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span>(<span class="no">result</span>)
 <span class="co">## Create a long dataframe summarizing cell line and promoter class</span>
 <span class="no">pdata1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">cellLine</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'A549'</span>, <span class="st">'HepG2'</span>), <span class="kw">each</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">rdata</span>)),
                        <span class="kw">promoterClass</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">rdata</span>$<span class="no">A549.class</span>, <span class="no">rdata</span>$<span class="no">HepG2.class</span>)))
 
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html">na.omit</a></span>(<span class="no">pdata1</span>)) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">cellLine</span>, <span class="kw">fill</span> <span class="kw">=</span> <span class="no">promoterClass</span>)) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">'Cell Lines'</span>) + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">'Count'</span>) +  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">fill</span> <span class="kw">=</span> <span class="st">'Promoter Category'</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span>(<span class="st">'Categorization of Promoters'</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/ggplot.html">ggplot</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html">na.omit</a></span>(<span class="no">pdata1</span>)) +
+  <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/geom_bar.html">geom_bar</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">cellLine</span>, <span class="kw">fill</span> <span class="kw">=</span> <span class="no">promoterClass</span>)) +
+  <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">xlab</a></span>(<span class="st">'Cell Lines'</span>) + <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">ylab</a></span>(<span class="st">'Count'</span>) +  <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">labs</a></span>(<span class="kw">fill</span> <span class="kw">=</span> <span class="st">'Promoter Category'</span>) +
+  <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">ggtitle</a></span>(<span class="st">'Categorization of Promoters'</span>)</pre></body></html></div>
 <p><img src="proActiv_files/figure-html/VizPromoterCategories-1.png" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div id="majorminor-promoters-by-position" class="section level3">
 <h3 class="hasAnchor">
 <a href="#majorminor-promoters-by-position" class="anchor"></a>Major/minor promoters by position</h3>
 <p>Analysis of major:minor promoter proportions against promoter position. The analysis is restricted to multi-promoter genes with at least one active promoter. Below, we generate the plot for cell line HepG2. In general, the major:minor promoter proportion decreases with increasing promoter position.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co">## Because many genes have many annotated promoters, we collapse promoters </span>
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co">## Because many genes have many annotated promoters, we collapse promoters </span>
 <span class="co">## from the 5th position and onward into one group for simplicity</span>
 <span class="no">pdata2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html">as_tibble</a></span>(<span class="no">rdata</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">promoterPosition</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">promoterPosition</span> <span class="kw">&gt;</span> <span class="fl">5</span>, <span class="fl">5</span>, <span class="no">promoterPosition</span>)) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">HepG2.class</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'Major'</span>, <span class="st">'Minor'</span>))
 
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">pdata2</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">promoterPosition</span>, <span class="kw">fill</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="no">HepG2.class</span>)), <span class="kw">position</span> <span class="kw">=</span> <span class="st">'fill'</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="no">Promoter</span> ~ <span class="no">Position</span> ~ <span class="st">"5'"</span> <span class="kw">%-&gt;%</span> <span class="st">"3'"</span>)) + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">'Percentage'</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">fill</span> <span class="kw">=</span> <span class="st">'Promoter Category'</span>) + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span>(<span class="st">'Major/Minor Promoter Proportion in HepG2'</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span>(<span class="kw">breaks</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0</span>,<span class="fl">1</span>, <span class="fl">0.25</span>), <span class="kw">labels</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0</span>,<span class="fl">100</span>,<span class="fl">25</span>),<span class="st">'%'</span>)) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span>(<span class="kw">breaks</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">1</span>,<span class="fl">5</span>), <span class="kw">labels</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'1'</span>,<span class="st">'2'</span>,<span class="st">'3'</span>,<span class="st">'4'</span>,<span class="st">'&gt;=5'</span>))</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/ggplot.html">ggplot</a></span>(<span class="no">pdata2</span>) +
+  <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/geom_bar.html">geom_bar</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">promoterPosition</span>, <span class="kw">fill</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span>(<span class="no">HepG2.class</span>)), <span class="kw">position</span> <span class="kw">=</span> <span class="st">'fill'</span>) +
+  <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">xlab</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="no">Promoter</span> ~ <span class="no">Position</span> ~ <span class="st">"5'"</span> <span class="kw">%-&gt;%</span> <span class="st">"3'"</span>)) + <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">ylab</a></span>(<span class="st">'Percentage'</span>) +
+  <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">labs</a></span>(<span class="kw">fill</span> <span class="kw">=</span> <span class="st">'Promoter Category'</span>) + <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">ggtitle</a></span>(<span class="st">'Major/Minor Promoter Proportion in HepG2'</span>) +
+  <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/scale_continuous.html">scale_y_continuous</a></span>(<span class="kw">breaks</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0</span>,<span class="fl">1</span>, <span class="fl">0.25</span>), <span class="kw">labels</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0</span>,<span class="fl">100</span>,<span class="fl">25</span>),<span class="st">'%'</span>)) +
+  <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/scale_continuous.html">scale_x_continuous</a></span>(<span class="kw">breaks</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">1</span>,<span class="fl">5</span>), <span class="kw">labels</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'1'</span>,<span class="st">'2'</span>,<span class="st">'3'</span>,<span class="st">'4'</span>,<span class="st">'&gt;=5'</span>))</pre></body></html></div>
 <p><img src="proActiv_files/figure-html/VizMajorMinorPosition-1.png" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div id="major-promoter-activity-and-gene-expression" class="section level3">
 <h3 class="hasAnchor">
 <a href="#major-promoter-activity-and-gene-expression" class="anchor"></a>Major promoter activity and gene expression</h3>
 <p>Comparison of major promoter activity and gene expression, calculated by summing over all promoters. Single promoter genes lie on the diagonal. Multi-promoter genes lie to the right of the diagonal. Below, we generate the plot for cell line HepG2. This plot suggests that a single major promoter does not often fully explain gene expression, with minor promoters also contributing to gene expression.</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co">## Get active major promoters of HepG2</span>
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="co">## Get active major promoters of HepG2</span>
 <span class="no">majorPromoter</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html">as_tibble</a></span>(<span class="no">rdata</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">geneId</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">promoterCount</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>()) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">HepG2.class</span> <span class="kw">==</span> <span class="st">'Major'</span>)
 <span class="co">## Get gene expression corresponding to the genes identified above</span>
@@ -576,19 +584,19 @@
                                                               <span class="no">geneExpression</span>$<span class="no">geneId</span>)],
                      <span class="kw">promoterCount</span> <span class="kw">=</span> <span class="no">majorPromoter</span>$<span class="no">promoterCount</span>)
 
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">pdata3</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">geneExp</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">proActiv</span>)) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">colour</span> <span class="kw">=</span> <span class="no">promoterCount</span>), <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">0.5</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span>(<span class="st">'Major Promoter Activity vs. Gene Expression in HepG2'</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">'Average Gene Expression'</span>) + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">'Average Major Promoter Activity'</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">colour</span> <span class="kw">=</span> <span class="st">'Number of \n Annotated Promoters'</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_abline</a></span>(<span class="kw">slope</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">intercept</span> <span class="kw">=</span> <span class="fl">0</span>, <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'red'</span>, <span class="kw">linetype</span> <span class="kw">=</span> <span class="st">'dashed'</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/ggplot.html">ggplot</a></span>(<span class="no">pdata3</span>, <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">geneExp</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">proActiv</span>)) +
+  <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/geom_point.html">geom_point</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/aes.html">aes</a></span>(<span class="kw">colour</span> <span class="kw">=</span> <span class="no">promoterCount</span>), <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">0.5</span>) +
+  <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">ggtitle</a></span>(<span class="st">'Major Promoter Activity vs. Gene Expression in HepG2'</span>) +
+  <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">xlab</a></span>(<span class="st">'Average Gene Expression'</span>) + <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">ylab</a></span>(<span class="st">'Average Major Promoter Activity'</span>) +
+  <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">labs</a></span>(<span class="kw">colour</span> <span class="kw">=</span> <span class="st">'Number of \n Annotated Promoters'</span>) +
+  <span class="fu"><a href="https://rdrr.io/pkg/ggplot2/man/geom_abline.html">geom_abline</a></span>(<span class="kw">slope</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">intercept</span> <span class="kw">=</span> <span class="fl">0</span>, <span class="kw">colour</span> <span class="kw">=</span> <span class="st">'red'</span>, <span class="kw">linetype</span> <span class="kw">=</span> <span class="st">'dashed'</span>)</pre></body></html></div>
 <p><img src="proActiv_files/figure-html/VizMajorGeneExp-1.png" width="624" style="display: block; margin: auto;"></p>
 </div>
 <div id="t-sne" class="section level3">
 <h3 class="hasAnchor">
 <a href="#t-sne" class="anchor"></a>t-SNE</h3>
 <p>We generate a t-SNE plot with all active promoters. Expectedly, replicates from each cell line cluster together.</p>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">Rtsne</span>)
+<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">Rtsne</span>)
 
 <span class="co">## Remove inactive promoters (sparse rows)</span>
 <span class="no">data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">assays</a></span>(<span class="no">result</span>)$<span class="no">absolutePromoterActivity</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span>(<span class="no">.</span>) <span class="kw">&gt;</span> <span class="fl">0</span>)
@@ -625,7 +633,7 @@
 <a href="#session-information" class="anchor"></a>Session information</h2>
 <pre><code>#&gt; R version 4.0.2 (2020-06-22)
 #&gt; Platform: x86_64-w64-mingw32/x64 (64-bit)
-#&gt; Running under: Windows 10 x64 (build 18362)
+#&gt; Running under: Windows 10 x64 (build 19041)
 #&gt; 
 #&gt; Matrix products: default
 #&gt; 

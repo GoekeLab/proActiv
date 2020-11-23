@@ -120,6 +120,12 @@ The `PromoterAnnotation` object has 3 slots:
 - `promoterIdMapping` : An ID mapping between transcripts, promoter IDs and gene IDs  
 - `promoterCoordinates` : Promoter coordinates (TSS) and internal promoter state, along with the 3' coordinate of the first exon 
 
+When creating promoter annotations for other species, one can call `genomeStyles` to identify 
+the `species` argument to be used:
+```{r OtherSpecies, eval=TRUE}
+names(GenomeInfoDb::genomeStyles())
+```
+
 ### Running proActiv
 
 Once promoters in the genome are identified, proActiv estimates promoter activity at each annotated promoter. Here, we load pre-calculated promoter annotation for GENCODE Release 34. We also supply the experimental condition to `proActiv`. This information allows `proActiv` to summarize results across conditions.
