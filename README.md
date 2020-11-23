@@ -163,6 +163,12 @@ is described in detail
 
 ## Release History
 
+**Release 1.0.0**
+
+Release date: 28th October 2020
+
+Released with Bioconductor 3.12
+
 **Release 0.99.0**
 
 Release date: 21st August 2020
