@@ -156,6 +156,10 @@ buildSummarizedExperiment <- function(promoterAnnotation,
 #' @importFrom S4Vectors DataFrame metadata
 #' @importFrom SummarizedExperiment rowData colData assays
 summarizeAcrossCondition <- function(result, condition) {
+        if (any(make.names(condition) != condition)) {
+            warning("Condition is modified to be syntactically valid")
+            condition <- make.names(condition)
+        }
         colData(result) <- DataFrame(sampleName = colnames(result), 
                                     condition=condition)
         colnames(result) <- colData(result)$sampleName
