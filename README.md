@@ -44,11 +44,13 @@ TCGA, ICGC, GTEx, and PCAWG is available at
 
 ### Installation
 
-proActiv can be installed from GitHub with:
+proActiv can be installed from Bioconductor:
 
 ``` r
-library("devtools")
-devtools::install_github("GoekeLab/proActiv")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("proActiv")
 ```
 
 ### Quick Start

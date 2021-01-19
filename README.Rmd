@@ -45,11 +45,12 @@ Additional data on differential promoters in tissues and cancers from TCGA, ICGC
 
 ### Installation
 
-proActiv can be installed from GitHub with:
+proActiv can be installed from Bioconductor:
+```{r, eval=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
 
-``` r
-library("devtools")
-devtools::install_github("GoekeLab/proActiv")
+BiocManager::install("proActiv")
 ```
 
 ### Quick Start
