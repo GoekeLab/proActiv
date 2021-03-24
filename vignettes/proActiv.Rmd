@@ -35,7 +35,7 @@ If you use proActiv in your research, please cite:
   - [Preparing input data]
   - [Preparing promoter annotations]
   - [Running proActiv]
-  - [Alternative promoter usage]
+  - [Identifying alternative promoters]
 - [Analysis and visualization of alternative promoter usage]
   - [Alternative promoter usage]
   - [Promoter category proportion]
@@ -89,7 +89,7 @@ Below, we demonstrate running `proActiv` with input STAR junction files. This da
 - extdata/vignette/SGNEx_HepG2_Illumina_replicate4-run1.subset.SJ.out.tab.gz 
 - extdata/vignette/SGNEx_HepG2_Illumina_replicate5-run1.subset.SJ.out.tab.gz
 
-```{r ListFiles, eval=FALSE}
+```{r List files, eval=FALSE}
 files <- list.files(system.file('extdata/vignette/junctions', 
                                 package = 'proActiv'), full.names = TRUE)
 ```
@@ -100,7 +100,7 @@ In order to quantify promoter activity, proActiv uses a set of promoters based o
 
 We demonstrate creating the restricted promoter annotation for the Human genome (GENCODE v34) with both GTF and TxDb:
 
-```{r CreateAnnotation, eval=FALSE}
+```{r Create annotation, eval=FALSE}
 ## From GTF file path
 gtf.file <- system.file('extdata/vignette/annotation/gencode.v34.annotation.subset.gtf.gz', 
                         package = 'proActiv')
@@ -122,7 +122,7 @@ The `PromoterAnnotation` object has 3 slots:
 
 When creating promoter annotations for other species, one can call `genomeStyles` to identify 
 the `species` argument to be used:
-```{r OtherSpecies, eval=TRUE}
+```{r Other species, eval=TRUE}
 names(GenomeInfoDb::genomeStyles())
 ```
 
@@ -156,48 +156,28 @@ The `metadata` slot provides gene expression data for each replicate per conditi
 
 For cleaner downstream analysis, one can remove single-exon transcripts for which promoter activity is not quantified. `result` can be filtered as such:
 
-```{r filter result, eval=TRUE}
+```{r Filter result, eval=TRUE}
 ## Removes single-exon transcripts / promoters by eliminating promoter counts that are NA 
 result <- result[complete.cases(assays(result)$promoterCounts),]
 ```
 
-### Alternative promoter usage
+### Identifying alternative promoters
 
-We identify genes with similar expression levels across cell lines with alternate promoter usage using [DEXSeq](https://bioconductor.org/packages/release/bioc/html/DEXSeq.html) (Anders, Reyes, Huber 2012). While DEXSeq is originally intended for inferring differential exon usage in RNA-Seq data, DEXSeq can be similarly used with raw promoter counts as input to assess the statistical significance of alternative promoter usage across conditions. We follow the standard [DEXSeq workflow](https://bioconductor.org/packages/devel/bioc/vignettes/DEXSeq/inst/doc/DEXSeq.html#3_counting_reads). 
+To identify alternative promoter usage, proActiv implements a linear model, regressing both absolute promoter activity and relative promoter activity against sample conditions. A change in absolute promoter activity indicates absolute differential usage of the promoter. However, this does not imply alternative usage or a switch in major promoter, as the relative usage of promoters between conditions may still be the same. For this reason, information from relative promoter activity must also be taken into account. Alternative promoter usage is thus characterized by a significant change in absolute and relative promoter activity across conditions.
 
-```{r DEXSeq, eval=TRUE, message=FALSE, warning=FALSE}
-library(DEXSeq)
+Candidates for alternative promoter usage can be identified by calling `getAlternativePromoters`. This function takes in the `result` object returned by `proActiv`, and `currentCondition`, the current condition to be compared to all other samples. 
 
-countData <- data.frame(assays(result)$promoterCounts, rowData(result))
-
-## Call DEXSeq - promoter as feature, gene as group
-dxd <- DEXSeqDataSet(countData = as.matrix(countData[,seq_len(length(condition))]),
-                     sampleData = data.frame(colData(result)),
-                     design = formula(~ sample + exon + condition:exon),
-                     featureID = as.factor(countData$promoterId),
-                     groupID = as.factor(countData$geneId))
-dxr1 <- DEXSeq(dxd)
-``` 
-
-`DEXSeq` returns `dxr1`, which provides the significance that a promoter is differentially used across conditions. The description of each column of `dxr1` can be found in the metadata columns. 
-
-```{r DEXSeq column description, eval=TRUE}
-mcols(dxr1)$description
+```{r Get alternative, eval=TRUE}
+alternativePromoters <- getAlternativePromoters(result, "A549")
+show(alternativePromoters)
 ```
 
-Users can sort this result by the minimum adjusted p-value for all promoters belonging to a particular gene. This helps to better identify candidate genes where alternative promoter usage is present.    
-
-```{r dxr1 wrangling, eval=TRUE}
-## Arrange by minimum padj for each gene
-dxr1 <- data.frame(dxr1[,1:10]) %>% 
-  group_by(groupID) %>% 
-  mutate(minp = min(padj)) %>%
-  arrange(minp)
-```
-
-```{r dxr1, eval=TRUE, echo=FALSE, layout='l-body-outset'}
-knitr::kable(head(data.frame(dxr1)))
-``` 
+Detection of alternative promoters with the following parameters:  
+  - `thresAbs` Minimum value for promoter to be active in absolute terms. Defaults to 0.25.  
+  - `thresRel` Minimum value for promoter to be active in relative terms. Defaults to 0.05.  
+  - `thresPval` Adjusted p-value threshold for detecting alternative promoters. Defaults to 0.05.  
+  - `promoterFC` Minimum fold change for a promoter in the current condition compared to all other conditions. Promoters must have at least this magnitude of fold change for alternative usage. This parameter can be decreased to relax alternative usage definition. Defaults to 2.0.  
+  - `geneFC` Maximum fold change for gene expression. To identify alternative promoter usage independent of changes in gene expression, limit the gene expression fold change. Promoters must have at most this magnitude of gene expression fold change for alternative usage. This parameter can be increased to relax alternative usage definition. Defaults to 1.5.
 
 ## Analysis and visualization of alternative promoter usage
 
