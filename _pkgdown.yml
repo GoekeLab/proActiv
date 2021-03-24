@@ -6,8 +6,10 @@ template:
 reference:
   - title: Functions
     contents:
-      - proActiv
       - preparePromoterAnnotation
+      - proActiv
+      - getAlternativePromoters
+      - boxplotPromoters
       - plotPromoters
   - title: Data
     contents:

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Estimates promoter counts and activity in a single command — proActiv • proActiv</title>
+<title>Visualizes promoter activity and gene expression with boxplots — boxplotPromoters • proActiv</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Estimates promoter counts and activity in a single command — proActiv" />
-<meta property="og:description" content="Estimates promoter counts and activity in a single command" />
+<meta property="og:title" content="Visualizes promoter activity and gene expression with boxplots — boxplotPromoters" />
+<meta property="og:description" content="Visualizes promoter activity and gene expression with boxplots" />
 
 
 
@@ -119,82 +119,71 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Estimates promoter counts and activity in a single command</h1>
-    <small class="dont-index">Source: <a href='https://github.com/GoekeLab/proActiv/blob/master/R/proActiv.R'><code>R/proActiv.R</code></a></small>
-    <div class="hidden name"><code>proActiv.Rd</code></div>
+    <h1>Visualizes promoter activity and gene expression with boxplots</h1>
+    <small class="dont-index">Source: <a href='https://github.com/GoekeLab/proActiv/blob/master/R/plot-proActiv.R'><code>R/plot-proActiv.R</code></a></small>
+    <div class="hidden name"><code>boxplotPromoters.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Estimates promoter counts and activity in a single command</p>
+    <p>Visualizes promoter activity and gene expression with boxplots</p>
     </div>
 
-    <pre class="usage"><span class='fu'>proActiv</span><span class='op'>(</span>
-  <span class='va'>files</span>,
-  <span class='va'>promoterAnnotation</span>,
-  fileLabels <span class='op'>=</span> <span class='cn'>NULL</span>,
-  condition <span class='op'>=</span> <span class='cn'>NULL</span>,
-  genome <span class='op'>=</span> <span class='cn'>NULL</span>,
-  ncores <span class='op'>=</span> <span class='fl'>1</span>
+    <pre class="usage"><span class='fu'>boxplotPromoters</span><span class='op'>(</span>
+  <span class='va'>result</span>,
+  <span class='va'>geneId</span>,
+  geneName <span class='op'>=</span> <span class='cn'>NULL</span>,
+  filterInternal <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  col <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>files</th>
-      <td><p>A character vector. The list of input files for 
-which the junction read counts will be calculated</p></td>
+      <th>result</th>
+      <td><p>A SummarizedExperiment object return by proActiv, with assays 
+giving promoter counts and activity with gene expression stored as 
+metadata. rowData contains promoter metadata and absolute promoter 
+activity summarized across conditions. Condition must be provided.</p></td>
     </tr>
     <tr>
-      <th>promoterAnnotation</th>
-      <td><p>A PromoterAnnotation object containing the
-intron ranges, promoter coordinates and the promoter id mapping</p></td>
+      <th>geneId</th>
+      <td><p>A character vector. A single gene id. This identifier must
+correspond to the identifier in the promoter annotation.</p></td>
     </tr>
     <tr>
-      <th>fileLabels</th>
-      <td><p>A character vector. The labels of input files 
-for which the junction read counts will be calculated. These labels will be 
-used as column names for each output data.frame object. If not provided,
-filenames will be used as labels. Defaults to NULL</p></td>
+      <th>geneName</th>
+      <td><p>A character vector. Common gene name to be displayed
+on plot. Optional. Defaults to NULL.</p></td>
     </tr>
     <tr>
-      <th>condition</th>
-      <td><p>A character vector. The condition to which each sample
-belong to. Must correspond to the order of the files. If supplied, 
-results are summarized by condition. Defaults to NULL</p></td>
+      <th>filterInternal</th>
+      <td><p>A boolean. Determines if internal promoters should be 
+removed from the plot. Defaults to TRUE.</p></td>
     </tr>
     <tr>
-      <th>genome</th>
-      <td><p>A character. Genome version. Must be specified if input file
-type is a BAM file. Defaults to NULL</p></td>
-    </tr>
-    <tr>
-      <th>ncores</th>
-      <td><p>A numeric value. The number of cores to be used for 
-counting junction reads. Defaults to 1 (no parallelization). This parameter 
-will be used as an argument to BiocParallel::bplapply</p></td>
+      <th>col</th>
+      <td><p>A character vector of colours to be used for plotting.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A SummarizedExperiment object with assays giving promoter counts 
-  and activity with gene expression stored as metadata. rowData contains
-  promoter metadata and absolute promoter activity summarized across
-  conditions (if condition is provided)</p>
+    <p>A list of length 3. Each entry is a plot corresponding to 
+ absolute promoter activity, relative promoter activity and gene expression.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='va'>files</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>'extdata/vignette/junctions'</span>, 
+    <pre class="examples"><div class='input'><span class='va'>files</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>'extdata/vignette/junctions'</span>, 
                        package <span class='op'>=</span> <span class='st'>'proActiv'</span><span class='op'>)</span>, 
                        full.names <span class='op'>=</span> <span class='cn'>TRUE</span>, pattern <span class='op'>=</span> <span class='st'>'replicate5'</span><span class='op'>)</span>
 <span class='va'>promoterAnnotation</span> <span class='op'>&lt;-</span> <span class='va'>promoterAnnotation.gencode.v34.subset</span>
-<span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'>proActiv</span><span class='op'>(</span>files <span class='op'>=</span> <span class='va'>files</span>,
+<span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'><a href='proActiv.html'>proActiv</a></span><span class='op'>(</span>files <span class='op'>=</span> <span class='va'>files</span>,
                        promoterAnnotation  <span class='op'>=</span> <span class='va'>promoterAnnotation</span>,
                        condition <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'A549'</span>, <span class='st'>'HepG2'</span><span class='op'>)</span>, each<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>,
                        fileLabels <span class='op'>=</span> <span class='cn'>NULL</span>,
                        ncores <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Processing: C:/Users/josep/AppData/Local/Temp/RtmpAjTO2D/temp_libpath8efc18da742c/proActiv/extdata/vignette/junctions/SGNEx_A549_Illumina_replicate5-run1.subset.SJ.out.tab.gz</span></div><div class='output co'>#&gt; <span class='message'>File loaded into memory</span></div><div class='output co'>#&gt; <span class='message'>Calculating junction counts</span></div><div class='output co'>#&gt; <span class='message'>Processing: C:/Users/josep/AppData/Local/Temp/RtmpAjTO2D/temp_libpath8efc18da742c/proActiv/extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate5-run1.subset.SJ.out.tab.gz</span></div><div class='output co'>#&gt; <span class='message'>File loaded into memory</span></div><div class='output co'>#&gt; <span class='message'>Calculating junction counts</span></div><div class='output co'>#&gt; <span class='message'>Calculating normalized read counts...</span></div><div class='output co'>#&gt; <span class='message'>converting counts to integer mode</span></div><div class='output co'>#&gt; <span class='message'>Calculating log2 absolute promoter activity...</span></div><div class='output co'>#&gt; <span class='message'>Calculating gene expression...</span></div><div class='output co'>#&gt; <span class='message'>Calculating relative promoter activity...</span></div><div class='output co'>#&gt; <span class='message'>Calculating positions of promoters...</span></div><div class='output co'>#&gt; <span class='message'>Summarising expression and activity across conditions...</span></div><div class='output co'>#&gt; <span class='message'>Categorizing A549 promoters...</span></div><div class='output co'>#&gt; <span class='message'>Categorizing HepG2 promoters...</span></div><div class='input'>                           
+</div><div class='output co'>#&gt; <span class='message'>Processing: C:/Users/josep/AppData/Local/Temp/RtmpAjTO2D/temp_libpath8efc18da742c/proActiv/extdata/vignette/junctions/SGNEx_A549_Illumina_replicate5-run1.subset.SJ.out.tab.gz</span></div><div class='output co'>#&gt; <span class='message'>File loaded into memory</span></div><div class='output co'>#&gt; <span class='message'>Calculating junction counts</span></div><div class='output co'>#&gt; <span class='message'>Processing: C:/Users/josep/AppData/Local/Temp/RtmpAjTO2D/temp_libpath8efc18da742c/proActiv/extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate5-run1.subset.SJ.out.tab.gz</span></div><div class='output co'>#&gt; <span class='message'>File loaded into memory</span></div><div class='output co'>#&gt; <span class='message'>Calculating junction counts</span></div><div class='output co'>#&gt; <span class='message'>Calculating normalized read counts...</span></div><div class='output co'>#&gt; <span class='message'>converting counts to integer mode</span></div><div class='output co'>#&gt; <span class='message'>Calculating log2 absolute promoter activity...</span></div><div class='output co'>#&gt; <span class='message'>Calculating gene expression...</span></div><div class='output co'>#&gt; <span class='message'>Calculating relative promoter activity...</span></div><div class='output co'>#&gt; <span class='message'>Calculating positions of promoters...</span></div><div class='output co'>#&gt; <span class='message'>Summarising expression and activity across conditions...</span></div><div class='output co'>#&gt; <span class='message'>Categorizing A549 promoters...</span></div><div class='output co'>#&gt; <span class='message'>Categorizing HepG2 promoters...</span></div><div class='input'><span class='va'>plots</span> <span class='op'>&lt;-</span> <span class='fu'>boxplotPromoters</span><span class='op'>(</span><span class='va'>result</span>, <span class='st'>"ENSG00000076864.19"</span><span class='op'>)</span>
+
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

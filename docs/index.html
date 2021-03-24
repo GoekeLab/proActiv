@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">proActiv</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.15</span>
       </span>
     </div>
 
@@ -49,20 +49,20 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="index.html">
-    <span class="fa fa-home"></span>
+    <span class="fas fa-home"></span>
      
   </a>
 </li>
 <li>
   <a href="articles/proActiv.html">
-    <span class="fa fa-file-alt"></span>
+    <span class="fas fa-file-alt"></span>
      
     Complete Analysis Workflow
   </a>
 </li>
 <li>
   <a href="reference/index.html">
-    <span class="fa fa-code"></span>
+    <span class="fas fa-code"></span>
      
     Manual
   </a>
@@ -71,7 +71,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/GoekeLab/proActiv/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -115,9 +115,12 @@
 <div id="installation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h3>
-<p>proActiv can be installed from GitHub with:</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"devtools"</span>)
-<span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"GoekeLab/proActiv"</span>)</pre></div>
+<p>proActiv can be installed from Bioconductor:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>
+
+<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html">install</a></span><span class="op">(</span><span class="st">"proActiv"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="quick-start" class="section level3">
 <h3 class="hasAnchor">
@@ -131,19 +134,20 @@
 <li>extdata/vignette/SGNEx_HepG2_Illumina_replicate4-run1.subset.SJ.out.tab.gz</li>
 <li>extdata/vignette/SGNEx_HepG2_Illumina_replicate5-run1.subset.SJ.out.tab.gz</li>
 </ul>
-<!-- end list --><div class="sourceCode" id="cb2"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">proActiv</span>)
+<!-- end list --><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/GoekeLab/proActiv">proActiv</a></span><span class="op">)</span>
 
 <span class="co">## List of STAR junction files as input</span>
-<span class="no">files</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette/junctions'</span>,
-                                <span class="kw">package</span> <span class="kw">=</span> <span class="st">'proActiv'</span>), <span class="kw">full.names</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">'extdata/vignette/junctions'</span>, 
+                                package <span class="op">=</span> <span class="st">'proActiv'</span><span class="op">)</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">## Vector describing experimental condition</span>
-<span class="no">condition</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'A549'</span>,<span class="st">'HepG2'</span>), <span class="kw">each</span><span class="kw">=</span><span class="fl">3</span>)
+<span class="va">condition</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'A549'</span>,<span class="st">'HepG2'</span><span class="op">)</span>, each<span class="op">=</span><span class="fl">3</span><span class="op">)</span>
 <span class="co">## Promoter annotation for human genome GENCODE v34</span>
-<span class="no">promoterAnnotation</span> <span class="kw">&lt;-</span> <span class="no">promoterAnnotation.gencode.v34.subset</span>
+<span class="va">promoterAnnotation</span> <span class="op">&lt;-</span> <span class="va">promoterAnnotation.gencode.v34.subset</span>
 
-<span class="no">result</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/proActiv.html">proActiv</a></span>(<span class="kw">files</span> <span class="kw">=</span> <span class="no">files</span>,
-                   <span class="kw">promoterAnnotation</span> <span class="kw">=</span> <span class="no">promoterAnnotation</span>,
-                   <span class="kw">condition</span> <span class="kw">=</span> <span class="no">condition</span>)</pre></div>
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/proActiv.html">proActiv</a></span><span class="op">(</span>files <span class="op">=</span> <span class="va">files</span>, 
+                   promoterAnnotation <span class="op">=</span> <span class="va">promoterAnnotation</span>,
+                   condition <span class="op">=</span> <span class="va">condition</span><span class="op">)</span></code></pre></div>
 <p><code>result</code> is a summarizedExperiment object which can be accessed as follows:</p>
 <ul>
 <li>
@@ -156,28 +160,30 @@
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData(results)</a></code> returns promoter metadata and summarized absolute promoter activity by conditions</li>
 </ul>
 <p>proActiv can also be run with BAM files as input, but an additional parameter <code>genome</code> must be supplied:</p>
-<div class="sourceCode" id="cb3"><pre class="r"><span class="co">## From BAM files - genome parameter must be provided</span>
-<span class="no">files</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/testdata/bam'</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">'proActiv'</span>), <span class="kw">full.names</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">result</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/proActiv.html">proActiv</a></span>(<span class="kw">files</span> <span class="kw">=</span> <span class="no">files</span>,
-                   <span class="kw">promoterAnnotation</span> <span class="kw">=</span> <span class="no">promoterAnnotation.gencode.v34.subset</span>,
-                   <span class="kw">genome</span> <span class="kw">=</span> <span class="st">'hg38'</span>)</pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## From BAM files - genome parameter must be provided</span>
+<span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">'extdata/testdata/bam'</span>, package <span class="op">=</span> <span class="st">'proActiv'</span><span class="op">)</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/proActiv.html">proActiv</a></span><span class="op">(</span>files <span class="op">=</span> <span class="va">files</span>, 
+                   promoterAnnotation <span class="op">=</span> <span class="va">promoterAnnotation.gencode.v34.subset</span>,
+                   genome <span class="op">=</span> <span class="st">'hg38'</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="creating-a-promoter-annotation-object" class="section level3">
 <h3 class="hasAnchor">
 <a href="#creating-a-promoter-annotation-object" class="anchor"></a>Creating a Promoter Annotation object</h3>
 <p>In order to quantify promoter activity, proActiv uses a set of promoters based on genome annotations. proActiv allows the creation of a promoter annotation object for any genome from a TxDb object or from a GTF file with the <code>preparePromoterAnnotation</code> function. Users have the option to either pass the file path of the GTF/GFF or TxDb to be used, or use the TxDb object directly as input. proActiv includes pre-calculated promoter annotations for the human genome (GENCODE v34). However, due to size constraints, the annotation is restricted to the chr1:10,000,000-30,000,000 region. Users can build full annotations by downloading GTF files from <a href="https://www.gencodegenes.org">GENCODE</a> page and following the steps below.</p>
 <p>Here, we demonstrate creating the subsetted promoter annotation for the Human genome (GENCODE v34) with both GTF and TxDb:</p>
-<div class="sourceCode" id="cb4"><pre class="r"><span class="co">## From GTF file path</span>
-<span class="no">gtf.file</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette/annotation/gencode.v34.annotation.subset.gtf.gz'</span>,
-                        <span class="kw">package</span> <span class="kw">=</span> <span class="st">'proActiv'</span>)
-<span class="no">promoterAnnotation.gencode.v34.subset</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/preparePromoterAnnotation.html">preparePromoterAnnotation</a></span>(<span class="kw">file</span> <span class="kw">=</span> <span class="no">gtf.file</span>,
-                                                                   <span class="kw">species</span> <span class="kw">=</span> <span class="st">'Homo_sapiens'</span>)
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## From GTF file path</span>
+<span class="va">gtf.file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">'extdata/vignette/annotation/gencode.v34.annotation.subset.gtf.gz'</span>, 
+                        package <span class="op">=</span> <span class="st">'proActiv'</span><span class="op">)</span>
+<span class="va">promoterAnnotation.gencode.v34.subset</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/preparePromoterAnnotation.html">preparePromoterAnnotation</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">gtf.file</span>,
+                                                                   species <span class="op">=</span> <span class="st">'Homo_sapiens'</span><span class="op">)</span>
 <span class="co">## From TxDb object</span>
-<span class="no">txdb.file</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata/vignette/annotation/gencode.v34.annotation.subset.sqlite'</span>,
-                         <span class="kw">package</span> <span class="kw">=</span> <span class="st">'proActiv'</span>)
-<span class="no">txdb</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html">loadDb</a></span>(<span class="no">txdb.file</span>)
-<span class="no">promoterAnnotation.gencode.v34.subset</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/preparePromoterAnnotation.html">preparePromoterAnnotation</a></span>(<span class="kw">txdb</span> <span class="kw">=</span> <span class="no">txdb</span>,
-                                                                   <span class="kw">species</span> <span class="kw">=</span> <span class="st">'Homo_sapiens'</span>)</pre></div>
+<span class="va">txdb.file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">'extdata/vignette/annotation/gencode.v34.annotation.subset.sqlite'</span>, 
+                         package <span class="op">=</span> <span class="st">'proActiv'</span><span class="op">)</span>
+<span class="va">txdb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html">loadDb</a></span><span class="op">(</span><span class="va">txdb.file</span><span class="op">)</span>
+<span class="va">promoterAnnotation.gencode.v34.subset</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/preparePromoterAnnotation.html">preparePromoterAnnotation</a></span><span class="op">(</span>txdb <span class="op">=</span> <span class="va">txdb</span>, 
+                                                                   species <span class="op">=</span> <span class="st">'Homo_sapiens'</span><span class="op">)</span></code></pre></div>
 <p>The <code>PromoterAnnotation</code> object has 3 slots:</p>
 <ul>
 <li>
@@ -198,6 +204,9 @@
 <div id="release-history" class="section level2">
 <h2 class="hasAnchor">
 <a href="#release-history" class="anchor"></a>Release History</h2>
+<p><strong>Release 1.0.0</strong></p>
+<p>Release date: 28th October 2020</p>
+<p>Released with Bioconductor 3.12</p>
 <p><strong>Release 0.99.0</strong></p>
 <p>Release date: 21st August 2020</p>
 <p>Changes in version 0.99.0:</p>
@@ -273,7 +282,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

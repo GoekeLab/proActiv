@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proActiv</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.15</span>
       </span>
     </div>
 
@@ -80,20 +80,20 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home"></span>
+    <span class="fas fa-home"></span>
      
   </a>
 </li>
 <li>
   <a href="../articles/proActiv.html">
-    <span class="fa fa-file-alt"></span>
+    <span class="fas fa-file-alt"></span>
      
     Complete Analysis Workflow
   </a>
 </li>
 <li>
   <a href="../reference/index.html">
-    <span class="fa fa-code"></span>
+    <span class="fas fa-code"></span>
      
     Manual
   </a>
@@ -102,7 +102,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/GoekeLab/proActiv/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -128,23 +128,23 @@
     <p>Visualizes promoter activity and transcript model for a gene of interest</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plotPromoters</span>(
-  <span class='no'>result</span>,
-  <span class='no'>gene</span>,
-  <span class='no'>txdb</span>,
-  <span class='no'>ranges</span>,
-  <span class='kw'>cex.title</span> <span class='kw'>=</span> <span class='fl'>0.9</span>,
-  <span class='kw'>cex.axis</span> <span class='kw'>=</span> <span class='fl'>0.9</span>,
-  <span class='kw'>cex.main</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>blk.width</span> <span class='kw'>=</span> <span class='fl'>500</span>,
-  <span class='kw'>blk.fill</span> <span class='kw'>=</span> <span class='st'>"grey"</span>,
-  <span class='kw'>blk.border</span> <span class='kw'>=</span> <span class='st'>"darkgrey"</span>,
-  <span class='kw'>label.col</span> <span class='kw'>=</span> <span class='st'>"black"</span>,
-  <span class='kw'>label.size</span> <span class='kw'>=</span> <span class='fl'>0.7</span>,
-  <span class='kw'>arrow.width</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>arrow.fill</span> <span class='kw'>=</span> <span class='st'>"transparent"</span>,
-  <span class='kw'>arrow.border</span> <span class='kw'>=</span> <span class='st'>"grey"</span>
-)</pre>
+    <pre class="usage"><span class='fu'>plotPromoters</span><span class='op'>(</span>
+  <span class='va'>result</span>,
+  <span class='va'>gene</span>,
+  <span class='va'>txdb</span>,
+  <span class='va'>ranges</span>,
+  cex.title <span class='op'>=</span> <span class='fl'>0.9</span>,
+  cex.axis <span class='op'>=</span> <span class='fl'>0.9</span>,
+  cex.main <span class='op'>=</span> <span class='fl'>1</span>,
+  blk.width <span class='op'>=</span> <span class='fl'>500</span>,
+  blk.fill <span class='op'>=</span> <span class='st'>"grey"</span>,
+  blk.border <span class='op'>=</span> <span class='st'>"darkgrey"</span>,
+  label.col <span class='op'>=</span> <span class='st'>"black"</span>,
+  label.size <span class='op'>=</span> <span class='fl'>0.7</span>,
+  arrow.width <span class='op'>=</span> <span class='cn'>NULL</span>,
+  arrow.fill <span class='op'>=</span> <span class='st'>"transparent"</span>,
+  arrow.border <span class='op'>=</span> <span class='st'>"grey"</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -233,24 +233,50 @@ the promoter arrows in the annotation track. Defaults to 'grey'</p></td>
   conditions, along with a model of transcripts belonging to the gene</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples">
+    <pre class="examples"><div class='input'> 
 <span class='co'>## First, run proActiv to generate a summarizedExperiment result</span>
-<span class='no'>files</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'extdata/vignette/junctions'</span>,
-                       <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'proActiv'</span>),
-                       <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='no'>promoterAnnotation</span> <span class='kw'>&lt;-</span> <span class='no'>promoterAnnotation.gencode.v34.subset</span>
-<span class='no'>result</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='proActiv.html'>proActiv</a></span>(<span class='kw'>files</span> <span class='kw'>=</span> <span class='no'>files</span>,
-                       <span class='kw'>promoterAnnotation</span>  <span class='kw'>=</span> <span class='no'>promoterAnnotation</span>,
-                       <span class='kw'>condition</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'A549'</span>,<span class='st'>'HepG2'</span>), <span class='kw'>each</span><span class='kw'>=</span><span class='fl'>3</span>),
-                       <span class='kw'>ncores</span> <span class='kw'>=</span> <span class='fl'>1</span>)
-<span class='co'>## Read in pre-computed ranges</span>
-<span class='no'>txdb</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>AnnotationDbi</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html'>loadDb</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'extdata/vignette/annotations'</span>,
-                                   <span class='st'>'gencode.v34.annotation.rap1gap.sqlite'</span>,
-                                   <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'proActiv'</span>))
-<span class='co'>## Declare a gene of interest</span>
-<span class='no'>gene</span> <span class='kw'>&lt;-</span> <span class='st'>'ENSG00000076864.19'</span>
+<span class='va'>files</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>'extdata/vignette/junctions'</span>, 
+                      package <span class='op'>=</span> <span class='st'>'proActiv'</span><span class='op'>)</span>, 
+                      full.names <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>promoterAnnotation</span> <span class='op'>&lt;-</span> <span class='va'>promoterAnnotation.gencode.v34.subset</span>
+<span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'><a href='proActiv.html'>proActiv</a></span><span class='op'>(</span>files <span class='op'>=</span> <span class='va'>files</span>,
+                       promoterAnnotation  <span class='op'>=</span> <span class='va'>promoterAnnotation</span>,
+                       condition <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'A549'</span>,<span class='st'>'HepG2'</span><span class='op'>)</span>, each<span class='op'>=</span><span class='fl'>3</span><span class='op'>)</span>,
+                       ncores <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Processing: C:/Users/josep/AppData/Local/Temp/RtmpAjTO2D/temp_libpath8efc18da742c/proActiv/extdata/vignette/junctions/SGNEx_A549_Illumina_replicate1-run1.subset.SJ.out.tab.gz</span></div><div class='output co'>#&gt; <span class='message'>File loaded into memory</span></div><div class='output co'>#&gt; <span class='message'>Calculating junction counts</span></div><div class='output co'>#&gt; <span class='message'>Processing: C:/Users/josep/AppData/Local/Temp/RtmpAjTO2D/temp_libpath8efc18da742c/proActiv/extdata/vignette/junctions/SGNEx_A549_Illumina_replicate3-run1.subset.SJ.out.tab.gz</span></div><div class='output co'>#&gt; <span class='message'>File loaded into memory</span></div><div class='output co'>#&gt; <span class='message'>Calculating junction counts</span></div><div class='output co'>#&gt; <span class='message'>Processing: C:/Users/josep/AppData/Local/Temp/RtmpAjTO2D/temp_libpath8efc18da742c/proActiv/extdata/vignette/junctions/SGNEx_A549_Illumina_replicate5-run1.subset.SJ.out.tab.gz</span></div><div class='output co'>#&gt; <span class='message'>File loaded into memory</span></div><div class='output co'>#&gt; <span class='message'>Calculating junction counts</span></div><div class='output co'>#&gt; <span class='message'>Processing: C:/Users/josep/AppData/Local/Temp/RtmpAjTO2D/temp_libpath8efc18da742c/proActiv/extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate2-run1.subset.SJ.out.tab.gz</span></div><div class='output co'>#&gt; <span class='message'>File loaded into memory</span></div><div class='output co'>#&gt; <span class='message'>Calculating junction counts</span></div><div class='output co'>#&gt; <span class='message'>Processing: C:/Users/josep/AppData/Local/Temp/RtmpAjTO2D/temp_libpath8efc18da742c/proActiv/extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate4-run1.subset.SJ.out.tab.gz</span></div><div class='output co'>#&gt; <span class='message'>File loaded into memory</span></div><div class='output co'>#&gt; <span class='message'>Calculating junction counts</span></div><div class='output co'>#&gt; <span class='message'>Processing: C:/Users/josep/AppData/Local/Temp/RtmpAjTO2D/temp_libpath8efc18da742c/proActiv/extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate5-run1.subset.SJ.out.tab.gz</span></div><div class='output co'>#&gt; <span class='message'>File loaded into memory</span></div><div class='output co'>#&gt; <span class='message'>Calculating junction counts</span></div><div class='output co'>#&gt; <span class='message'>Calculating normalized read counts...</span></div><div class='output co'>#&gt; <span class='message'>converting counts to integer mode</span></div><div class='output co'>#&gt; <span class='message'>Calculating log2 absolute promoter activity...</span></div><div class='output co'>#&gt; <span class='message'>Calculating gene expression...</span></div><div class='output co'>#&gt; <span class='message'>Calculating relative promoter activity...</span></div><div class='output co'>#&gt; <span class='message'>Calculating positions of promoters...</span></div><div class='output co'>#&gt; <span class='message'>Summarising expression and activity across conditions...</span></div><div class='output co'>#&gt; <span class='message'>Categorizing A549 promoters...</span></div><div class='output co'>#&gt; <span class='message'>Categorizing HepG2 promoters...</span></div><div class='input'><span class='co'>## Read in pre-computed ranges</span>
+<span class='va'>txdb</span> <span class='op'>&lt;-</span> <span class='fu'>AnnotationDbi</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html'>loadDb</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>'extdata/vignette/annotations'</span>,
+                                  <span class='st'>'gencode.v34.annotation.rap1gap.sqlite'</span>,
+                                  package <span class='op'>=</span> <span class='st'>'proActiv'</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Loading required package: GenomicFeatures</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: BiocGenerics</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: parallel</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Attaching package: 'BiocGenerics'</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:parallel':</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,</span>
+#&gt; <span class='message'>    clusterExport, clusterMap, parApply, parCapply, parLapply,</span>
+#&gt; <span class='message'>    parLapplyLB, parRapply, parSapply, parSapplyLB</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:stats':</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    IQR, mad, sd, var, xtabs</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:base':</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    anyDuplicated, append, as.data.frame, basename, cbind, colnames,</span>
+#&gt; <span class='message'>    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,</span>
+#&gt; <span class='message'>    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,</span>
+#&gt; <span class='message'>    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,</span>
+#&gt; <span class='message'>    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,</span>
+#&gt; <span class='message'>    union, unique, unsplit, which.max, which.min</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: S4Vectors</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: stats4</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Attaching package: 'S4Vectors'</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from 'package:base':</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    expand.grid</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: IRanges</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Attaching package: 'IRanges'</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from 'package:grDevices':</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    windows</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: GenomeInfoDb</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: GenomicRanges</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: AnnotationDbi</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: Biobase</span></div><div class='output co'>#&gt; <span class='message'>Welcome to Bioconductor</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    Vignettes contain introductory material; view with</span>
+#&gt; <span class='message'>    'browseVignettes()'. To cite Bioconductor, see</span>
+#&gt; <span class='message'>    'citation("Biobase")', and for packages 'citation("pkgname")'.</span></div><div class='input'><span class='co'>## Declare a gene of interest</span>
+<span class='va'>gene</span> <span class='op'>&lt;-</span> <span class='st'>'ENSG00000076864.19'</span>
 <span class='co'>## Call plot </span>
-<span class='fu'>plotPromoters</span>(<span class='kw'>result</span> <span class='kw'>=</span> <span class='no'>result</span>, <span class='kw'>gene</span> <span class='kw'>=</span> <span class='no'>gene</span>, <span class='kw'>txdb</span> <span class='kw'>=</span> <span class='no'>txdb</span>)</pre>
+<span class='fu'>plotPromoters</span><span class='op'>(</span>result <span class='op'>=</span> <span class='va'>result</span>, gene <span class='op'>=</span> <span class='va'>gene</span>, txdb <span class='op'>=</span> <span class='va'>txdb</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Plotting ENSG00000076864.19</span></div><div class='output co'>#&gt; <span class='message'>Creating Gene Region Track...</span></div><div class='output co'>#&gt; <span class='message'>Creating Data Track...</span></div><div class='output co'>#&gt; <span class='message'>Creating Annotation Track...</span></div><div class='output co'>#&gt; <span class='message'>Creating Plot...</span></div><div class='img'><img src='plotPromoters-1.png' alt='' width='700' height='433' /></div><div class='input'>                           
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -266,7 +292,7 @@ the promoter arrows in the annotation track. Defaults to 'grey'</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

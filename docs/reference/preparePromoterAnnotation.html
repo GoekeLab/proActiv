@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proActiv</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.15</span>
       </span>
     </div>
 
@@ -80,20 +80,20 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home"></span>
+    <span class="fas fa-home"></span>
      
   </a>
 </li>
 <li>
   <a href="../articles/proActiv.html">
-    <span class="fa fa-file-alt"></span>
+    <span class="fas fa-file-alt"></span>
      
     Complete Analysis Workflow
   </a>
 </li>
 <li>
   <a href="../reference/index.html">
-    <span class="fa fa-code"></span>
+    <span class="fas fa-code"></span>
      
     Manual
   </a>
@@ -102,7 +102,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/GoekeLab/proActiv/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -128,7 +128,7 @@
     <p>Prepares promoter annotation from a gtf or txdb</p>
     </div>
 
-    <pre class="usage"><span class='fu'>preparePromoterAnnotation</span>(<span class='no'>txdb</span>, <span class='no'>file</span>, <span class='no'>species</span>)</pre>
+    <pre class="usage"><span class='fu'>preparePromoterAnnotation</span><span class='op'>(</span><span class='va'>txdb</span>, <span class='va'>file</span>, <span class='va'>species</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -160,13 +160,15 @@ names(genomeStyles()).</p></td>
   attributes of the promoter annotation data.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples">
-<span class='no'>txdbPath</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'extdata/vignette/annotations/'</span>,
-                            <span class='st'>'gencode.v34.annotation.subset.sqlite'</span>,
-                             <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'proActiv'</span>)
-<span class='no'>txdb</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>AnnotationDbi</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html'>loadDb</a></span>(<span class='no'>txdbPath</span>)
-<span class='no'>promoterAnnotation</span> <span class='kw'>&lt;-</span> <span class='fu'>preparePromoterAnnotation</span>(<span class='kw'>txdb</span> <span class='kw'>=</span> <span class='no'>txdb</span>,
-                                                <span class='kw'>species</span> <span class='kw'>=</span> <span class='st'>'Homo_sapiens'</span>)</pre>
+    <pre class="examples"><div class='input'>
+<span class='va'>txdbPath</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>'extdata/vignette/annotations/'</span>,
+                            <span class='st'>'gencode.v34.annotation.subset.sqlite'</span>, 
+                             package <span class='op'>=</span> <span class='st'>'proActiv'</span><span class='op'>)</span>
+<span class='va'>txdb</span> <span class='op'>&lt;-</span> <span class='fu'>AnnotationDbi</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html'>loadDb</a></span><span class='op'>(</span><span class='va'>txdbPath</span><span class='op'>)</span>
+<span class='va'>promoterAnnotation</span> <span class='op'>&lt;-</span> <span class='fu'>preparePromoterAnnotation</span><span class='op'>(</span>txdb <span class='op'>=</span> <span class='va'>txdb</span>,
+                                                species <span class='op'>=</span> <span class='st'>'Homo_sapiens'</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Extract exons by transcripts...</span></div><div class='output co'>#&gt; <span class='message'>Identify overlapping first exons for each gene...</span></div><div class='output co'>#&gt; <span class='message'>Prepare mapping between transcripts, tss, promoters and genes...</span></div><div class='output co'>#&gt; <span class='message'>Prepare annotated intron ranges...</span></div><div class='output co'>#&gt; <span class='message'>Annotating reduced exon ranges...</span></div><div class='output co'>#&gt; <span class='message'>Prepare promoter coordinates and first exon ranges...</span></div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -182,7 +184,7 @@ names(genomeStyles()).</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

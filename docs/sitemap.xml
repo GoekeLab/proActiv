@@ -4,6 +4,9 @@
     <loc>https://goekelab.github.io/proActiv//index.html</loc>
   </url>
   <url>
+    <loc>https://goekelab.github.io/proActiv//reference/boxplotPromoters.html</loc>
+  </url>
+  <url>
     <loc>https://goekelab.github.io/proActiv//reference/calculateJunctionReadCounts.html</loc>
   </url>
   <url>
@@ -11,6 +14,9 @@
   </url>
   <url>
     <loc>https://goekelab.github.io/proActiv//reference/getAbsolutePromoterActivity.html</loc>
+  </url>
+  <url>
+    <loc>https://goekelab.github.io/proActiv//reference/getAlternativePromoters.html</loc>
   </url>
   <url>
     <loc>https://goekelab.github.io/proActiv//reference/getGeneExpression.html</loc>
