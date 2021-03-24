@@ -40,8 +40,8 @@
 #'  
 #' ## First, run proActiv to generate a summarizedExperiment result
 #' files <- list.files(system.file('extdata/vignette/junctions', 
-#'                        package = 'proActiv'), 
-#'                        full.names = TRUE)
+#'                       package = 'proActiv'), 
+#'                       full.names = TRUE)
 #' promoterAnnotation <- promoterAnnotation.gencode.v34.subset
 #' result <- proActiv(files = files,
 #'                        promoterAnnotation  = promoterAnnotation,
@@ -49,8 +49,8 @@
 #'                        ncores = 1)
 #' ## Read in pre-computed ranges
 #' txdb <- AnnotationDbi::loadDb(system.file('extdata/vignette/annotations',
-#'                                    'gencode.v34.annotation.rap1gap.sqlite',
-#'                                    package = 'proActiv'))
+#'                                   'gencode.v34.annotation.rap1gap.sqlite',
+#'                                   package = 'proActiv'))
 #' ## Declare a gene of interest
 #' gene <- 'ENSG00000076864.19'
 #' ## Call plot 
@@ -97,6 +97,8 @@ plotPromoters <- function(result, gene, txdb, ranges,
 # Helper function to get data track
 #' @importFrom GenomicRanges GRanges values
 #' @importFrom Gviz DataTrack
+#' @importFrom IRanges IRanges
+#' @importFrom S4Vectors 'mcols<-' mcols 'values<-'
 getDataTrack <- function(rdata, groups, blk.width,
                             fill.histogram, col.histogram) {
     message('Creating Data Track...')
@@ -160,6 +162,7 @@ getGeneRegionTrack <- function(rdata, gene, txdb, ranges) {
 
 # Helper function to get annotation track
 #' @importFrom Gviz AnnotationTrack
+#' @importFrom GenomicRanges start end
 getAnnotationTrack <- function(rdata, grtrack, arrow.width,
                                 fontcolor.feature, cex.feature, 
                                 fill, col) {
@@ -185,3 +188,125 @@ getAnnotationTrack <- function(rdata, grtrack, arrow.width,
                             fill = fill, col = col)
     return(atrack)
     }
+
+
+#' Visualizes promoter activity and gene expression with boxplots
+#'
+#' @param result A SummarizedExperiment object return by proActiv, with assays 
+#'   giving promoter counts and activity with gene expression stored as 
+#'   metadata. rowData contains promoter metadata and absolute promoter 
+#'   activity summarized across conditions. Condition must be provided. 
+#' @param geneId A character vector. A single gene id. This identifier must
+#'   correspond to the identifier in the promoter annotation. 
+#' @param geneName A character vector. Common gene name to be displayed
+#'   on plot. Optional. Defaults to NULL.
+#' @param filterInternal A boolean. Determines if internal promoters should be 
+#'   removed from the plot. Defaults to TRUE. 
+#' @param col A character vector of colours to be used for plotting. 
+#' 
+#' @export
+#' @return A list of length 3. Each entry is a plot corresponding to 
+#'  absolute promoter activity, relative promoter activity and gene expression.
+#' 
+#' @examples
+#' files <- list.files(system.file('extdata/vignette/junctions', 
+#'                        package = 'proActiv'), 
+#'                        full.names = TRUE, pattern = 'replicate5')
+#' promoterAnnotation <- promoterAnnotation.gencode.v34.subset
+#' result <- proActiv(files = files,
+#'                        promoterAnnotation  = promoterAnnotation,
+#'                        condition = rep(c('A549', 'HepG2'), each=1),
+#'                        fileLabels = NULL,
+#'                        ncores = 1)
+#' plots <- boxplotPromoters(result, "ENSG00000076864.19")
+#' 
+#' @importFrom SummarizedExperiment rowData
+#' @importFrom S4Vectors metadata 
+boxplotPromoters <- function(result, 
+                                geneId, 
+                                geneName = NULL, 
+                                filterInternal = TRUE,
+                                col = NULL) {
+    
+    rdata <- rowData(result)
+    gexp <- metadata(result)$gene
+    gexp <- gexp[,c(result$sampleName)]
+    genelst <- rdata$geneId
+    
+    geneIdx <- grep(geneId, genelst)
+    if (length(geneIdx) == 0) {
+        stop("Gene not found")
+    }
+    result <- result[geneIdx,]
+    internalId <- TRUE
+    if (filterInternal) {
+        rdata <- rowData(result)
+        internalId <- rdata$internalPromoter == FALSE
+    }
+    assay.abs <- assays(result)$abs[internalId,]
+    assay.rel <- assays(result)$rel[internalId,]
+    nonzero <- apply(assay.abs, 1, function(x) !all(x==0))
+    assay.abs <- assay.abs[nonzero,]
+    assay.rel <- assay.rel[nonzero,]
+    gexp <- gexp[grep(geneId, rownames(gexp)),]
+    if (nrow(assay.abs) == 0) {
+        stop("Gene has no expressed non-internal promoters")
+    }
+    
+    condition <- result$condition
+    
+    plot.abs <- generateBoxplot(assay.abs, condition, 
+                                main = paste0("Absolute Promoter Activity ", 
+                                                geneName),
+                                col = col)
+    plot.rel <- generateBoxplot(assay.rel, condition, 
+                                main = paste0("Relative Promoter Activity ", 
+                                                geneName),
+                                col = col)
+    plot.gexp <- generateBoxplot(gexp, condition, 
+                                main = paste0("Gene Expression ", geneName), 
+                                promoter = FALSE,
+                                col = col)
+    return(list(plot.abs, plot.rel, plot.gexp))
+}
+
+# Helper function for boxplotPromoters.
+#' @importFrom data.table data.table melt
+#' @importFrom ggplot2 ggplot geom_boxplot theme_light theme ggtitle aes 
+#'   element_text scale_fill_manual
+generateBoxplot <- function(data, 
+                            condition, 
+                            main, 
+                            promoter = TRUE,
+                            col) {
+    ## Reshape to long for ggplot
+    colnames(data) <- condition
+    data$Feature <- rownames(data)
+    data <- data.table(data)
+    data <- melt(data, ncol(data))
+    if (promoter) {
+        data$Feature <- paste0('prmtr.', data$Feature)
+    }
+    names(data) <- c("Prmtr", "Condition", "Expression")
+    data$Condition <- factor(data$Condition)
+    
+    Prmtr <- Expression <- Condition <- NULL
+    ## Promoter and gene expression plots
+    if (promoter) {
+        outPlot <- ggplot(data = data, aes(x = Prmtr, y = Expression, fill = Condition)) + 
+            geom_boxplot(outlier.alpha = 0.5, outlier.size = 1) + 
+            theme_light() +
+            theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + 
+            ggtitle(main)
+    } else {
+        outPlot <- ggplot(data = data, aes(x = Prmtr, y = Expression, fill = Condition)) + 
+            geom_boxplot(outlier.alpha = 0.5, outlier.size = 1) + 
+            theme_light() +
+            ggtitle(main)
+    }
+    if (!is.null(col)) {
+        outPlot <- outPlot + 
+            scale_fill_manual(values = col[seq_len(length(unique(condition)))])
+    }
+    return(outPlot)
+}
