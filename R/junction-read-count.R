@@ -13,42 +13,45 @@
 #' @return The total number of junction reads overlapping with each promoter for
 #'   the input annotated intron ranges
 #' 
-#' @importFrom GenomeInfoDb seqlevelsStyle
-#' @importFrom S4Vectors queryHits
-#' @importFrom S4Vectors subjectHits
-#'
+#' @importFrom GenomicAlignments readTopHatJunctions readSTARJunctions 
+#'   readGAlignments summarizeJunctions
+#' @importFrom GenomeInfoDb seqlevelsStyle keepStandardChromosomes
+#' @importFrom GenomicRanges findOverlaps 'strand<-' 
+#' @importFrom S4Vectors queryHits subjectHits
 calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges, 
                                         file = '', fileType = '', genome = '') {
     if(fileType == 'tophat') {
         message(paste0('Processing: ', file))
-        junctionTable <- readTopHatJunctions(file)
-        seqlevelsStyle(junctionTable) <- 'UCSC'
+        junctionTable <- GenomicAlignments::readTopHatJunctions(file)
+        GenomeInfoDb::seqlevelsStyle(junctionTable) <- 'UCSC'
         message('File loaded into memory')
     } else if(fileType == 'star') {
         message(paste0('Processing: ', file))
-        junctionTable <- readSTARJunctions(file)
-        seqlevelsStyle(junctionTable) <- 'UCSC'
+        junctionTable <- GenomicAlignments::readSTARJunctions(file)
+        GenomeInfoDb::seqlevelsStyle(junctionTable) <- 'UCSC'
         junctionTable$score <- junctionTable$um_reads  
         message('File loaded into memory')
     } else if (fileType == 'bam') {
         message(paste0('Processing: ', file))
-        rawBam <- readGAlignments(file)
-        bam <- keepStandardChromosomes(rawBam, pruning.mode = 'coarse')
-        seqlevelsStyle(bam) <- 'UCSC'
+        rawBam <- GenomicAlignments::readGAlignments(file)
+        bam <- GenomeInfoDb::keepStandardChromosomes(rawBam, 
+                                                     pruning.mode = 'coarse')
+        GenomeInfoDb::seqlevelsStyle(bam) <- 'UCSC'
         rm(rawBam)
         gc()
-        junctions <- summarizeJunctions(bam, genome = genome)
+        junctions <- GenomicAlignments::summarizeJunctions(bam, genome = genome)
         rm(bam)
         gc()
-        junctionTable <- keepStandardChromosomes(junctions, 
+        junctionTable <- GenomeInfoDb::keepStandardChromosomes(junctions, 
                                                     pruning.mode = 'coarse')
         strand(junctionTable) <- junctionTable$intron_strand
         junctionTable <- junctionTable[,c('score')]
         message('Junctions extracted from BAM file')
     }
     message('Calculating junction counts')
-    intronRanges.overlap <- findOverlaps(intronRanges, junctionTable, 
-                                            type = 'equal')
+    intronRanges.overlap <- GenomicRanges::findOverlaps(intronRanges, 
+                                                        junctionTable, 
+                                                        type = 'equal')
     intronRanges$junctionCounts <- rep(0, length(intronRanges))
     intronRanges$junctionCounts[queryHits(intronRanges.overlap)] <- 
                         junctionTable$score[subjectHits(intronRanges.overlap)]
@@ -88,7 +91,6 @@ calculateJunctionReadCounts <- function(promoterCoordinates, intronRanges,
 #' @return A data.frame object. The number of junction reads per promoter (rows)
 #'   for each sample (cols)
 #' @importFrom BiocParallel bpparam bplapply
-#' 
 calculatePromoterReadCounts <- function(promoterAnnotation, files = NULL, 
                                         fileLabels = NULL, fileType = NULL , 
                                         genome = NULL, numberOfCores = 1) {
@@ -139,7 +141,6 @@ normalizePromoterReadCounts <- function(promoterReadCounts) {
     if (ncol(promoterReadCounts) == 1) {
         return(promoterReadCounts)
     }
-
     activePromoters <- which(!is.na(promoterReadCounts[, 1]))
     colData <- data.frame(sampleLabels = colnames(promoterReadCounts))
     rownames(colData) <- colnames(promoterReadCounts)
@@ -149,7 +150,6 @@ normalizePromoterReadCounts <- function(promoterReadCounts) {
         stop('DESeq2 is not installed! 
                 For normalization DESeq2 is needed, please install it.')
     }
-
     dds <- DESeq2::DESeqDataSetFromMatrix(countData = 
                                         promoterReadCounts[activePromoters, ], 
                                         colData = colData, design = ~ 1)

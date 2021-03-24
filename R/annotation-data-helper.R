@@ -1,13 +1,7 @@
-#' @import IRanges
-#' @import GenomicRanges
-#' @import GenomicFeatures
-#' @import GenomicAlignments
-#'
-NULL
 
 # Get the transcript ranges with metadata and transcript lengths
-#' @importFrom GenomeInfoDb keepStandardChromosomes
-#' @importFrom GenomeInfoDb 'seqlevelsStyle<-'
+#' @importFrom GenomeInfoDb keepStandardChromosomes 'seqlevelsStyle<-'
+#' @importFrom GenomicFeatures transcripts
 getTranscriptRanges <- function(txdb, species = 'Homo_sapiens') {
     # Retrieve transcript ranges with detailed metadata
     transcriptRanges <- transcripts(txdb, columns = 
@@ -21,8 +15,8 @@ getTranscriptRanges <- function(txdb, species = 'Homo_sapiens') {
 }
 
 # Get transcript start site coordinates
-#' @importFrom GenomeInfoDb keepStandardChromosomes
-#' @importFrom GenomeInfoDb 'seqlevelsStyle<-'
+#' @importFrom GenomeInfoDb keepStandardChromosomes 'seqlevelsStyle<-'
+#' @importFrom GenomicFeatures promoters
 getTssRanges <- function(transcriptRanges) {
     # Annotate transcription start sites (TSSs) with ids
     tssCoordinates <- promoters(transcriptRanges, upstream = 0, downstream = 1)
@@ -64,6 +58,8 @@ getFirstExonRanges <- function(exonRangesByTx.unlist) {
 #' @importFrom rlang .data
 #' @importFrom dplyr as_tibble '%>%' arrange group_by mutate lead summarise 
 #'   ungroup select n 
+#' @importFrom S4Vectors mcols 'mcols<-'
+#' @importFrom GenomicRanges makeGRangesFromDataFrame
 getReducedExonRanges <- function(exonRanges.firstExon, 
                                 exonRanges.firstExon.geneId) {
     exonRanges.firstExon$geneId <- exonRanges.firstExon.geneId
@@ -89,8 +85,8 @@ getReducedExonRanges <- function(exonRanges.firstExon,
 }
 
 # Get intron ranges for each promoter
-#' @importFrom GenomeInfoDb keepStandardChromosomes
-#' @importFrom GenomeInfoDb 'seqlevelsStyle<-'
+#' @importFrom GenomeInfoDb keepStandardChromosomes 'seqlevelsStyle<-'
+#' @importFrom GenomicFeatures intronsByTranscript
 getIntronRangesByTx <- function(txdb, transcriptRanges, 
                                 species = 'Homo_sapiens') {
     # Retrieve intron ranges for each promoter
@@ -119,7 +115,7 @@ getUniqueIntronRanges <- function(intronRangesByTx.unlist) {
 getIntronRanks <- function(intronRangesByTx) {
     intronRankByTx <- as_tibble(intronRangesByTx) %>% 
         dplyr::group_by(.data$group_name) %>% 
-        dplyr::mutate(rank = ifelse(strand == '+', 
+        dplyr::mutate(rank = ifelse(.data$strand == '+', 
                                     row_number(), rev(row_number())))
     intronRank <- intronRankByTx$rank
     return(intronRank)
@@ -150,7 +146,7 @@ annotateAllIntronRanges <- function(intronRankByTx, intronRangesByTx.unlist,
     return(intronRangesByTx.unlist)
 }
 
-# Annotate unique intorn ranges with metadata
+# Annotate unique intron ranges with metadata
 annotateUniqueIntronRanges <- function(intronRanges.unique, 
                                         intronRangesByTx.unlist) {
     # Annotate unique intron ranges with corresponding ids
@@ -187,6 +183,7 @@ annotateUniqueIntronRanges <- function(intronRanges.unique,
 # across transcripts
 #' @importFrom rlang .data
 #' @importFrom dplyr as_tibble mutate group_by '%>%' filter distinct inner_join
+#' @importFrom S4Vectors mcols
 getIntronTable <- function(intronRanges.unique, intronRangesByTx.unlist) {
     intronTable <- as_tibble(as.data.frame(intronRanges.unique)) 
     # Prepare metadata for each intron
@@ -246,6 +243,8 @@ getPromoterMetadata <- function(intronTable.firstIntron) {
 }
 
 # Annotate the reduced exon ranges for each promoter with the intron metadata
+#' @importFrom IRanges IRanges 
+#' @importFrom S4Vectors mcols<- mcols
 annotateReducedExonRanges <- function(exonReducedRanges, promoterMetadata, 
                                         intronIdByPromoter.firstIntron) {
     intronReducedTable <- cbind(as.data.frame(exonReducedRanges), 

@@ -24,6 +24,9 @@
 #' promoterAnnotation <- preparePromoterAnnotation(txdb = txdb,
 #'                                                 species = 'Homo_sapiens')
 #' 
+#' @importFrom GenomicFeatures promoters 
+#' @importFrom GenomicRanges width resize end
+#' @importFrom S4Vectors 'mcols<-'
 preparePromoterAnnotation <- function(txdb, file, species) {
     txdb <- parseTxdb(txdb, file, species)
     promoterAnnotation <- PromoterAnnotation()

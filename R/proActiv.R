@@ -102,10 +102,10 @@ parseFile <- function(files, fileLabels, genome) {
 }
 
 # Call functions to get activity and build summarized experiment
-#' @import SummarizedExperiment
+#' @importFrom SummarizedExperiment SummarizedExperiment 'rowData<-'
 #' @importFrom data.table as.data.table .N ':='
 #' @importFrom rlang .data
-#' @importFrom S4Vectors metadata
+#' @importFrom S4Vectors 'metadata<-'
 buildSummarizedExperiment <- function(promoterAnnotation, 
                                         files, fileLabels, fileType, 
                                         genome, ncores) {
@@ -135,8 +135,7 @@ buildSummarizedExperiment <- function(promoterAnnotation,
     promoterCoordinates$geneId <- promoterIdMapping$geneId[match(
                 promoterCoordinates$promoterId, promoterIdMapping$promoterId)]
     promoterCoordinates <- as.data.table(promoterCoordinates)
-    promoterPosition <- NULL
-    geneId <- NULL
+    promoterPosition <- geneId <- strand <- NULL
     promoterCoordinates[, promoterPosition := ifelse(strand == '+', seq_len(.N), 
                                                 rev(seq_len(.N))), by=geneId]
     ## Build row data
@@ -154,7 +153,7 @@ buildSummarizedExperiment <- function(promoterAnnotation,
 
 # Helper function to summarize results across condition
 #' @importFrom S4Vectors DataFrame metadata
-#' @importFrom SummarizedExperiment rowData colData assays
+#' @importFrom SummarizedExperiment rowData colData 'colData<-' assays
 summarizeAcrossCondition <- function(result, condition) {
         if (any(make.names(condition) != condition)) {
             warning("Condition is modified to be syntactically valid")
