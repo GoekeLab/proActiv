@@ -1,3 +1,14 @@
+CHANGES IN VERSION 1.1.15
+------------------------
+
++ Implement getAlternativePromoters for identifying alternative promoters
++ Implement boxplotPromoters for visualizing promoter usage
+
+CHANGES IN VERSION 1.1.6
+------------------------
+
++ Enforce condition vector to following naming conventions
+
 CHANGES IN VERSION 1.0.0
 ------------------------
 
