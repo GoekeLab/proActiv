@@ -1,28 +1,11 @@
 context('proActiv Wrapper')
 library(proActiv)
-library(mockery)
 
 promoterAnnotation <- promoterAnnotation.gencode.v34.subset
 
 test_that('proActiv handles non-existent files',{
   
   expect_error(proActiv('', promoterAnnotation))
-
-  })
-
-test_that('proActiv handles multiple file types', {
-  
-  mockery::stub(proActiv, 'file.exists', function() TRUE)
-  files <- c('sample1.bed', 'sample2.junctions')
-  expect_error(proActiv(files, promoterAnnotation))
-
-  })
-
-test_that('proActiv handles invalid file types', {
-  
-  mockery::stub(proActiv, 'file.exists', function() TRUE)
-  files <- c('sample1.txt')
-  expect_error(proActiv(files, promoterAnnotation))
 
   })
 
@@ -57,20 +40,20 @@ test_that('proActiv returns a Summarized Experiment with junction input', {
   
 })
 
-test_that('proActiv returns a Summarized Experiment with bam input', {
-  
-  ## Test BAM file input
-  bams <- list.files(system.file('extdata/testdata/bam', package = 'proActiv'), full.names = TRUE)
-  suppressWarnings(
-      expect_s4_class(proActiv(bams, promoterAnnotation, genome = 'hg38'), 'SummarizedExperiment')
-  )
-  suppressWarnings(
-      result <- proActiv(bams, promoterAnnotation, genome = 'hg38')
-  )
-  expect_equal(length(assays(result)), 4)
-  expect_equal(ncol(rowData(result)), 8)
-  
-})
+# test_that('proActiv returns a Summarized Experiment with bam input', {
+#   
+#   ## Test BAM file input
+#   bams <- list.files(system.file('extdata/testdata/bam', package = 'proActiv'), full.names = TRUE)
+#   suppressWarnings(
+#       expect_s4_class(proActiv(bams, promoterAnnotation, genome = 'hg38'), 'SummarizedExperiment')
+#   )
+#   suppressWarnings(
+#       result <- proActiv(bams, promoterAnnotation, genome = 'hg38')
+#   )
+#   expect_equal(length(assays(result)), 4)
+#   expect_equal(ncol(rowData(result)), 8)
+#   
+# })
 
 
 test_that('proActiv parallelisation returns expected output', {

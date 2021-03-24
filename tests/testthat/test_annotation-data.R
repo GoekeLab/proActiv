@@ -1,23 +1,15 @@
 context('Calculating Promoter Annotation')
 library(proActiv)
-library(mockery)
 
 gtfPath <- system.file('extdata/vignette/annotations/gencode.v34.annotation.subset.gtf.gz', package = 'proActiv')
 txdbPath <- system.file('extdata/vignette/annotations/gencode.v34.annotation.subset.sqlite', package = 'proActiv')
 
-txdb <- loadDb(txdbPath)
+txdb <- AnnotationDbi::loadDb(txdbPath)
 
 test_that('preparePromoterAnnotation handles ambiguous argument specification', {
   expect_error(preparePromoterAnnotation(gtfPath, 'Homo_sapiens'))
 })
 
-test_that('preparePromoterAnnotation handles multiple file types', {
-  
-  mockery::stub(preparePromoterAnnotation, 'file.exists', function() TRUE)
-  files <- 'sample.gtf'
-  expect_error(preparePromoterAnnotation(file = file, species = 'Homo_sapiens'))
-  
-})
 
 test_that('preparePromoterAnnotation handles non-existent files', {
   
@@ -25,15 +17,6 @@ test_that('preparePromoterAnnotation handles non-existent files', {
   expect_error(preparePromoterAnnotation(file = file, species = 'Homo_sapiens'))
   
 })
-
-test_that('preparePromoterAnnotation handles invalid file types', {
-  
-  mockery::stub(preparePromoterAnnotation, 'file.exists', function() TRUE)
-  file <- 'sample.txt'
-  expect_error(preparePromoterAnnotation(file = file, species = 'Homo_sapiens'))
-  
-})
-
 
 test_that('preparePromoterAnnotation returns expected output with gtf file path',{
   

@@ -30,15 +30,3 @@ test_that('plotPromoters throws error if both txdb and ranges provided', {
     expect_error(plotPromoters(result, gene, txdb = txdb, ranges = ranges))
     
 }) 
-
-test_that('plotPromoters produces expected output with txdb', {
-
-    vdiffr::expect_doppelganger('plotPromoters', plotPromoters(result, gene, txdb = txdb))
-    
-})
-
-test_that('plotPromoters produces expected output with ranges', {
-    
-    vdiffr::expect_doppelganger('plotPromoters', plotPromoters(result, gene, ranges = ranges))
-    
-})
