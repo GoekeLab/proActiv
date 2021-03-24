@@ -80,8 +80,8 @@ Visualizes promoter activity and transcript model for a gene of interest
  
 ## First, run proActiv to generate a summarizedExperiment result
 files <- list.files(system.file('extdata/vignette/junctions', 
-                       package = 'proActiv'), 
-                       full.names = TRUE)
+                      package = 'proActiv'), 
+                      full.names = TRUE)
 promoterAnnotation <- promoterAnnotation.gencode.v34.subset
 result <- proActiv(files = files,
                        promoterAnnotation  = promoterAnnotation,
@@ -89,8 +89,8 @@ result <- proActiv(files = files,
                        ncores = 1)
 ## Read in pre-computed ranges
 txdb <- AnnotationDbi::loadDb(system.file('extdata/vignette/annotations',
-                                   'gencode.v34.annotation.rap1gap.sqlite',
-                                   package = 'proActiv'))
+                                  'gencode.v34.annotation.rap1gap.sqlite',
+                                  package = 'proActiv'))
 ## Declare a gene of interest
 gene <- 'ENSG00000076864.19'
 ## Call plot 
