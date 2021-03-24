@@ -32,35 +32,29 @@ LazyData: true
 Depends: R (>= 4.0.0)
 RoxygenNote: 7.1.1
 Imports: 
+    AnnotationDbi,
+    BiocParallel,
+    data.table,
     dplyr,
+    DESeq2,
+    IRanges,
     GenomicRanges,
     GenomicFeatures,
     GenomicAlignments,
     GenomeInfoDb,
-    IRanges,
-    S4Vectors,
+    ggplot2,
+    Gviz,
     methods,
     rlang,
+    S4Vectors,
     SummarizedExperiment,
-    AnnotationDbi,
-    DESeq2,
-    data.table,
-    tibble,
-    Gviz,
-    BiocParallel
+    stats,
+    tibble
 Suggests: 
     testthat,
-    mockery,
-    BSgenome,
-    BiocManager,
-    BSgenome.Hsapiens.UCSC.hg38,
-    knitr,
     rmarkdown,
-    DEXSeq,
-    Rtsne,
-    ggplot2,
-    tidyr,
-    vdiffr
+    knitr,
+    Rtsne
 URL: https://github.com/GoekeLab/proActiv
 biocViews:
     RNASeq,
