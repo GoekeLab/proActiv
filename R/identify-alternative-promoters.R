@@ -1,17 +1,17 @@
 #' Identifies alternative promoters.
 #'
 #' @param result A SummarizedExperiment object with assays giving promoter 
-#'   counts and activity with gene expression stored as metadata (output from 
-#'   proActiv). rowData contains promoter metadata and absolute promoter 
-#'   activity summarized across conditions. Condition must be provided.
-#' @param currentCondition A character vector. The current condition to be 
+#'   counts, activity and gene expression (output from proActiv). rowData 
+#'   contains promoter metadata and absolute promoter activity summarized 
+#'   across conditions. Condition must be provided.
+#' @param referenceCondition A character vector. The reference condition to be 
 #'   compared. Samples corresponding to all other conditions will be compared 
 #'   to this samples in this current condition.  
-#' @param thresAbs A numeric value. Minimum value for promoter to be active in 
+#' @param minAbs A numeric value. Minimum value for promoter to be active in 
 #'   absolute terms. Defaults to 0.25.
-#' @param thresRel A numeric value. Minimum value for promoter to be active in 
+#' @param minRel A numeric value. Minimum value for promoter to be active in 
 #'   relative terms. Defaults to 0.05.
-#' @param thresPval A numeric value. Adjusted p-value threshold for detecting 
+#' @param maxPval A numeric value. Adjusted p-value threshold for detecting 
 #'   alternative promoters. Defaults to 0.05.
 #' @param promoterFC A numeric value. Minimum fold change for a promoter in the
 #'   current condition compared to all other conditions. Promoters must have at 
@@ -38,9 +38,9 @@
 #' alternativePromoters <- getAlternativePromoters(result, "A549")
 #' 
 #' @importFrom SummarizedExperiment rowData
-getAlternativePromoters <- function(result, currentCondition,
-                                    thresAbs = 0.25, thresRel = 0.05,
-                                    thresPval = 0.05,
+getAlternativePromoters <- function(result, referenceCondition,
+                                    minAbs = 0.25, minRel = 0.05,
+                                    maxPval = 0.05,
                                     promoterFC = 2.0, geneFC = 1.5) {
     
     condition <- result$condition
@@ -48,30 +48,30 @@ getAlternativePromoters <- function(result, currentCondition,
         stop("The input summarized experiment must contain sample condition. 
                 Run proActiv with a condition vector.")
     }
-    id <- which(condition == currentCondition)
+    id <- which(condition == referenceCondition)
     if (length(id) == 0 ) {
         stop(paste0("Invalid input condition. Should correspond to one of: ",
                     paste(unique(condition), collapse = ' ')))
     }
-    condition[id] <- currentCondition
+    condition[id] <- referenceCondition
     condition[-id] <- 'other'
     condition <- relevel(as.factor(condition), ref = 'other')
-    resultAbs <- fitPromoters(result, currentCondition, 
-                            type = "absolute", thres = thresAbs)
-    resultRel <- fitPromoters(result, currentCondition,
-                            type = "relative", thres = thresRel)
+    resultAbs <- fitPromoters(result, referenceCondition, 
+                            type = "absolute", thres = minAbs)
+    resultRel <- fitPromoters(result, referenceCondition,
+                            type = "relative", thres = minRel)
     
     altPro <- rep(0, nrow(result))
     altPro[
-        resultAbs$padj < thresPval & resultRel$padj < thresPval &
+        resultAbs$padj < maxPval & resultRel$padj < maxPval &
         resultAbs$abs.cond > (promoterFC * resultAbs$abs.other) & 
-        resultAbs$abs.cond > thresAbs &
+        resultAbs$abs.cond > minAbs &
         resultAbs$gexp.cond < (geneFC * resultAbs$gexp.other) & 
         resultAbs$gexp.cond > (resultAbs$gexp.other / geneFC)] <- 1
     altPro[
-        resultAbs$padj < thresPval & resultRel$padj < thresPval &
+        resultAbs$padj < maxPval & resultRel$padj < maxPval &
         resultAbs$abs.other > (promoterFC * resultAbs$abs.cond) & 
-        resultAbs$abs.other > thresAbs &
+        resultAbs$abs.other > minAbs &
         resultAbs$gexp.other < (geneFC * resultAbs$gexp.cond) & 
         resultAbs$gexp.other > (resultAbs$gexp.cond / geneFC)] <- -1
     
@@ -92,7 +92,7 @@ getAlternativePromoters <- function(result, currentCondition,
 #' @importFrom SummarizedExperiment assays rowData
 #' @importFrom S4Vectors metadata
 #' @importFrom stats lm p.adjust relevel
-fitPromoters <- function(result, currentCondition, type, thres) {
+fitPromoters <- function(result, referenceCondition, type, thres) {
     if (type == "absolute") {
         raw.assay <- assays(result)$absolutePromoterActivity
     } else if (type == "relative") {
@@ -116,13 +116,14 @@ fitPromoters <- function(result, currentCondition, type, thres) {
     ## Other metrics
     ## - mean absolute promoter activity each in group
     ## - gene expression
-    id <- which(condition == currentCondition)
+    id <- which(condition == referenceCondition)
     
     mean.cond <- rowMeans(raw.assay[,id, drop = FALSE], na.rm = TRUE) 
     mean.other <- rowMeans(raw.assay[,-id, drop = FALSE], na.rm = TRUE) 
     
-    gexp <- metadata(result)[[1]]
-    gexp <- gexp[, result$sampleName]
+    gexp <- assays(result)$gene
+    gexp <- as.matrix(gexp[, result$sampleName])
+    rownames(gexp) <- rowData(result)$geneId
     mean.gexp.cond <- rowMeans(gexp[,id, drop = FALSE], na.rm=TRUE)
     mean.gexp.cond <- mean.gexp.cond[match(rdata$geneId, rownames(gexp))]
     mean.gexp.other <- rowMeans(gexp[,-id, drop = FALSE], na.rm=TRUE)

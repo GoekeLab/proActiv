@@ -1,8 +1,8 @@
 #' Visualizes promoter activity and transcript model for a gene of interest
 #'
 #' @param result A SummarizedExperiment object with assays giving promoter 
-#'   counts and activity with gene expression stored as column data and 
-#'   promoter gene id mapping stored as row data
+#'   counts,activity and gene expression and promoter gene id mapping stored as
+#'   row data
 #' @param gene A character vector of length 1. Single gene of interest to 
 #'   be plotted
 #' @param txdb A TxDb object. The txdb must correspond to the genome version 
@@ -229,8 +229,11 @@ boxplotPromoters <- function(result,
                                 col = NULL) {
     
     rdata <- rowData(result)
-    gexp <- metadata(result)$gene
-    gexp <- gexp[,c(result$sampleName)]
+    gexp <- as.matrix(assays(result)$gene)
+    gexp <- gexp[, result$sampleName]
+    rownames(gexp) <- rdata$geneId
+    gexp <- gexp[!duplicated(gexp), ]
+    gexp <- data.frame(gexp)
     genelst <- rdata$geneId
     
     geneIdx <- grep(geneId, genelst)
@@ -246,9 +249,9 @@ boxplotPromoters <- function(result,
     assay.abs <- assays(result)$abs[internalId,]
     assay.rel <- assays(result)$rel[internalId,]
     nonzero <- apply(assay.abs, 1, function(x) !all(x==0))
-    assay.abs <- assay.abs[nonzero,]
-    assay.rel <- assay.rel[nonzero,]
-    gexp <- gexp[grep(geneId, rownames(gexp)),]
+    assay.abs <- assay.abs[nonzero,,drop=FALSE]
+    assay.rel <- assay.rel[nonzero,,drop=FALSE]
+    gexp <- gexp[grep(geneId, rownames(gexp)),,drop=FALSE]
     if (nrow(assay.abs) == 0) {
         stop("Gene has no expressed non-internal promoters")
     }

@@ -20,7 +20,7 @@
 #'
 #' @export
 #' @return A SummarizedExperiment object with assays giving promoter counts 
-#'   and activity with gene expression stored as metadata. rowData contains
+#'   and activity with gene expression. rowData contains
 #'   promoter metadata and absolute promoter activity summarized across
 #'   conditions (if condition is provided)
 #' 
@@ -126,9 +126,9 @@ buildSummarizedExperiment <- function(promoterAnnotation,
             absolutePromoterActivity = absolutePromoterActivity[, 
                                                     fileLabels, drop = FALSE],
             relativePromoterActivity = relativePromoterActivity[, 
-                                                    fileLabels, drop = FALSE]))
-    metadata(result) <- list(geneExpression = 
-                                    geneExpression[, fileLabels, drop = FALSE])
+                                                    fileLabels, drop = FALSE],
+            geneExpression = geneExpression[, fileLabels, drop = FALSE]))
+    
     message('Calculating positions of promoters...')
     promoterCoordinates <- promoterCoordinates(promoterAnnotation)
     promoterIdMapping <- promoterIdMapping(promoterAnnotation)
@@ -166,9 +166,8 @@ summarizeAcrossCondition <- function(result, condition) {
         for (group in unique(condition)) {
             rowData(result)[,paste0(group, '.mean')] <- 
                 rowMeans(assays(result[,colData(result)$condition==group])$abs) 
-            metadata(result)$geneExpression[,paste0(group, '.mean')] <- 
-                rowMeans(metadata(result)$geneExpression[
-                    ,colData(result)$condition==group, drop=FALSE])
+            rowData(result)[,paste0(group, '.gene.mean')] <- 
+                rowMeans(assays(result[,colData(result)$condition==group])$gene)
         }
         rowData(result) <- categorizePromoters(rowData(result), condition)
     return(result)

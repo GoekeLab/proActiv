@@ -38,18 +38,15 @@ getAbsolutePromoterActivity <- function(junctionReadCounts, promoterAnnotation,
 getGeneExpression <- function(absolutePromoterActivity) {
     message('Calculating gene expression...')
     conversionHelper <- absolutePromoterActivity[, c('promoterId', 'geneId')]
-    if (ncol(absolutePromoterActivity) == 3) {
-        geneExpression <- data.frame(counts = tapply(
-                                    absolutePromoterActivity[, 3], 
-                                    conversionHelper$geneId, sum, na.rm = TRUE))
-    } else {
-        geneExpression <- as.data.frame(apply(
-                                absolutePromoterActivity[, -c(1,2)], 2, tapply, 
-                                conversionHelper$geneId, sum, na.rm = TRUE))
-    }
+    geneExpression <- as.matrix(apply(
+        absolutePromoterActivity[, -c(1,2), drop=FALSE], 2, tapply, 
+        conversionHelper$geneId, sum, na.rm = TRUE))
+    counts <- as.numeric(table(conversionHelper$geneId))
+    geneExpression <- geneExpression[rep(seq_len(nrow(geneExpression)), 
+                                         times = counts),]
+    geneExpression <- data.frame(geneExpression, row.names = NULL)
     colnames(geneExpression) <- colnames(absolutePromoterActivity)[-c(1,2)]
-    geneExpression <- cbind(geneId = rownames(geneExpression), geneExpression)
-    return(geneExpression)
+    geneExpression <- cbind(geneId = conversionHelper$geneId, geneExpression)
 }
 
 #' Prepare the relative promoter activity table including the promoter and gene

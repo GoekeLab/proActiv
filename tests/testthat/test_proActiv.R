@@ -35,8 +35,8 @@ test_that('proActiv returns a Summarized Experiment with junction input', {
   expect_s4_class(proActiv(junctions, promoterAnnotation, condition = rep(c('A549', 'HepG2'), each=3)), 'SummarizedExperiment')
   
   result <- proActiv(junctions, promoterAnnotation, condition = rep(c('A549', 'HepG2'), each=3))  
-  expect_equal(length(assays(result)), 4)
-  expect_equal(ncol(rowData(result)), 12)
+  expect_equal(length(assays(result)), 5)
+  expect_equal(ncol(rowData(result)), 14)
   
 })
 

@@ -128,14 +128,14 @@ setMethod("promoterCoordinates", "PromoterAnnotation",
 #'   be assigned
 #' 
 #' @describeIn PromoterAnnotation-class Setter for intronRanges
-#' @exportMethod intronRanges<-
+#' @exportMethod 'intronRanges<-'
 #' @importFrom methods validObject
 
 setGeneric("intronRanges<-", 
             function(x, value) standardGeneric("intronRanges<-"))
 
 #' @describeIn PromoterAnnotation-class Setter for intronRanges
-#' @aliases intronRanges<-,PromoterAnnotation-method
+#' @aliases 'intronRanges<-',PromoterAnnotation-method
 
 setMethod("intronRanges<-", "PromoterAnnotation", function(x, value) {
     x@intronRanges <- value
@@ -144,14 +144,14 @@ setMethod("intronRanges<-", "PromoterAnnotation", function(x, value) {
 })
 
 #' @describeIn PromoterAnnotation-class Setter for promoterIdMapping
-#' @exportMethod promoterIdMapping<-
+#' @exportMethod 'promoterIdMapping<-'
 #' @importFrom methods validObject
 
 setGeneric("promoterIdMapping<-", 
             function(x, value) standardGeneric("promoterIdMapping<-"))
 
 #' @describeIn PromoterAnnotation-class Setter for promoterIdMapping
-#' @aliases promoterIdMapping<-,PromoterAnnotation-method
+#' @aliases 'promoterIdMapping<-',PromoterAnnotation-method
 
 setMethod("promoterIdMapping<-", "PromoterAnnotation", function(x, value) {
     x@promoterIdMapping <- value
@@ -160,14 +160,14 @@ setMethod("promoterIdMapping<-", "PromoterAnnotation", function(x, value) {
 })
 
 #' @describeIn PromoterAnnotation-class Setter for promoterCoordinates
-#' @exportMethod promoterCoordinates<-
+#' @exportMethod 'promoterCoordinates<-'
 #' @importFrom methods validObject
 
 setGeneric("promoterCoordinates<-", 
             function(x, value) standardGeneric("promoterCoordinates<-"))
 
 #' @describeIn PromoterAnnotation-class Setter for promoterCoordinates
-#' @aliases promoterCoordinates<-,PromoterAnnotation-method
+#' @aliases 'promoterCoordinates<-',PromoterAnnotation-method
 
 setMethod("promoterCoordinates<-", "PromoterAnnotation", function(x, value) {
     x@promoterCoordinates <- value

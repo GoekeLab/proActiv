@@ -20,16 +20,6 @@ SummarizedExperiment::rowData
 #' @export
 SummarizedExperiment::colData
 
-# S4Vectors
-
-#' @importFrom S4Vectors metadata
-#' @export
-S4Vectors::metadata
-
-#' @importFrom S4Vectors 'metadata<-'
-#' @export
-S4Vectors::`metadata<-`
-
 # dplyr
 
 #' @importFrom dplyr as_tibble
