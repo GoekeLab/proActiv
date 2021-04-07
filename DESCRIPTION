@@ -1,6 +1,6 @@
 Package: proActiv
 Title: Estimate Promoter Activity from RNA-Seq data
-Version: 1.1.15
+Version: 1.1.18
 Authors@R: c(
     person(given = "Deniz",
            family = "Demircioglu",
@@ -54,7 +54,8 @@ Suggests:
     testthat,
     rmarkdown,
     knitr,
-    Rtsne
+    Rtsne,
+    gridExtra
 URL: https://github.com/GoekeLab/proActiv
 biocViews:
     RNASeq,

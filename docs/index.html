@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">proActiv</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.18</span>
       </span>
     </div>
 
@@ -125,14 +125,14 @@
 <div id="quick-start" class="section level3">
 <h3 class="hasAnchor">
 <a href="#quick-start" class="anchor"></a>Quick Start</h3>
-<p>proActiv estimates promoter activity from RNA-Seq data. Promoter activity is defined as the total amount of transcription initiated at each promoter. proActiv takes as input either BAM files or junction files (TopHat2 or STAR), and a promoter annotation object of the relevant genome. An optional argument <code>condition</code> can be supplied, describing the experimental condition corresponding to each input file. Here we demonstrate proActiv with STAR junction files (Human genome GRCh38 GENCODE v34) as input. These files are taken from the <a href="https://github.com/GoekeLab/sg-nex-data">SGNEx project</a> but restricted to the chr1:10,000,000-30,000,000 region, and can be found at ‘extdata/vignette’:</p>
+<p>proActiv estimates promoter activity from RNA-Seq data. Promoter activity is defined as the total amount of transcription initiated at each promoter. proActiv takes as input either BAM files or junction files (TopHat2 or STAR), and a promoter annotation object of the relevant genome. An optional argument <code>condition</code> can be supplied, describing the experimental condition corresponding to each input file. Here we demonstrate proActiv with STAR junction files (Human genome GRCh38 GENCODE v34) as input. These files are taken from the <a href="https://github.com/GoekeLab/sg-nex-data">SGNEx project</a> but restricted to the chr1:10,000,000-30,000,000 region, and can be found at <code>extdata/vignette</code>:</p>
 <ul>
-<li>extdata/vignette/SGNEx_A549_Illumina_replicate1-run1.subset.SJ.out.tab.gz</li>
-<li>extdata/vignette/SGNEx_A549_Illumina_replicate3-run1.subset.SJ.out.tab.gz</li>
-<li>extdata/vignette/SGNEx_A549_Illumina_replicate5-run1.subset.SJ.out.tab.gz</li>
-<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate2-run1.subset.SJ.out.tab.gz</li>
-<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate4-run1.subset.SJ.out.tab.gz</li>
-<li>extdata/vignette/SGNEx_HepG2_Illumina_replicate5-run1.subset.SJ.out.tab.gz</li>
+<li><code>extdata/vignette/SGNEx_A549_Illumina_replicate1-run1.subset.SJ.out.tab.gz</code></li>
+<li><code>extdata/vignette/SGNEx_A549_Illumina_replicate3-run1.subset.SJ.out.tab.gz</code></li>
+<li><code>extdata/vignette/SGNEx_A549_Illumina_replicate5-run1.subset.SJ.out.tab.gz</code></li>
+<li><code>extdata/vignette/SGNEx_HepG2_Illumina_replicate2-run1.subset.SJ.out.tab.gz</code></li>
+<li><code>extdata/vignette/SGNEx_HepG2_Illumina_replicate4-run1.subset.SJ.out.tab.gz</code></li>
+<li><code>extdata/vignette/SGNEx_HepG2_Illumina_replicate5-run1.subset.SJ.out.tab.gz</code></li>
 </ul>
 <!-- end list --><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/GoekeLab/proActiv">proActiv</a></span><span class="op">)</span>
@@ -151,10 +151,7 @@
 <p><code>result</code> is a summarizedExperiment object which can be accessed as follows:</p>
 <ul>
 <li>
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">assays(results)</a></code> returns raw/normalized promoter counts and absolute/relative promoter activity<br>
-</li>
-<li>
-<code><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html">metadata(results)</a></code> returns gene expression data<br>
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">assays(results)</a></code> returns raw/normalized promoter counts, absolute/relative promoter activity and gene expression data<br>
 </li>
 <li>
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData(results)</a></code> returns promoter metadata and summarized absolute promoter activity by conditions</li>
@@ -204,6 +201,14 @@
 <div id="release-history" class="section level2">
 <h2 class="hasAnchor">
 <a href="#release-history" class="anchor"></a>Release History</h2>
+<p><strong>Release 1.1.18</strong></p>
+<p>Date: 7th April 2021</p>
+<p>Changes in version 1.1.18:</p>
+<ul>
+<li><p>Gene expression data is now stored in the <code>assays</code> of the summarizedExperiment object returned by <code>proActiv</code> to facilitate easier filtering of the summarizedExperiment object. The metadata slot is now empty.</p></li>
+<li><p>Plotting promoter activity: Implementation of <code>boxplotPromoters</code> function to plot boxplots of absolute promoter activity, relative promoter activity, and gene expression.</p></li>
+<li><p>Identification of alternative promoters: Implementation of <code>getAlternativePromoters</code>, used to identify promoters that may exhibit alternative usage.</p></li>
+</ul>
 <p><strong>Release 1.0.0</strong></p>
 <p>Release date: 28th October 2020</p>
 <p>Released with Bioconductor 3.12</p>

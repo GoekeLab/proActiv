@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proActiv</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.18</span>
       </span>
     </div>
 
@@ -130,10 +130,10 @@
 
     <pre class="usage"><span class='fu'>getAlternativePromoters</span><span class='op'>(</span>
   <span class='va'>result</span>,
-  <span class='va'>currentCondition</span>,
-  thresAbs <span class='op'>=</span> <span class='fl'>0.25</span>,
-  thresRel <span class='op'>=</span> <span class='fl'>0.05</span>,
-  thresPval <span class='op'>=</span> <span class='fl'>0.05</span>,
+  <span class='va'>referenceCondition</span>,
+  minAbs <span class='op'>=</span> <span class='fl'>0.25</span>,
+  minRel <span class='op'>=</span> <span class='fl'>0.05</span>,
+  maxPval <span class='op'>=</span> <span class='fl'>0.05</span>,
   promoterFC <span class='op'>=</span> <span class='fl'>2</span>,
   geneFC <span class='op'>=</span> <span class='fl'>1.5</span>
 <span class='op'>)</span></pre>
@@ -144,28 +144,28 @@
     <tr>
       <th>result</th>
       <td><p>A SummarizedExperiment object with assays giving promoter 
-counts and activity with gene expression stored as metadata (output from 
-proActiv). rowData contains promoter metadata and absolute promoter 
-activity summarized across conditions. Condition must be provided.</p></td>
+counts, activity and gene expression (output from proActiv). rowData 
+contains promoter metadata and absolute promoter activity summarized 
+across conditions. Condition must be provided.</p></td>
     </tr>
     <tr>
-      <th>currentCondition</th>
-      <td><p>A character vector. The current condition to be 
+      <th>referenceCondition</th>
+      <td><p>A character vector. The reference condition to be 
 compared. Samples corresponding to all other conditions will be compared 
 to this samples in this current condition.</p></td>
     </tr>
     <tr>
-      <th>thresAbs</th>
+      <th>minAbs</th>
       <td><p>A numeric value. Minimum value for promoter to be active in 
 absolute terms. Defaults to 0.25.</p></td>
     </tr>
     <tr>
-      <th>thresRel</th>
+      <th>minRel</th>
       <td><p>A numeric value. Minimum value for promoter to be active in 
 relative terms. Defaults to 0.05.</p></td>
     </tr>
     <tr>
-      <th>thresPval</th>
+      <th>maxPval</th>
       <td><p>A numeric value. Adjusted p-value threshold for detecting 
 alternative promoters. Defaults to 0.05.</p></td>
     </tr>
@@ -190,7 +190,7 @@ expression, limit the gene expression fold change.</p></td>
  if any.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'> 
+    <pre class="examples"> 
 <span class='va'>files</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>'extdata/vignette/junctions'</span>, 
                        package <span class='op'>=</span> <span class='st'>'proActiv'</span><span class='op'>)</span>, 
                        full.names <span class='op'>=</span> <span class='cn'>TRUE</span>, pattern <span class='op'>=</span> <span class='st'>'replicate5'</span><span class='op'>)</span>
@@ -200,10 +200,9 @@ expression, limit the gene expression fold change.</p></td>
                        condition <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'A549'</span>, <span class='st'>'HepG2'</span><span class='op'>)</span>, each<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>,
                        fileLabels <span class='op'>=</span> <span class='cn'>NULL</span>,
                        ncores <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Processing: C:/Users/josep/AppData/Local/Temp/RtmpAjTO2D/temp_libpath8efc18da742c/proActiv/extdata/vignette/junctions/SGNEx_A549_Illumina_replicate5-run1.subset.SJ.out.tab.gz</span></div><div class='output co'>#&gt; <span class='message'>File loaded into memory</span></div><div class='output co'>#&gt; <span class='message'>Calculating junction counts</span></div><div class='output co'>#&gt; <span class='message'>Processing: C:/Users/josep/AppData/Local/Temp/RtmpAjTO2D/temp_libpath8efc18da742c/proActiv/extdata/vignette/junctions/SGNEx_HepG2_Illumina_replicate5-run1.subset.SJ.out.tab.gz</span></div><div class='output co'>#&gt; <span class='message'>File loaded into memory</span></div><div class='output co'>#&gt; <span class='message'>Calculating junction counts</span></div><div class='output co'>#&gt; <span class='message'>Calculating normalized read counts...</span></div><div class='output co'>#&gt; <span class='message'>converting counts to integer mode</span></div><div class='output co'>#&gt; <span class='message'>Calculating log2 absolute promoter activity...</span></div><div class='output co'>#&gt; <span class='message'>Calculating gene expression...</span></div><div class='output co'>#&gt; <span class='message'>Calculating relative promoter activity...</span></div><div class='output co'>#&gt; <span class='message'>Calculating positions of promoters...</span></div><div class='output co'>#&gt; <span class='message'>Summarising expression and activity across conditions...</span></div><div class='output co'>#&gt; <span class='message'>Categorizing A549 promoters...</span></div><div class='output co'>#&gt; <span class='message'>Categorizing HepG2 promoters...</span></div><div class='input'><span class='va'>alternativePromoters</span> <span class='op'>&lt;-</span> <span class='fu'>getAlternativePromoters</span><span class='op'>(</span><span class='va'>result</span>, <span class='st'>"A549"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Fitting absolute promoter activity to condition...</span></div><div class='output co'>#&gt; <span class='message'>Fitting relative promoter activity to condition...</span></div><div class='output co'>#&gt; <span class='message'>No alternative promoters detected with current parameters. </span>
-#&gt; <span class='message'>                Consider relaxing thresholds.</span></div><div class='input'>
-</div></pre>
+<span class='va'>alternativePromoters</span> <span class='op'>&lt;-</span> <span class='fu'>getAlternativePromoters</span><span class='op'>(</span><span class='va'>result</span>, <span class='st'>"A549"</span><span class='op'>)</span>
+
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
