@@ -24,8 +24,8 @@ plotPromoters(
 }
 \arguments{
 \item{result}{A SummarizedExperiment object with assays giving promoter 
-counts and activity with gene expression stored as column data and 
-promoter gene id mapping stored as row data}
+counts,activity and gene expression and promoter gene id mapping stored as
+row data}
 
 \item{gene}{A character vector of length 1. Single gene of interest to 
 be plotted}

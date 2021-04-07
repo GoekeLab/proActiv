@@ -7,8 +7,6 @@
 \alias{assays}
 \alias{rowData}
 \alias{colData}
-\alias{metadata}
-\alias{metadata<-}
 \alias{as_tibble}
 \alias{\%>\%}
 \alias{group_by}
@@ -27,8 +25,6 @@ below to see their documentation.
   \item{AnnotationDbi}{\code{\link[AnnotationDbi:AnnotationDb-class]{loadDb}}}
 
   \item{dplyr}{\code{\link[dplyr:reexports]{\%>\%}}, \code{\link[dplyr]{arrange}}, \code{\link[dplyr:reexports]{as_tibble}}, \code{\link[dplyr]{filter}}, \code{\link[dplyr]{group_by}}, \code{\link[dplyr]{mutate}}, \code{\link[dplyr:context]{n}}}
-
-  \item{S4Vectors}{\code{\link[S4Vectors:Annotated-class]{metadata}}, \code{\link[S4Vectors:Annotated-class]{metadata<-}}}
 
   \item{SummarizedExperiment}{\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assays}}, \code{\link[SummarizedExperiment:SummarizedExperiment-class]{colData}}, \code{\link[SummarizedExperiment:SummarizedExperiment-class]{rowData}}}
 

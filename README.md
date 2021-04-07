@@ -65,14 +65,14 @@ Here we demonstrate proActiv with STAR junction files (Human genome
 GRCh38 GENCODE v34) as input. These files are taken from the [SGNEx
 project](https://github.com/GoekeLab/sg-nex-data) but restricted to the
 chr1:10,000,000-30,000,000 region, and can be found at
-‘extdata/vignette’:
+`extdata/vignette`:
 
-  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate1-run1.subset.SJ.out.tab.gz
-  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate3-run1.subset.SJ.out.tab.gz
-  - extdata/vignette/SGNEx\_A549\_Illumina\_replicate5-run1.subset.SJ.out.tab.gz
-  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate2-run1.subset.SJ.out.tab.gz
-  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate4-run1.subset.SJ.out.tab.gz
-  - extdata/vignette/SGNEx\_HepG2\_Illumina\_replicate5-run1.subset.SJ.out.tab.gz
+  - `extdata/vignette/SGNEx_A549_Illumina_replicate1-run1.subset.SJ.out.tab.gz`
+  - `extdata/vignette/SGNEx_A549_Illumina_replicate3-run1.subset.SJ.out.tab.gz`
+  - `extdata/vignette/SGNEx_A549_Illumina_replicate5-run1.subset.SJ.out.tab.gz`
+  - `extdata/vignette/SGNEx_HepG2_Illumina_replicate2-run1.subset.SJ.out.tab.gz`
+  - `extdata/vignette/SGNEx_HepG2_Illumina_replicate4-run1.subset.SJ.out.tab.gz`
+  - `extdata/vignette/SGNEx_HepG2_Illumina_replicate5-run1.subset.SJ.out.tab.gz`
 
 <!-- end list -->
 
@@ -95,9 +95,8 @@ result <- proActiv(files = files,
 `result` is a summarizedExperiment object which can be accessed as
 follows:
 
-  - `assays(results)` returns raw/normalized promoter counts and
-    absolute/relative promoter activity  
-  - `metadata(results)` returns gene expression data  
+  - `assays(results)` returns raw/normalized promoter counts,
+    absolute/relative promoter activity and gene expression data  
   - `rowData(results)` returns promoter metadata and summarized absolute
     promoter activity by conditions
 
@@ -164,6 +163,25 @@ is described in detail
 [here](https://goekelab.github.io/proActiv/articles/proActiv.html).
 
 ## Release History
+
+**Release 1.1.18**
+
+Date: 7th April 2021
+
+Changes in version 1.1.18:
+
+  - Gene expression data is now stored in the `assays` of the
+    summarizedExperiment object returned by `proActiv` to facilitate
+    easier filtering of the summarizedExperiment object. The metadata
+    slot is now empty.
+
+  - Plotting promoter activity: Implementation of `boxplotPromoters`
+    function to plot boxplots of absolute promoter activity, relative
+    promoter activity, and gene expression.
+
+  - Identification of alternative promoters: Implementation of
+    `getAlternativePromoters`, used to identify promoters that may
+    exhibit alternative usage.
 
 **Release 1.0.0**
 

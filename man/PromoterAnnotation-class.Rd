@@ -12,10 +12,13 @@
 \alias{promoterCoordinates,PromoterAnnotation-method}
 \alias{intronRanges<-}
 \alias{intronRanges<-,PromoterAnnotation-method}
+\alias{'intronRanges<-',PromoterAnnotation-method}
 \alias{promoterIdMapping<-}
 \alias{promoterIdMapping<-,PromoterAnnotation-method}
+\alias{'promoterIdMapping<-',PromoterAnnotation-method}
 \alias{promoterCoordinates<-}
 \alias{promoterCoordinates<-,PromoterAnnotation-method}
+\alias{'promoterCoordinates<-',PromoterAnnotation-method}
 \title{S4 class for promoter annotation data for a specific annotation version}
 \usage{
 PromoterAnnotation(

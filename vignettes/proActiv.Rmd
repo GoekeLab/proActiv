@@ -68,9 +68,8 @@ result <- proActiv(files = files,
 
 `result` is a summarizedExperiment object which can be accessed as follows:
 
- - `assays(results)` returns raw/normalized promoter counts and absolute/relative promoter activity  
- - `metadata(results)` returns gene expression data  
- - `rowData(results)` returns promoter metadata and summarized absolute promoter activity by conditions
+ - `assays(results)` returns raw/normalized promoter counts, absolute/relative promoter activity and gene expression
+ - `rowData(results)` returns promoter metadata and summarized absolute promoter activity and gene expression by conditions
 
 ## A complete workflow to identify alternative promoter usage
 
@@ -80,14 +79,14 @@ Here we present a complete step-by-step workflow for analyzing promoter activity
 
 proActiv uses RNA-Seq data to quantify promoter activity. Users have the option of using as input either BAM files, or tab-delimited junction files that are generated when TopHat2 or STAR is used for read alignment.
 
-Below, we demonstrate running `proActiv` with input STAR junction files. This data is taken from the [SGNEx project](https://github.com/GoekeLab/sg-nex-data), and restricted to the chr1:10,000,000-30,000,000 region. The reference genome used for alignment is Gencode v34 (GRCh38). These files can be found in ‘extdata/vignette/junctions’:
+Below, we demonstrate running `proActiv` with input STAR junction files. This data is taken from the [SGNEx project](https://github.com/GoekeLab/sg-nex-data), and restricted to the chr1:10,000,000-30,000,000 region. The reference genome used for alignment is Gencode v34 (GRCh38). These files can be found in `extdata/vignette/junctions`:
 
-- extdata/vignette/SGNEx_A549_Illumina_replicate1-run1.subset.SJ.out.tab.gz
-- extdata/vignette/SGNEx_A549_Illumina_replicate3-run1.subset.SJ.out.tab.gz 
-- extdata/vignette/SGNEx_A549_Illumina_replicate5-run1.subset.SJ.out.tab.gz
-- extdata/vignette/SGNEx_HepG2_Illumina_replicate2-run1.subset.SJ.out.tab.gz 
-- extdata/vignette/SGNEx_HepG2_Illumina_replicate4-run1.subset.SJ.out.tab.gz 
-- extdata/vignette/SGNEx_HepG2_Illumina_replicate5-run1.subset.SJ.out.tab.gz
+- `extdata/vignette/SGNEx_A549_Illumina_replicate1-run1.subset.SJ.out.tab.gz`
+- `extdata/vignette/SGNEx_A549_Illumina_replicate3-run1.subset.SJ.out.tab.gz` 
+- `extdata/vignette/SGNEx_A549_Illumina_replicate5-run1.subset.SJ.out.tab.gz`
+- `extdata/vignette/SGNEx_HepG2_Illumina_replicate2-run1.subset.SJ.out.tab.gz` 
+- `extdata/vignette/SGNEx_HepG2_Illumina_replicate4-run1.subset.SJ.out.tab.gz` 
+- `extdata/vignette/SGNEx_HepG2_Illumina_replicate5-run1.subset.SJ.out.tab.gz`
 
 ```{r List files, eval=FALSE}
 files <- list.files(system.file('extdata/vignette/junctions', 
@@ -140,19 +139,17 @@ result <- proActiv(files = files,
                    condition = condition)
 ```
 
-`result` is a `SummarizedExperiment` object with assays as raw/normalized promoter counts, and absolute/relative promoter activity: 
+`result` is a `SummarizedExperiment` object with assays as raw/normalized promoter counts, absolute/relative promoter activity and gene expression: 
 
 ```{r proActiv result, eval=TRUE}
 show(result)
 ``` 
 
-The `rowData` slot stores a promoter-gene ID mapping and promoter position (5' to 3') for each promoter by gene. Mean absolute promoter activity for each condition is also summarized here. Promoters are also categorized into three classes. Promoters with activity < 0.25 are classified as inactive, while the most active promoters of each gene are classified as major promoters. Promoters active at lower levels are classified as minor promoters. 
+The `rowData` slot stores a promoter-gene ID mapping and promoter position (5' to 3') for each promoter by gene. Mean absolute promoter activity and gene expression for each condition is also summarized here. Promoters are also categorized into three classes. Promoters with activity < 0.25 are classified as inactive, while the most active promoters of each gene are classified as major promoters. Promoters active at lower levels are classified as minor promoters. 
 
 ```{r Result rowData, eval=TRUE, echo=FALSE}
 knitr::kable(head(rowData(result)))
 ```
-
-The `metadata` slot provides gene expression data for each replicate per condition, and also summarizes mean expression across conditions.
 
 For cleaner downstream analysis, one can remove single-exon transcripts for which promoter activity is not quantified. `result` can be filtered as such:
 
@@ -165,18 +162,18 @@ result <- result[complete.cases(assays(result)$promoterCounts),]
 
 To identify alternative promoter usage, proActiv implements a linear model, regressing both absolute promoter activity and relative promoter activity against sample conditions. A change in absolute promoter activity indicates absolute differential usage of the promoter. However, this does not imply alternative usage or a switch in major promoter, as the relative usage of promoters between conditions may still be the same. For this reason, information from relative promoter activity must also be taken into account. Alternative promoter usage is thus characterized by a significant change in absolute and relative promoter activity across conditions.
 
-Candidates for alternative promoter usage can be identified by calling `getAlternativePromoters`. This function takes in the `result` object returned by `proActiv`, and `currentCondition`, the current condition to be compared to all other samples. 
+Candidates for alternative promoter usage can be identified by calling `getAlternativePromoters`. This function takes in the `result` object returned by `proActiv`, and `referenceCondition`, the reference condition to be compared to all other samples. 
 
 ```{r Get alternative, eval=TRUE}
-alternativePromoters <- getAlternativePromoters(result, "A549")
+alternativePromoters <- getAlternativePromoters(result = result, referenceCondition = "A549")
 show(alternativePromoters)
 ```
 
 Detection of alternative promoters with the following parameters:  
 
-- `thresAbs` Minimum value for promoter to be active in absolute terms. Defaults to 0.25.    
-- `thresRel` Minimum value for promoter to be active in relative terms. Defaults to 0.05.    
-- `thresPval` Adjusted p-value threshold for detecting alternative promoters. Defaults to 0.05.    
+- `minAbs` Minimum value for promoter to be active in absolute terms. Defaults to 0.25.    
+- `minRel` Minimum value for promoter to be active in relative terms. Defaults to 0.05.    
+- `maxPval` Adjusted p-value threshold for detecting alternative promoters. Defaults to 0.05.    
 - `promoterFC` Minimum fold change for a promoter in the current condition compared to all other conditions. Promoters must have at least this magnitude of fold change for alternative usage. This parameter can be decreased to relax alternative usage definition. Defaults to 2.0.    
 - `geneFC` Maximum fold change for gene expression. To identify alternative promoter usage independent of changes in gene expression, limit the gene expression fold change. Promoters must have at most this magnitude of gene expression fold change for alternative usage. This parameter can be increased to relax alternative usage definition. Defaults to 1.5.  
 
@@ -215,7 +212,7 @@ Alternatively, promoter activity can be visualized with `boxplotPromoters`. This
 - `result`. The `summarizedExperiment` object returned by proActiv. This must contain a condition vector (i.e., the call to `proActiv` that returned this `result` must have had the `condition` vector supplied).    
 - `geneId`. A character vector of the gene of interest. This identifier must correspond to the identifier in the promoter annotation.    
 - `geneName`. A character vector of the gene of interest. The common gene name to be plotted. Optional and defaults to NULL.   
-- `filterInternal`. A boolean variable that determines if non-internal promoters should be removed from the plot. Defaults to TRUE.     
+- `filterInternal`. A boolean variable that determines if internal promoters should be removed from the plot. Defaults to TRUE.     
 - `col`. A character vector of colours for plotting. Defaults to NULL, which uses `ggplot2` default colours.    
 
 Below, we call `boxplotPromoters` with RAP1GAP:
@@ -274,14 +271,9 @@ Comparison of major promoter activity and gene expression, calculated by summing
 ## Get active major promoters of HepG2
 majorPromoter <- as_tibble(rdata) %>% group_by(geneId) %>% 
   mutate(promoterCount = n()) %>% filter(HepG2.class == 'Major') 
-## Get gene expression corresponding to the genes identified above
-geneExpression <- metadata(result)$geneExpression %>% 
-  rownames_to_column(var = 'geneId') %>% 
-  filter(geneId %in% majorPromoter$geneId)
 
 pdata3 <- data.frame(proActiv = majorPromoter$HepG2.mean,
-                     geneExp = geneExpression$HepG2.mean[match(majorPromoter$geneId, 
-                                                              geneExpression$geneId)],
+                     geneExp = majorPromoter$HepG2.gene.mean,
                      promoterCount = majorPromoter$promoterCount)
 
 ggplot(pdata3, aes(x = geneExp, y = proActiv)) + 

@@ -38,7 +38,7 @@ will be used as an argument to BiocParallel::bplapply}
 }
 \value{
 A SummarizedExperiment object with assays giving promoter counts 
-  and activity with gene expression stored as metadata. rowData contains
+  and activity with gene expression. rowData contains
   promoter metadata and absolute promoter activity summarized across
   conditions (if condition is provided)
 }

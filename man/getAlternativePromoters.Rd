@@ -6,31 +6,31 @@
 \usage{
 getAlternativePromoters(
   result,
-  currentCondition,
-  thresAbs = 0.25,
-  thresRel = 0.05,
-  thresPval = 0.05,
+  referenceCondition,
+  minAbs = 0.25,
+  minRel = 0.05,
+  maxPval = 0.05,
   promoterFC = 2,
   geneFC = 1.5
 )
 }
 \arguments{
 \item{result}{A SummarizedExperiment object with assays giving promoter 
-counts and activity with gene expression stored as metadata (output from 
-proActiv). rowData contains promoter metadata and absolute promoter 
-activity summarized across conditions. Condition must be provided.}
+counts, activity and gene expression (output from proActiv). rowData 
+contains promoter metadata and absolute promoter activity summarized 
+across conditions. Condition must be provided.}
 
-\item{currentCondition}{A character vector. The current condition to be 
+\item{referenceCondition}{A character vector. The reference condition to be 
 compared. Samples corresponding to all other conditions will be compared 
 to this samples in this current condition.}
 
-\item{thresAbs}{A numeric value. Minimum value for promoter to be active in 
+\item{minAbs}{A numeric value. Minimum value for promoter to be active in 
 absolute terms. Defaults to 0.25.}
 
-\item{thresRel}{A numeric value. Minimum value for promoter to be active in 
+\item{minRel}{A numeric value. Minimum value for promoter to be active in 
 relative terms. Defaults to 0.05.}
 
-\item{thresPval}{A numeric value. Adjusted p-value threshold for detecting 
+\item{maxPval}{A numeric value. Adjusted p-value threshold for detecting 
 alternative promoters. Defaults to 0.05.}
 
 \item{promoterFC}{A numeric value. Minimum fold change for a promoter in the
