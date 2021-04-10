@@ -1,6 +1,6 @@
 Package: proActiv
 Title: Estimate Promoter Activity from RNA-Seq data
-Version: 1.1.18
+Version: 1.1.19
 Authors@R: c(
     person(given = "Deniz",
            family = "Demircioglu",
@@ -25,7 +25,8 @@ Description: Most human genes have multiple promoters that control the
   promoter. In particular, proActiv accepts junction files from TopHat2 or STAR 
   or BAM files as inputs. These estimates can then be used to identify which 
   promoter is active, which promoter is inactive, and which promoters change 
-  their activity across conditions. 
+  their activity across conditions. proActiv also allows visualization of 
+  promoter activity across conditions.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
