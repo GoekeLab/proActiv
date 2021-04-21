@@ -42,7 +42,6 @@ getAlternativePromoters <- function(result, referenceCondition,
                                     minAbs = 0.25, minRel = 0.05,
                                     maxPval = 0.05,
                                     promoterFC = 2.0, geneFC = 1.5) {
-    
     condition <- result$condition
     if (is.null(condition)) {
         stop("The input summarized experiment must contain sample condition. 
@@ -77,10 +76,13 @@ getAlternativePromoters <- function(result, referenceCondition,
     
     rdata <- data.frame(rowData(result))
     upReg <- which(altPro > 0)
-    upSet <- rdata[upReg,seq_len(2)] 
+    upSet <- rdata[upReg,seq_len(2)]
+    upSet <- cbind(upSet, padjAbs=resultAbs[upReg,"padj"], 
+                   padjRel=resultRel[upReg, "padj"])
     downReg <- which(altPro < 0)
     downSet <- rdata[downReg,seq_len(2)]
-    
+    downSet <- cbind(downSet, padjAbs=resultAbs[downReg,"padj"], 
+                   padjRel=resultRel[downReg, "padj"])
     if (length(upReg) == 0 && length(downReg) == 0) {
         message("No alternative promoters detected with current parameters. 
                 Consider relaxing thresholds.")
