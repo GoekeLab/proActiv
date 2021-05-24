@@ -187,7 +187,7 @@ categorizePromoters <- function(rdata, condition) {
             group_by(.data$geneId) %>%
             slice_max(!!as.name(mean), with_ties = FALSE)
         rdata[[class]] <- ifelse(rdata[[mean]] < 0.25, 'Inactive', 'Minor')
-        rdata[[class]][max_rows$promoterId] <- "Major"
+        rdata[[class]][match(max_rows$promoterId, rdata$promoterId)] <- "Major"
         rdata[[class]][which(rdata[[mean]] < 0.25)] <- "Inactive"
         rdata[[class]][which(rdata$internalPromoter)] <- NA
         rdata[[class]][which(is.na(rdata$internalPromoter))] <- NA
