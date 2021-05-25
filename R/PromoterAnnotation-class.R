@@ -10,6 +10,8 @@
 #' @slot promoterCoordinates A GRanges object. Promoter coordinates (TSS) with 
 #'   gene id and internal promoter state
 #'
+#' @importFrom GenomicRanges GRanges
+#'
 #' @name PromoterAnnotation-class
 #' @rdname PromoterAnnotation-class
 #' @exportClass PromoterAnnotation
@@ -22,9 +24,9 @@ setClass(
         promoterCoordinates = "GRanges"
     ),
     prototype = list(
-        intronRanges = GRanges(),
+        intronRanges = GenomicRanges::GRanges(),
         promoterIdMapping = data.frame(),
-        promoterCoordinates = GRanges()
+        promoterCoordinates = GenomicRanges::GRanges()
     )
 )
 
@@ -40,7 +42,8 @@ setClass(
 #' @rdname PromoterAnnotation-class
 #'
 #' @importFrom methods new
-#'
+#' @importFrom GenomicRanges GRanges
+#' 
 #' @export
 #' @return A promoter annotation object with three slots: intronRanges, 
 #'   promoterIdMapping and promoter Coordinates
@@ -57,9 +60,9 @@ setClass(
 #' 
 
 PromoterAnnotation <-
-    function(intronRanges = GRanges(),
+    function(intronRanges = GenomicRanges::GRanges(),
         promoterIdMapping = data.frame(),
-        promoterCoordinates = GRanges()) {
+        promoterCoordinates = GenomicRanges::GRanges()) {
     new(
         "PromoterAnnotation",
         intronRanges = intronRanges,

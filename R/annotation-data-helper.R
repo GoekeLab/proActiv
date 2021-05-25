@@ -38,6 +38,7 @@ getTssRanges <- function(transcriptRanges) {
 # Get exon ranges for each transcript
 #' @importFrom GenomeInfoDb keepStandardChromosomes
 #' @importFrom GenomeInfoDb 'seqlevelsStyle<-'
+#' @importFrom GenomicFeatures exonsBy
 getExonRangesByTx <- function(txdb, species = 'Homo_sapiens') {
     exonRangesByTx <- exonsBy(txdb, by = 'tx', use.names = TRUE)
     exonRangesByTx <- 

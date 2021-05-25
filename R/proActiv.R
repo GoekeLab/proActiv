@@ -59,6 +59,71 @@ proActiv <- function(files, promoterAnnotation, fileLabels = NULL,
     return(result) 
 }
 
+#' Integrate multiple proActiv runs 
+#'
+#' @param res1 A summarizedExperiment object returned by proActiv
+#' @param res2 A summarizedExperiment object returned by proActiv
+#' @param ... Additional summarizedExperiment objects returned by proActiv
+#' @param promoterAnnotation Promoter annotation object used to create 
+#'   proActiv runs
+#' @param renormalize Whether to renormalize counts after merging. Defaults to 
+#'   TRUE
+#'
+#' @export
+#' @return A SummarizedExperiment object with assays giving promoter counts 
+#'   and activity with gene expression. rowData contains
+#'   promoter metadata and absolute promoter activity summarized across
+#'   conditions (if condition is provided)
+#' 
+#' @examples
+#' f1 <- list.files(system.file('extdata/vignette/junctions', 
+#'                              package = 'proActiv'), 
+#'                  full.names = TRUE, pattern = 'A549')
+#' f2 <- list.files(system.file('extdata/vignette/junctions', 
+#'                              package = 'proActiv'), 
+#'                  full.names = TRUE, pattern = 'HepG2')
+#' promoterAnnotation <- promoterAnnotation.gencode.v34.subset
+#' res1 <- proActiv(files = f1, promoterAnnotation  = promoterAnnotation,
+#'                  condition = rep('A549',3))
+#' res2 <- proActiv(files = f2, promoterAnnotation = promoterAnnotation,
+#'                  condition = rep('HepG2',3))
+#' res <- integrateProactiv(res1, res2, promoterAnnotation = promoterAnnotation)
+#'
+#' @importFrom SummarizedExperiment assays `assays<-` cbind rowData `rowData<-`
+integrateProactiv <- function(res1, res2, ..., 
+                              promoterAnnotation,
+                              renormalize = TRUE) {
+    combined <- cbind(res1, res2, ...)
+    if (renormalize) {
+        promoterCounts <- assays(combined)$promoterCounts
+        normalizedPromoterCounts <- normalizePromoterReadCounts(promoterCounts)
+        absolutePromoterActivity <- getAbsolutePromoterActivity(
+            normalizedPromoterCounts, promoterAnnotation)
+        
+        geneExpression <- getGeneExpression(absolutePromoterActivity)
+        relativePromoterActivity <- getRelativePromoterActivity(
+            absolutePromoterActivity, geneExpression)
+        
+        rownames(geneExpression) <- rownames(promoterCounts)
+        fileLabels <- combined$sampleName
+        assays(combined) <- list(promoterCounts = promoterCounts, 
+            normalizedPromoterCounts = normalizedPromoterCounts, 
+            absolutePromoterActivity = absolutePromoterActivity[, fileLabels, 
+                                                                drop=FALSE], 
+            relativePromoterActivity = relativePromoterActivity[, fileLabels, 
+                                                                drop=FALSE],
+            geneExpression = geneExpression[, fileLabels, drop=FALSE])    
+        
+        ## Settle rowData
+        rowData(combined) <- rowData(combined)[-grep("mean|class", 
+                                                colnames(rowData(combined)))]
+        combined <- summarizeAcrossCondition(combined, combined$condition)
+    }
+    return(combined)
+} 
+
+
+
 # Helper function to impute file labels and infer file type
 parseFile <- function(files, fileLabels, genome) {
     checkFile <- file.exists(files)

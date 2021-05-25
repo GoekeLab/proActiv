@@ -22,9 +22,9 @@
 \title{S4 class for promoter annotation data for a specific annotation version}
 \usage{
 PromoterAnnotation(
-  intronRanges = GRanges(),
+  intronRanges = GenomicRanges::GRanges(),
   promoterIdMapping = data.frame(),
-  promoterCoordinates = GRanges()
+  promoterCoordinates = GenomicRanges::GRanges()
 )
 
 intronRanges(x)

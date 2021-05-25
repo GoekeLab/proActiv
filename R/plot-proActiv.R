@@ -1,195 +1,3 @@
-#' Visualizes promoter activity and transcript model for a gene of interest
-#'
-#' @param result A SummarizedExperiment object with assays giving promoter 
-#'   counts,activity and gene expression and promoter gene id mapping stored as
-#'   row data
-#' @param gene A character vector of length 1. Single gene of interest to 
-#'   be plotted
-#' @param txdb A TxDb object. The txdb must correspond to the genome version 
-#'   used in running proActiv. Here, it is recommended to use the same txdb in 
-#'   generating promoter annotations
-#' @param ranges A list of GRanges. Each entry in the list should correspond to 
-#'   a transcript that will be visualized, with Genomic Ranges giving the exons 
-#'   corresponding to that transcript 
-#' @param cex.title A numeric value. Size of axis labels. Defaults to 0.9
-#' @param cex.axis A numeric value. Size of axis and axis ticks. Defaults to 0.9
-#' @param cex.main A numeric value. Size of plot name. Defaults to 1
-#' @param blk.width A numeric value. The width of promoters blocks in the 
-#'   data track. Defaults to 500 (bases)
-#' @param blk.fill A character vector of length 1. The fill colour of the 
-#'   promoter blocks in the data track. Defaults to 'grey' 
-#' @param blk.border A character vector of length 1. The border colour of the 
-#'   promoter blocks in the data track. Defaults to 'darkgrey'
-#' @param label.col A character vector of length 1. The font colour of the 
-#'   promoter ID label in the annotation track. Defaults to 'black'
-#' @param label.size A numeric value. The size of the promoter ID label in the 
-#'   annotation track. Defaults to 0.7
-#' @param arrow.width A numeric value. The width of promoter arrows in the 
-#'   annotation track. This value is internally calculated based on the gene 
-#'   of interest 
-#' @param arrow.fill A character vector of length 1. The fill colour of the 
-#'   promoter arrows in the annotation track. Defaults to 'transparent'
-#' @param arrow.border A character vector of length 1. The border colour of 
-#'   the promoter arrows in the annotation track. Defaults to 'grey'
-#' 
-#' @export
-#' @return Outputs a plot of the promoters of the gene of interest across 
-#'   conditions, along with a model of transcripts belonging to the gene 
-#'   
-#' @examples 
-#'  
-#' ## First, run proActiv to generate a summarizedExperiment result
-#' files <- list.files(system.file('extdata/vignette/junctions', 
-#'                       package = 'proActiv'), 
-#'                       full.names = TRUE)
-#' promoterAnnotation <- promoterAnnotation.gencode.v34.subset
-#' result <- proActiv(files = files,
-#'                        promoterAnnotation  = promoterAnnotation,
-#'                        condition = rep(c('A549','HepG2'), each=3),
-#'                        ncores = 1)
-#' ## Read in pre-computed ranges
-#' txdb <- AnnotationDbi::loadDb(system.file('extdata/vignette/annotations',
-#'                                   'gencode.v34.annotation.rap1gap.sqlite',
-#'                                   package = 'proActiv'))
-#' ## Declare a gene of interest
-#' gene <- 'ENSG00000076864.19'
-#' ## Call plot 
-#' plotPromoters(result = result, gene = gene, txdb = txdb)
-#'                            
-#' @importFrom Gviz plotTracks GenomeAxisTrack
-#' @importFrom SummarizedExperiment rowData colData
-#' @importFrom S4Vectors complete.cases
-plotPromoters <- function(result, gene, txdb, ranges,
-                            cex.title = 0.9, cex.axis = 0.9, cex.main = 1,
-                            blk.width = 500, blk.fill = 'grey',
-                            blk.border = 'darkgrey',
-                            label.col = 'black', label.size = 0.7,
-                            arrow.width = NULL, arrow.fill = 'transparent', 
-                            arrow.border = 'grey') {
-    result.gene <- result[rowData(result)$geneId == gene, ]
-    rdata <- rowData(result.gene)[complete.cases(rowData(result.gene)),]
-    groups <- unique(colData(result.gene)$condition)
-
-    if (nrow(rdata) == 0) {
-        stop('Gene ID selected is either not present or has only one transcript 
-            which is a single-exon transcript. proActiv does not estimate 
-            promoter activity in such cases.')
-    }
-    message(paste0('Plotting ', gene))
-    
-    grtrack <- getGeneRegionTrack(rdata, gene, txdb, ranges)
-    dtracklist <- getDataTrack(rdata, groups, blk.width = blk.width,
-                                fill.histogram = blk.fill, 
-                                col.histogram = blk.border)
-    atrack <- getAnnotationTrack(rdata, grtrack, arrow.width = arrow.width,
-                                fontcolor.feature = label.col,
-                                cex.feature = label.size,
-                                fill = arrow.fill, col = arrow.border)
-    gtrack <- GenomeAxisTrack()
-    
-    message('Creating Plot...')
-    plotTracks(c(grtrack, dtracklist, atrack, gtrack), type='histo', 
-                main = gene, col.axis = 'black', col.title = 'black', 
-                background.title = 'transparent', cex.title = cex.title, 
-                cex.axis = cex.axis, cex.main = cex.main)
-    }
-
-# Helper function to get data track
-#' @importFrom GenomicRanges GRanges values
-#' @importFrom Gviz DataTrack
-#' @importFrom IRanges IRanges
-#' @importFrom S4Vectors 'mcols<-' mcols 'values<-'
-getDataTrack <- function(rdata, groups, blk.width,
-                            fill.histogram, col.histogram) {
-    message('Creating Data Track...')
-    ## Set dummy width for visualization
-    if (is.null(blk.width)) {
-        blk.width <- blk.width
-    }
-    blk.offset <- 0
-    if (unique(rdata$strand) == '-') {
-        blk.offset <- -blk.width
-    } 
-    ## GRanges summarizing promoter activity and coordinates
-    gr <- GRanges(seqnames = rdata$seqnames, 
-                    strand = rdata$strand,
-                    ranges = IRanges(start = rdata$start + blk.offset, 
-                                        width = blk.width)) 
-    values(gr) <- rdata[,grep('mean', colnames(rdata))]
-    names(mcols(gr)) <- gsub('.mean', '', names(mcols(gr)))
-
-    ## Set max y limit
-    maxy <- max(unlist(mcols(gr))) + 0.5
-    dtracklist <- vector("list", length(groups))
-    for (i in seq_len(length(groups))) {
-        dtracklist[[i]] <- DataTrack(gr[,groups[i]], 
-                                    name = groups[i], ylim = c(0, maxy),
-                                    fill.histogram = fill.histogram,
-                                    col.histogram = col.histogram)
-    }
-    return(dtracklist)
-    }
-
-# Helper function to get gene region track
-#' @importFrom GenomicFeatures exonsBy
-#' @importFrom Gviz GeneRegionTrack
-#' @importFrom GenomicRanges GRangesList
-getGeneRegionTrack <- function(rdata, gene, txdb, ranges) {
-    message('Creating Gene Region Track...')
-    txs.gene <- rdata$txId[[1]]
-    if ( missing(txdb) & missing(ranges)) {
-        stop('Either txdb or ranges must be provided')
-    } else if (!missing(txdb) & !missing(ranges)) {
-        stop('Both `txdb` and `ranges` arguments are provided: 
-                Please specify only one')
-    } else if (missing(ranges)) {
-        exons.gene <- suppressWarnings(exonsBy(txdb, by = 'tx', 
-                                               use.names = TRUE)[txs.gene])
-    } else {
-        exons.gene <- ranges
-    }
-    gene.model <- as(GRangesList(exons.gene), 'data.frame')
-    gene.model <- gene.model[,c('seqnames','start','end'
-                                ,'strand','group_name')]
-    colnames(gene.model)[1] <- 'chromosome'
-    colnames(gene.model)[5] <- 'transcript'
-    
-    grtrack <- GeneRegionTrack(gene.model,
-                            transcriptAnnotation = 'transcript',
-                            name = as.character(gene.model$chromosome[1]))
-    return(grtrack)
-    }
-
-# Helper function to get annotation track
-#' @importFrom Gviz AnnotationTrack
-#' @importFrom GenomicRanges start end
-getAnnotationTrack <- function(rdata, grtrack, arrow.width,
-                                fontcolor.feature, cex.feature, 
-                                fill, col) {
-    message('Creating Annotation Track...')
-    ## Adjust arrow start depending on stand - Gviz quirks
-    if (is.null(arrow.width)) {
-        min.coord <- min(c(start(grtrack), end(grtrack)))
-        max.coord <- max(c(start(grtrack), end(grtrack)))
-        arrow.width <- diff(c(min.coord, max.coord))/sqrt(nrow(rdata)+1)
-    }
-    arrow.offset <- 0
-    if (unique(rdata$strand) == '-') {
-        arrow.offset <- -arrow.width
-    } 
-    atrack <- AnnotationTrack(start = rdata$start + arrow.offset, 
-                            width = arrow.width,
-                            chromosome = rdata$seqnames, 
-                            strand = rdata$strand,
-                            group = paste0('prmtr.', rdata$promoterId),
-                            featureAnnotation = 'group', name = '',
-                            fontcolor.feature = fontcolor.feature,
-                            cex.feature = cex.feature,
-                            fill = fill, col = col)
-    return(atrack)
-    }
-
-
 #' Visualizes promoter activity and gene expression with boxplots
 #'
 #' @param result A SummarizedExperiment object return by proActiv, with assays 
@@ -313,3 +121,193 @@ generateBoxplot <- function(data,
     }
     return(outPlot)
 }
+
+
+
+#' Performs principal component analysis 
+#'
+#' @param result A SummarizedExperiment object return by proActiv, with assays 
+#'   giving promoter counts and activity with gene expression stored as 
+#'   metadata. rowData contains promoter metadata and absolute promoter 
+#'   activity summarized across conditions. Condition must be provided. 
+#' @param by A character vector. The assay to perform principal component 
+#'  analysis by. One of promoterCounts, normalizedPromoterCounts, 
+#'  absolutePromoterActivity and geneExpression (unambiguous substrings can be 
+#'  supplied). Defaults to absolutePromoterActivity.  
+#' @param main A character vector. Plot title (optional). Defaults to NULL.
+#' @param col A vector of colours. If NULL, uses standard ggplot colours. 
+#'  Defaults to NULL.
+#' @param alpha A numeric value in between 0 and 1. Determines point 
+#'  transparency.
+#' @param cex.size A numeric value. Determines point size. 
+#' 
+#' @export
+#' @return PCA plot.
+#' 
+#' @examples
+#' files <- list.files(system.file('extdata/vignette/junctions', 
+#'                        package = 'proActiv'), 
+#'                        full.names = TRUE, pattern = 'replicate5')
+#' promoterAnnotation <- promoterAnnotation.gencode.v34.subset
+#' result <- proActiv(files = files,
+#'                        promoterAnnotation  = promoterAnnotation,
+#'                        condition = rep(c('A549', 'HepG2'), each=1),
+#'                        fileLabels = NULL,
+#'                        ncores = 1)
+#' result <- result[complete.cases(assays(result)[[1]]),]
+#' plotPCA(result)
+#' 
+#' @importFrom ggplot2 ggplot geom_point theme_light ggtitle scale_color_manual
+#'   xlab ylab xlim ylim
+#' @importFrom stats prcomp
+#' @importFrom SummarizedExperiment assays
+plotPCA <- function(result, by = "absolutePromoterActivity",
+                    main = NULL, col = NULL,
+                    alpha = 0.75, cex.size = 2) {
+    all <- c("promoterCounts", 
+             "normalizedPromoterCounts",
+             "absolutePromoterActivity",
+             "geneExpression")
+    assayIndex <- pmatch(by, all)
+    assayIndex <- ifelse(assayIndex == 4, 5, assayIndex)
+    if (is.na(assayIndex)) stop("Invalid assay.")
+    message(paste0("Using assay ", names(assays(result))[assayIndex]))
+    assay <- as.matrix(assays(result)[[assayIndex]])
+    if (assayIndex == 5) {
+        ## Remove duplicates for gene expression assay
+        assay <- assay[!duplicated(rowData(result)$geneId),]
+    }
+    pca <- prcomp(t(assay))
+    vv <- pca$sdev^2
+    vv <- paste0(round(vv / sum(vv) * 100,2),"%")
+    vv <- paste0("PC", seq_len(length(vv)), ": ", vv)
+    pdata <- data.frame(PC1 = pca$x[,1], 
+                        PC2 = pca$x[,2],
+                        Condition = result$condition)
+    
+    lims <- max(abs(range(pca$x[,1])), abs(range(pca$x[,2]))) * c(-1,1)
+    PC1 <- PC2 <- Condition <- NULL
+    plot <- ggplot(pdata, aes(x = PC1, y = PC2)) + 
+        geom_point(aes(color = Condition), alpha = alpha, size = cex.size) + 
+        xlab(vv[1]) + ylab(vv[2]) + theme_light() + xlim(lims) + ylim(lims) 
+    if (!is.null(main)) plot <- plot + ggtitle(main) 
+    if (!is.null(col)) {
+        nCond <- length(unique(result$condition))
+        if (length(col) < nCond) {
+            stop("Need as many colours as conditions.")
+        }
+        plot <- plot + scale_color_manual(values = col[seq_len(nCond)])
+    }
+    plot
+}
+
+#' Visualizes heatmap of features for samples
+#'
+#' @param result A SummarizedExperiment object return by proActiv, with assays 
+#'   giving promoter counts and activity with gene expression stored as 
+#'   metadata. rowData contains promoter metadata and absolute promoter 
+#'   activity summarized across conditions. Condition must be provided.
+#' @param by A character vector. The assay to visualize the heatmap for. 
+#'   One of promoterCounts, normalizedPromoterCounts, 
+#'   absolutePromoterActivity and geneExpression (unambiguous substrings can be 
+#'   supplied). Defaults to absolutePromoterActivity.  
+#' @param features Features to visualize. Either a list of promoterIds or 
+#'   geneIds. The features must correspond to the assay is used, i.e., if 
+#'   promoter assays are used, features must be promoterIds, while if gene
+#'   expression assay is used, features must be geneIds. Defaults to NULL 
+#'   (visualizes all features of the assay).
+#' @param cex.legend A numeric value. Legend size.
+#' @param cex.row A numeric value. Row label size.
+#' @param cex.col A numeric value. Column label size.
+#' @param row.margin A numeric value. Row margins.
+#' @param col.margin A numeric value. Column margins.
+#' @param col A vector of colours. Length should correspond to number of 
+#'   experimental conditions. Defaults to NULL.
+#' @param breaks A numeric vector. Breaks for heatmap plotting.
+#' @param palette A character vector. One of bluered, redblue, redgreen, 
+#'   greenred. Defaults to bluered. 
+#' 
+#' @export
+#' @return Displays heatmap.
+#' 
+#' @examples
+#' files <- list.files(system.file('extdata/vignette/junctions', 
+#'                        package = 'proActiv'), 
+#'                        full.names = TRUE, pattern = 'replicate5')
+#' promoterAnnotation <- promoterAnnotation.gencode.v34.subset
+#' result <- proActiv(files = files,
+#'                        promoterAnnotation  = promoterAnnotation,
+#'                        condition = rep(c('A549', 'HepG2'), each=1),
+#'                        fileLabels = NULL,
+#'                        ncores = 1)
+#' result <- result[complete.cases(assays(result)[[1]]),] 
+#' plotHeatmap(result)
+#' 
+#' @importFrom gplots heatmap.2 redblue bluered redgreen greenred
+#' @importFrom graphics legend
+#' @importFrom SummarizedExperiment assays
+#' @importFrom scales hue_pal 
+#' @importFrom stats complete.cases quantile
+plotHeatmap <- function(result, by = "absolutePromoterActivity", 
+                        features = NULL, 
+                        cex.legend = 0.75, cex.row = NULL, cex.col = NULL,
+                        row.margin = 5, col.margin = 12,
+                        col = NULL, breaks = NULL, palette = "bluered") {
+    all <- c("promoterCounts", "normalizedPromoterCounts",
+             "absolutePromoterActivity","geneExpression")
+    assayIndex <- pmatch(by, all)
+    assayIndex <- ifelse(assayIndex == 4, 5, assayIndex)
+    if (is.na(assayIndex)) stop("Invalid assay.")
+    message(paste0("Using assay ", names(assays(result))[assayIndex]))
+    assay <- as.matrix(assays(result)[[assayIndex]])
+    if (assayIndex == 5) {
+        ## Remove duplicates for gene expression assay
+        assay <- assay[!duplicated(rowData(result)$geneId),]
+        rownames(assay) <- unique(rowData(result)$geneId)
+    } else {
+        rownames(assay) <- rowData(result)$promoterId
+    }
+    if (!is.null(features)) {
+        assay <- assay[rownames(assay) %in% features, ]
+        if (nrow(assay) == 0) {
+            stop("Features are not found in chosen assay. Ensure promoter 
+                 features are used with promoter assays and gene features used 
+                 with gene expression assay.")
+        }
+    } else {
+        message("Using all features.")
+    }
+    if (assayIndex < 5) rownames(assay) <- paste0("prmtr. ", rownames(assay))
+    ## Map colours
+    condition <- result$condition
+    cond <- unique(condition)
+    nCond <- length(cond)
+    if (!is.null(col)) {
+        if (length(col) < nCond) stop("Need as many colours as conditions.")
+        cols <- col[seq_len(nCond)]
+    } else {
+        cols <- hue_pal()(nCond)
+    }
+    names(cols) <- cond
+    ## Filter all rows equal to zero
+    assay <- assay[rowSums(assay) > 0, ]
+    assay <- t(scale(t(assay)))
+    assay <- assay[complete.cases(assay),]
+    ## Plot
+    if (is.null(breaks)) {
+        limit <- as.numeric(unlist(assay))
+        lb <- as.numeric(quantile(limit, 0.05))
+        ub <- as.numeric(quantile(limit, 0.95))
+        breaks <- seq(lb, ub, length.out = 21)
+    }
+    pal <- get(palette, mode = "function")
+    if (is.null(cex.row)) cex.row <- 0.2 + 1/log10(nrow(assay))
+    if (is.null(cex.col)) cex.col <- 0.2 + 1/log10(ncol(assay))
+    heatmap.2(assay, col = pal(length(breaks)-1), breaks = breaks, 
+              trace = 'none', ColSideColors = cols[result$condition],
+              margins = c(row.margin, col.margin),
+              cexRow = cex.row, cexCol = cex.col)
+    legend("topright", legend = cond, fill = cols, border=FALSE, bty="n", 
+           cex = cex.legend)
+}
+
