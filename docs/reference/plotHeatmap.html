@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Visualizes promoter activity and gene expression with boxplots — boxplotPromoters • proActiv</title>
+<title>Visualizes heatmap of features for samples — plotHeatmap • proActiv</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Visualizes promoter activity and gene expression with boxplots — boxplotPromoters" />
-<meta property="og:description" content="Visualizes promoter activity and gene expression with boxplots" />
+<meta property="og:title" content="Visualizes heatmap of features for samples — plotHeatmap" />
+<meta property="og:description" content="Visualizes heatmap of features for samples" />
 
 
 
@@ -119,21 +119,27 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Visualizes promoter activity and gene expression with boxplots</h1>
+    <h1>Visualizes heatmap of features for samples</h1>
     <small class="dont-index">Source: <a href='https://github.com/GoekeLab/proActiv/blob/master/R/plot-proActiv.R'><code>R/plot-proActiv.R</code></a></small>
-    <div class="hidden name"><code>boxplotPromoters.Rd</code></div>
+    <div class="hidden name"><code>plotHeatmap.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Visualizes promoter activity and gene expression with boxplots</p>
+    <p>Visualizes heatmap of features for samples</p>
     </div>
 
-    <pre class="usage"><span class='fu'>boxplotPromoters</span><span class='op'>(</span>
+    <pre class="usage"><span class='fu'>plotHeatmap</span><span class='op'>(</span>
   <span class='va'>result</span>,
-  <span class='va'>geneId</span>,
-  geneName <span class='op'>=</span> <span class='cn'>NULL</span>,
-  filterInternal <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  col <span class='op'>=</span> <span class='cn'>NULL</span>
+  by <span class='op'>=</span> <span class='st'>"absolutePromoterActivity"</span>,
+  features <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cex.legend <span class='op'>=</span> <span class='fl'>0.75</span>,
+  cex.row <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cex.col <span class='op'>=</span> <span class='cn'>NULL</span>,
+  row.margin <span class='op'>=</span> <span class='fl'>5</span>,
+  col.margin <span class='op'>=</span> <span class='fl'>12</span>,
+  col <span class='op'>=</span> <span class='cn'>NULL</span>,
+  breaks <span class='op'>=</span> <span class='cn'>NULL</span>,
+  palette <span class='op'>=</span> <span class='st'>"bluered"</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -147,30 +153,59 @@ metadata. rowData contains promoter metadata and absolute promoter
 activity summarized across conditions. Condition must be provided.</p></td>
     </tr>
     <tr>
-      <th>geneId</th>
-      <td><p>A character vector. A single gene id. This identifier must
-correspond to the identifier in the promoter annotation.</p></td>
+      <th>by</th>
+      <td><p>A character vector. The assay to visualize the heatmap for. 
+One of promoterCounts, normalizedPromoterCounts, 
+absolutePromoterActivity and geneExpression (unambiguous substrings can be 
+supplied). Defaults to absolutePromoterActivity.</p></td>
     </tr>
     <tr>
-      <th>geneName</th>
-      <td><p>A character vector. Common gene name to be displayed
-on plot. Optional. Defaults to NULL.</p></td>
+      <th>features</th>
+      <td><p>Features to visualize. Either a list of promoterIds or 
+geneIds. The features must correspond to the assay is used, i.e., if 
+promoter assays are used, features must be promoterIds, while if gene
+expression assay is used, features must be geneIds. Defaults to NULL 
+(visualizes all features of the assay).</p></td>
     </tr>
     <tr>
-      <th>filterInternal</th>
-      <td><p>A boolean. Determines if internal promoters should be 
-removed from the plot. Defaults to TRUE.</p></td>
+      <th>cex.legend</th>
+      <td><p>A numeric value. Legend size.</p></td>
+    </tr>
+    <tr>
+      <th>cex.row</th>
+      <td><p>A numeric value. Row label size.</p></td>
+    </tr>
+    <tr>
+      <th>cex.col</th>
+      <td><p>A numeric value. Column label size.</p></td>
+    </tr>
+    <tr>
+      <th>row.margin</th>
+      <td><p>A numeric value. Row margins.</p></td>
+    </tr>
+    <tr>
+      <th>col.margin</th>
+      <td><p>A numeric value. Column margins.</p></td>
     </tr>
     <tr>
       <th>col</th>
-      <td><p>A character vector of colours to be used for plotting.</p></td>
+      <td><p>A vector of colours. Length should correspond to number of 
+experimental conditions. Defaults to NULL.</p></td>
+    </tr>
+    <tr>
+      <th>breaks</th>
+      <td><p>A numeric vector. Breaks for heatmap plotting.</p></td>
+    </tr>
+    <tr>
+      <th>palette</th>
+      <td><p>A character vector. One of bluered, redblue, redgreen, 
+greenred. Defaults to bluered.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list of length 3. Each entry is a plot corresponding to 
- absolute promoter activity, relative promoter activity and gene expression.</p>
+    <p>Displays heatmap.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='va'>files</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>'extdata/vignette/junctions'</span>, 
@@ -182,7 +217,8 @@ removed from the plot. Defaults to TRUE.</p></td>
                        condition <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'A549'</span>, <span class='st'>'HepG2'</span><span class='op'>)</span>, each<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>,
                        fileLabels <span class='op'>=</span> <span class='cn'>NULL</span>,
                        ncores <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
-<span class='va'>plots</span> <span class='op'>&lt;-</span> <span class='fu'>boxplotPromoters</span><span class='op'>(</span><span class='va'>result</span>, <span class='st'>"ENSG00000076864.19"</span><span class='op'>)</span>
+<span class='va'>result</span> <span class='op'>&lt;-</span> <span class='va'>result</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/stats/complete.cases.html'>complete.cases</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>assays</a></span><span class='op'>(</span><span class='va'>result</span><span class='op'>)</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span>,<span class='op'>]</span> 
+<span class='fu'>plotHeatmap</span><span class='op'>(</span><span class='va'>result</span><span class='op'>)</span>
 
 </pre>
   </div>

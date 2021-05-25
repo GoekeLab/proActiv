@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proActiv</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.22</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
       </span>
     </div>
 
@@ -421,24 +421,7 @@
 <div id="alternative-promoter-usage" class="section level3">
 <h3 class="hasAnchor">
 <a href="#alternative-promoter-usage" class="anchor"></a>Alternative Promoter Usage</h3>
-<p>To visualize genes with alternative promoter usage across conditions, we call <code>plotPromoters</code> on the summarizedExperiment object <code>result</code> returned by proActiv. Here, we demonstrate <code>plotPromoters</code> by visualizing promoters of RAP1GAP (ENSG00000076864.19). RAP1GAP is the most significant gene identified in <code>dxr1</code> as a candidate for alternative promoter usage across cell lines A549 and HepG2. <code>plotPromoters</code> takes in <code>result</code> and <code>gene</code>, a gene of interest.</p>
-<p>In order to build and plot a transcript model for the gene of interest, users may supply either a transcript database (<code>txdb</code>) or a list of Genomic Ranges giving the ranges of exons by transcripts to be plotted (<code>ranges</code>). If users choose to use a TxDb as input, we recommend that the TxDb used should be the same as the one used to prepare promoter annotations, as annotations from different sources may differ slightly. To keep the run-time of this vignette short, we use a TxDb generated from GENCODE v34 GTF subsetted to RAP1GAP.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## RAP1GAP</span>
-<span class="va">gene</span> <span class="op">&lt;-</span> <span class="st">'ENSG00000076864.19'</span>
-<span class="va">txdb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html">loadDb</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">'extdata/vignette/annotations'</span>,
-                           <span class="st">'gencode.v34.annotation.rap1gap.sqlite'</span>, 
-                           package <span class="op">=</span> <span class="st">'proActiv'</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="../reference/plotPromoters.html">plotPromoters</a></span><span class="op">(</span>result <span class="op">=</span> <span class="va">result</span>, gene <span class="op">=</span> <span class="va">gene</span>, txdb <span class="op">=</span> <span class="va">txdb</span><span class="op">)</span></code></pre></div>
-<p><img src="proActiv_files/figure-html/VizAlternativePromoters%20txdb-1.png" width="672" style="display: block; margin: auto;"></p>
-<p>The same plot can be generated with a list of Genomic Ranges giving the exons by transcripts of RAP1GAP:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ranges</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">'extdata/vignette/annotations'</span>,
-                              <span class="st">'exonsBy.rap1gap.rds'</span>,
-                              package <span class="op">=</span> <span class="st">'proActiv'</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="../reference/plotPromoters.html">plotPromoters</a></span><span class="op">(</span>result <span class="op">=</span> <span class="va">result</span>, gene <span class="op">=</span> <span class="va">gene</span>, ranges <span class="op">=</span> <span class="va">ranges</span><span class="op">)</span></code></pre></div>
-<p>Users can adjust the width of the promoter ‘blocks’ and ‘arrows’ in the plot with the numeric arguments <code>blk.width</code> and <code>arrow.width</code> respectively. <code>blk.width</code> defaults to 500 (bases), while <code>arrow.width</code> is internally calculated based on the range of the gene. Other parameters controlling the fill and border colour and size of labels are listed in code documentation.</p>
-<p>Alternatively, promoter activity can be visualized with <code>boxplotPromoters</code>. This function outputs boxplots of gene expression, absolute and relative promoter activity for a gene of interest. <code>boxplotPromoters</code> takes the following arguments:</p>
+<p>To visualize genes with alternative promoter usage across conditions, the function <code>boxplotPromoters</code> can be used. This function outputs boxplots of gene expression, absolute and relative promoter activity for a gene of interest. <code>boxplotPromoters</code> takes the following arguments:</p>
 <ul>
 <li>
 <code>result</code>. The <code>summarizedExperiment</code> object returned by proActiv. This must contain a condition vector (i.e., the call to <code>proActiv</code> that returned this <code>result</code> must have had the <code>condition</code> vector supplied).<br>
@@ -456,20 +439,20 @@
 <code>col</code>. A character vector of colours for plotting. Defaults to NULL, which uses <code>ggplot2</code> default colours.</li>
 </ul>
 <p>Below, we call <code>boxplotPromoters</code> with RAP1GAP:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boxplotPromoters.html">boxplotPromoters</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"ENSG00000076864.19"</span><span class="op">)</span>
 
 <span class="co"># Boxplot of absolute promoter activity</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">gridExtra</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html">grid.arrange</a></span><span class="op">(</span><span class="va">plots</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">plots</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span>, widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="proActiv_files/figure-html/Boxplot-1.png" width="672" style="display: block; margin: auto;"></p>
-<p>The <code>plots</code> object stores the plot for absolute promoter activity, relative promoter activity and gene expression in the first, second and third slot respectively. Both plots generated by <code>plotPromoters</code> and <code>boxplotPromoters</code> reflect the alternative usage of promoters 137 and 141 as called by <code>getAlternativePromoters</code>.</p>
+<p>The <code>plots</code> object stores the plot for absolute promoter activity, relative promoter activity and gene expression in the first, second and third slot respectively. The plot generated by <code>boxplotPromoters</code> reflect the alternative usage of promoters 137 and 141 as called by <code>getAlternativePromoters</code>.</p>
 </div>
 <div id="promoter-category-proportion" class="section level3">
 <h3 class="hasAnchor">
 <a href="#promoter-category-proportion" class="anchor"></a>Promoter category proportion</h3>
 <p>Here, we visualize the categorization of annotated promoters in the two cell lines. The proportions between the categories are similar across the two cell lines, with majority of the promoters being inactive.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
 
 <span class="va">rdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>
@@ -487,7 +470,7 @@
 <h3 class="hasAnchor">
 <a href="#majorminor-promoters-by-position" class="anchor"></a>Major/minor promoters by position</h3>
 <p>Analysis of major:minor promoter proportions against promoter position. The analysis is restricted to multi-promoter genes with at least one active promoter. Below, we generate the plot for cell line HepG2. In general, the major:minor promoter proportion decreases with increasing promoter position.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Because many genes have many annotated promoters, we collapse promoters </span>
 <span class="co">## from the 5th position and onward into one group for simplicity</span>
 <span class="va">pdata2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="va">rdata</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -506,7 +489,7 @@
 <h3 class="hasAnchor">
 <a href="#major-promoter-activity-and-gene-expression" class="anchor"></a>Major promoter activity and gene expression</h3>
 <p>Comparison of major promoter activity and gene expression, calculated by summing over all promoters. Single promoter genes lie on the diagonal. Multi-promoter genes lie to the right of the diagonal. Below, we generate the plot for cell line HepG2. This plot suggests that a single major promoter does not often fully explain gene expression, with minor promoters also contributing to gene expression.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Get active major promoters of HepG2</span>
 <span class="va">majorPromoter</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="va">rdata</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">geneId</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>promoterCount <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">HepG2.class</span> <span class="op">==</span> <span class="st">'Major'</span><span class="op">)</span> 
@@ -527,7 +510,7 @@
 <h3 class="hasAnchor">
 <a href="#t-sne" class="anchor"></a>t-SNE</h3>
 <p>We generate a t-SNE plot with all active promoters. Expectedly, replicates from each cell line cluster together.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jkrijthe/Rtsne">Rtsne</a></span><span class="op">)</span>
 
 <span class="co">## Remove inactive promoters (sparse rows)</span>
@@ -575,73 +558,64 @@
 #&gt; [5] LC_TIME=English_Singapore.1252    
 #&gt; 
 #&gt; attached base packages:
-#&gt; [1] stats4    parallel  stats     graphics  grDevices utils     datasets 
-#&gt; [8] methods   base     
+#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     
 #&gt; 
 #&gt; other attached packages:
-#&gt;  [1] Rtsne_0.15             ggplot2_3.3.3          gridExtra_2.3         
-#&gt;  [4] GenomicFeatures_1.42.1 AnnotationDbi_1.52.0   Biobase_2.50.0        
-#&gt;  [7] GenomicRanges_1.42.0   GenomeInfoDb_1.26.2    IRanges_2.24.1        
-#&gt; [10] S4Vectors_0.28.1       BiocGenerics_0.36.0    proActiv_1.1.22       
+#&gt; [1] Rtsne_0.15     ggplot2_3.3.3  gridExtra_2.3  proActiv_1.3.3
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
-#&gt;   [1] colorspace_2.0-0            ellipsis_0.3.1             
-#&gt;   [3] rprojroot_2.0.2             biovizBase_1.38.0          
-#&gt;   [5] htmlTable_2.1.0             XVector_0.30.0             
-#&gt;   [7] base64enc_0.1-3             fs_1.5.0                   
-#&gt;   [9] dichromat_2.0-0             rstudioapi_0.13            
-#&gt;  [11] farver_2.0.3                bit64_4.0.5                
-#&gt;  [13] xml2_1.3.2                  splines_4.0.3              
-#&gt;  [15] geneplotter_1.68.0          knitr_1.30                 
-#&gt;  [17] Formula_1.2-4               Rsamtools_2.6.0            
-#&gt;  [19] annotate_1.68.0             cluster_2.1.0              
-#&gt;  [21] dbplyr_2.0.0                png_0.1-7                  
-#&gt;  [23] compiler_4.0.3              httr_1.4.2                 
-#&gt;  [25] backports_1.2.1             lazyeval_0.2.2             
-#&gt;  [27] assertthat_0.2.1            Matrix_1.2-18              
-#&gt;  [29] htmltools_0.5.1.1           prettyunits_1.1.1          
-#&gt;  [31] tools_4.0.3                 gtable_0.3.0               
-#&gt;  [33] glue_1.4.2                  GenomeInfoDbData_1.2.4     
-#&gt;  [35] dplyr_1.0.2                 rappdirs_0.3.1             
-#&gt;  [37] Rcpp_1.0.5                  pkgdown_1.6.1              
-#&gt;  [39] vctrs_0.3.6                 Biostrings_2.58.0          
-#&gt;  [41] rtracklayer_1.49.5          xfun_0.19                  
-#&gt;  [43] stringr_1.4.0               lifecycle_0.2.0            
-#&gt;  [45] ensembldb_2.14.0            XML_3.99-0.5               
-#&gt;  [47] zlibbioc_1.36.0             scales_1.1.1               
-#&gt;  [49] BSgenome_1.58.0             VariantAnnotation_1.36.0   
-#&gt;  [51] ProtGenerics_1.22.0         ragg_0.4.0                 
-#&gt;  [53] hms_0.5.3                   MatrixGenerics_1.2.0       
-#&gt;  [55] SummarizedExperiment_1.20.0 AnnotationFilter_1.14.0    
-#&gt;  [57] RColorBrewer_1.1-2          yaml_2.2.1                 
-#&gt;  [59] curl_4.3                    memoise_1.1.0              
-#&gt;  [61] biomaRt_2.46.0              rpart_4.1-15               
-#&gt;  [63] latticeExtra_0.6-29         stringi_1.5.3              
-#&gt;  [65] RSQLite_2.2.1               highr_0.8                  
-#&gt;  [67] genefilter_1.72.0           desc_1.2.0                 
-#&gt;  [69] checkmate_2.0.0             BiocParallel_1.24.1        
-#&gt;  [71] rlang_0.4.9                 pkgconfig_2.0.3            
-#&gt;  [73] systemfonts_0.3.2           matrixStats_0.57.0         
-#&gt;  [75] bitops_1.0-6                evaluate_0.14              
-#&gt;  [77] lattice_0.20-41             purrr_0.3.4                
-#&gt;  [79] labeling_0.4.2              htmlwidgets_1.5.3          
-#&gt;  [81] GenomicAlignments_1.26.0    bit_4.0.4                  
-#&gt;  [83] tidyselect_1.1.0            magrittr_2.0.1             
-#&gt;  [85] DESeq2_1.30.0               R6_2.5.0                   
-#&gt;  [87] generics_0.1.0              Hmisc_4.4-2                
-#&gt;  [89] DelayedArray_0.16.0         DBI_1.1.0                  
-#&gt;  [91] withr_2.3.0                 pillar_1.4.7               
-#&gt;  [93] foreign_0.8-80              survival_3.2-7             
-#&gt;  [95] RCurl_1.98-1.2              nnet_7.3-14                
-#&gt;  [97] tibble_3.0.4                crayon_1.3.4               
-#&gt;  [99] BiocFileCache_1.14.0        rmarkdown_2.6              
-#&gt; [101] jpeg_0.1-8.1                progress_1.2.2             
-#&gt; [103] locfit_1.5-9.4              grid_4.0.3                 
-#&gt; [105] data.table_1.13.6           blob_1.2.1                 
-#&gt; [107] digest_0.6.27               xtable_1.8-4               
-#&gt; [109] textshaping_0.2.1           openssl_1.4.3              
-#&gt; [111] munsell_0.5.0               Gviz_1.34.0                
-#&gt; [113] askpass_1.1</code></pre>
+#&gt;   [1] bitops_1.0-6                matrixStats_0.57.0         
+#&gt;   [3] fs_1.5.0                    bit64_4.0.5                
+#&gt;   [5] RColorBrewer_1.1-2          progress_1.2.2             
+#&gt;   [7] httr_1.4.2                  rprojroot_2.0.2            
+#&gt;   [9] GenomeInfoDb_1.26.2         tools_4.0.3                
+#&gt;  [11] R6_2.5.0                    KernSmooth_2.23-17         
+#&gt;  [13] DBI_1.1.0                   BiocGenerics_0.36.0        
+#&gt;  [15] colorspace_2.0-0            withr_2.3.0                
+#&gt;  [17] tidyselect_1.1.0            prettyunits_1.1.1          
+#&gt;  [19] DESeq2_1.30.0               curl_4.3                   
+#&gt;  [21] bit_4.0.4                   compiler_4.0.3             
+#&gt;  [23] textshaping_0.2.1           Biobase_2.50.0             
+#&gt;  [25] xml2_1.3.2                  desc_1.2.0                 
+#&gt;  [27] DelayedArray_0.16.0         labeling_0.4.2             
+#&gt;  [29] rtracklayer_1.49.5          caTools_1.18.0             
+#&gt;  [31] scales_1.1.1                genefilter_1.72.0          
+#&gt;  [33] askpass_1.1                 rappdirs_0.3.1             
+#&gt;  [35] pkgdown_1.6.1               systemfonts_0.3.2          
+#&gt;  [37] stringr_1.4.0               digest_0.6.27              
+#&gt;  [39] Rsamtools_2.6.0             rmarkdown_2.6              
+#&gt;  [41] XVector_0.30.0              pkgconfig_2.0.3            
+#&gt;  [43] htmltools_0.5.1.1           MatrixGenerics_1.2.0       
+#&gt;  [45] highr_0.8                   dbplyr_2.0.0               
+#&gt;  [47] rlang_0.4.9                 rstudioapi_0.13            
+#&gt;  [49] RSQLite_2.2.1               farver_2.0.3               
+#&gt;  [51] generics_0.1.0              gtools_3.8.2               
+#&gt;  [53] BiocParallel_1.24.1         dplyr_1.0.2                
+#&gt;  [55] RCurl_1.98-1.2              magrittr_2.0.1             
+#&gt;  [57] GenomeInfoDbData_1.2.4      Matrix_1.2-18              
+#&gt;  [59] Rcpp_1.0.5                  munsell_0.5.0              
+#&gt;  [61] S4Vectors_0.28.1            lifecycle_0.2.0            
+#&gt;  [63] stringi_1.5.3               yaml_2.2.1                 
+#&gt;  [65] SummarizedExperiment_1.20.0 zlibbioc_1.36.0            
+#&gt;  [67] gplots_3.1.1                BiocFileCache_1.14.0       
+#&gt;  [69] grid_4.0.3                  blob_1.2.1                 
+#&gt;  [71] parallel_4.0.3              crayon_1.3.4               
+#&gt;  [73] lattice_0.20-41             Biostrings_2.58.0          
+#&gt;  [75] splines_4.0.3               GenomicFeatures_1.42.1     
+#&gt;  [77] annotate_1.68.0             hms_0.5.3                  
+#&gt;  [79] locfit_1.5-9.4              knitr_1.30                 
+#&gt;  [81] pillar_1.4.7                GenomicRanges_1.42.0       
+#&gt;  [83] geneplotter_1.68.0          biomaRt_2.46.0             
+#&gt;  [85] stats4_4.0.3                XML_3.99-0.5               
+#&gt;  [87] glue_1.4.2                  evaluate_0.14              
+#&gt;  [89] data.table_1.13.6           vctrs_0.3.6                
+#&gt;  [91] gtable_0.3.0                openssl_1.4.3              
+#&gt;  [93] purrr_0.3.4                 assertthat_0.2.1           
+#&gt;  [95] xfun_0.19                   xtable_1.8-4               
+#&gt;  [97] ragg_0.4.0                  survival_3.2-7             
+#&gt;  [99] tibble_3.0.4                GenomicAlignments_1.26.0   
+#&gt; [101] AnnotationDbi_1.52.0        memoise_1.1.0              
+#&gt; [103] IRanges_2.24.1              ellipsis_0.3.1</code></pre>
 </div>
   </div>
 

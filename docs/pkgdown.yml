@@ -3,7 +3,7 @@ pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
   proActiv: proActiv.html
-last_built: 2021-05-11T14:44Z
+last_built: 2021-05-25T20:23Z
 urls:
   reference: https://goekelab.github.io/proActiv//reference
   article: https://goekelab.github.io/proActiv//articles

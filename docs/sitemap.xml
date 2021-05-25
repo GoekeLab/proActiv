@@ -25,10 +25,16 @@
     <loc>https://goekelab.github.io/proActiv//reference/getRelativePromoterActivity.html</loc>
   </url>
   <url>
+    <loc>https://goekelab.github.io/proActiv//reference/integrateProactiv.html</loc>
+  </url>
+  <url>
     <loc>https://goekelab.github.io/proActiv//reference/normalizePromoterReadCounts.html</loc>
   </url>
   <url>
-    <loc>https://goekelab.github.io/proActiv//reference/plotPromoters.html</loc>
+    <loc>https://goekelab.github.io/proActiv//reference/plotHeatmap.html</loc>
+  </url>
+  <url>
+    <loc>https://goekelab.github.io/proActiv//reference/plotPCA.html</loc>
   </url>
   <url>
     <loc>https://goekelab.github.io/proActiv//reference/preparePromoterAnnotation.html</loc>

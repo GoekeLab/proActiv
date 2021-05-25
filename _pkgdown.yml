@@ -8,9 +8,11 @@ reference:
     contents:
       - preparePromoterAnnotation
       - proActiv
+      - integrateProactiv
       - getAlternativePromoters
       - boxplotPromoters
-      - plotPromoters
+      - plotPCA
+      - plotHeatmap
   - title: Data
     contents:
       - promoterAnnotation.gencode.v34.subset

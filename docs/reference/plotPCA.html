@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Normalize promoter read counts using DESeq2 — normalizePromoterReadCounts • proActiv</title>
+<title>Performs principal component analysis — plotPCA • proActiv</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Normalize promoter read counts using DESeq2 — normalizePromoterReadCounts" />
-<meta property="og:description" content="Normalize promoter read counts using DESeq2" />
+<meta property="og:title" content="Performs principal component analysis — plotPCA" />
+<meta property="og:description" content="Performs principal component analysis" />
 
 
 
@@ -119,33 +119,79 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Normalize promoter read counts using DESeq2</h1>
-    <small class="dont-index">Source: <a href='https://github.com/GoekeLab/proActiv/blob/master/R/junction-read-count.R'><code>R/junction-read-count.R</code></a></small>
-    <div class="hidden name"><code>normalizePromoterReadCounts.Rd</code></div>
+    <h1>Performs principal component analysis</h1>
+    <small class="dont-index">Source: <a href='https://github.com/GoekeLab/proActiv/blob/master/R/plot-proActiv.R'><code>R/plot-proActiv.R</code></a></small>
+    <div class="hidden name"><code>plotPCA.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Normalize promoter read counts using DESeq2</p>
+    <p>Performs principal component analysis</p>
     </div>
 
-    <pre class="usage"><span class='fu'>normalizePromoterReadCounts</span><span class='op'>(</span><span class='va'>promoterReadCounts</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>plotPCA</span><span class='op'>(</span>
+  <span class='va'>result</span>,
+  by <span class='op'>=</span> <span class='st'>"absolutePromoterActivity"</span>,
+  main <span class='op'>=</span> <span class='cn'>NULL</span>,
+  col <span class='op'>=</span> <span class='cn'>NULL</span>,
+  alpha <span class='op'>=</span> <span class='fl'>0.75</span>,
+  cex.size <span class='op'>=</span> <span class='fl'>2</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>promoterReadCounts</th>
-      <td><p>A data.frame object. The number of junction reads
-per promoter (rows) for each sample (cols)</p></td>
+      <th>result</th>
+      <td><p>A SummarizedExperiment object return by proActiv, with assays 
+giving promoter counts and activity with gene expression stored as 
+metadata. rowData contains promoter metadata and absolute promoter 
+activity summarized across conditions. Condition must be provided.</p></td>
+    </tr>
+    <tr>
+      <th>by</th>
+      <td><p>A character vector. The assay to perform principal component 
+analysis by. One of promoterCounts, normalizedPromoterCounts, 
+absolutePromoterActivity and geneExpression (unambiguous substrings can be 
+supplied). Defaults to absolutePromoterActivity.</p></td>
+    </tr>
+    <tr>
+      <th>main</th>
+      <td><p>A character vector. Plot title (optional). Defaults to NULL.</p></td>
+    </tr>
+    <tr>
+      <th>col</th>
+      <td><p>A vector of colours. If NULL, uses standard ggplot colours. 
+Defaults to NULL.</p></td>
+    </tr>
+    <tr>
+      <th>alpha</th>
+      <td><p>A numeric value in between 0 and 1. Determines point 
+transparency.</p></td>
+    </tr>
+    <tr>
+      <th>cex.size</th>
+      <td><p>A numeric value. Determines point size.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data.frame object. The normalized number of junction reads per
-  promoter (rows) for each sample (cols) using DESeq2 counts function.
-  Requires 'DESeq2' package to be installed</p>
+    <p>PCA plot.</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class='va'>files</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>'extdata/vignette/junctions'</span>, 
+                       package <span class='op'>=</span> <span class='st'>'proActiv'</span><span class='op'>)</span>, 
+                       full.names <span class='op'>=</span> <span class='cn'>TRUE</span>, pattern <span class='op'>=</span> <span class='st'>'replicate5'</span><span class='op'>)</span>
+<span class='va'>promoterAnnotation</span> <span class='op'>&lt;-</span> <span class='va'>promoterAnnotation.gencode.v34.subset</span>
+<span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'><a href='proActiv.html'>proActiv</a></span><span class='op'>(</span>files <span class='op'>=</span> <span class='va'>files</span>,
+                       promoterAnnotation  <span class='op'>=</span> <span class='va'>promoterAnnotation</span>,
+                       condition <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'A549'</span>, <span class='st'>'HepG2'</span><span class='op'>)</span>, each<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>,
+                       fileLabels <span class='op'>=</span> <span class='cn'>NULL</span>,
+                       ncores <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>result</span> <span class='op'>&lt;-</span> <span class='va'>result</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/stats/complete.cases.html'>complete.cases</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>assays</a></span><span class='op'>(</span><span class='va'>result</span><span class='op'>)</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span>,<span class='op'>]</span>
+<span class='fu'>plotPCA</span><span class='op'>(</span><span class='va'>result</span><span class='op'>)</span>
+
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -123,7 +123,8 @@ The `PromoterAnnotation` object has 3 slots:
 
 ### Complete Analysis Workflow: Analyzing Alternative Promoters
 
-Most human genes have multiple promoters that control the expression of distinct isoforms. The use of these alternative promoters enables the regulation of isoform expression pre-transcriptionally. Importantly, alternative promoters have been found to be important in a wide number of cell types and diseases. proActiv includes a workflow to identify and visualize alternative promoter usage between conditions. This workflow is described in detail [here](https://goekelab.github.io/proActiv/articles/proActiv.html).
+Most human genes have multiple promoters that control the expression of distinct isoforms. The use of these alternative promoters enables the regulation of isoform expression pre-transcriptionally. Importantly, alternative promoters have been found to be important in a wide number of cell types and diseases. proActiv includes a workflow to identify and visualize alternative promoter usage between conditions. This workflow is described in detail [here](https://goekelab.github.io/proActiv/articles/proActiv.html). Documentation of
+all functions can be found [here](https://goekelab.github.io/proActiv/reference/index.html).
 
 ## Release History
 
