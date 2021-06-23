@@ -208,10 +208,10 @@ buildSummarizedExperiment <- function(promoterAnnotation,
                         absolutePromoterActivity[,c('promoterId', 'geneId')], 
                         promoterCoordinates[,c("seqnames","start", "strand",
                                     "internalPromoter", "promoterPosition")])
-    transcriptByGene <- split(promoterIdMapping$transcriptName, 
-                                promoterIdMapping$geneId)
-    rowData(result)$txId <- transcriptByGene[match(rowData(result)$geneId, 
-                                                names(transcriptByGene))]
+    transcriptByPromoter <- split(promoterIdMapping$transcriptName, 
+                                promoterIdMapping$promoterId)
+    rowData(result)$txId <- transcriptByPromoter[match(rowData(result)$promoterId, 
+                                                names(transcriptByPromoter))]
     return(result)
 }
 
