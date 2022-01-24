@@ -103,12 +103,12 @@ Here, we demonstrate creating the subsetted promoter annotation for the Human ge
 
 ```{r CreateAnnotation, eval=FALSE}
 ## From GTF file path
-gtf.file <- system.file('extdata/vignette/annotation/gencode.v34.annotation.subset.gtf.gz', 
+gtf.file <- system.file('extdata/vignette/annotations/gencode.v34.annotation.subset.gtf.gz', 
                         package = 'proActiv')
 promoterAnnotation.gencode.v34.subset <- preparePromoterAnnotation(file = gtf.file,
                                                                    species = 'Homo_sapiens')
 ## From TxDb object
-txdb.file <- system.file('extdata/vignette/annotation/gencode.v34.annotation.subset.sqlite', 
+txdb.file <- system.file('extdata/vignette/annotations/gencode.v34.annotation.subset.sqlite', 
                          package = 'proActiv')
 txdb <- loadDb(txdb.file)
 promoterAnnotation.gencode.v34.subset <- preparePromoterAnnotation(txdb = txdb, 
